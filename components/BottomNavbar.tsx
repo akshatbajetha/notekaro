@@ -1,74 +1,60 @@
 "use client";
 import React from "react";
 import { FloatingDock } from "@/components/ui/floating-dock";
-import {
-  IconBrandGithub,
-  IconBrandX,
-  IconExchange,
-  IconHome,
-  IconNewSection,
-  IconTerminal2,
-  IconNotebook,
-} from "@tabler/icons-react";
-import { Separator } from "./ui/separator";
-import { ToggleTheme } from "./ToggleTheme";
+import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
+import { House, NotebookPen, Pencil, ListTodo } from "lucide-react";
 
 export function BottomNavbar() {
   const links = [
     {
       title: "Home",
       icon: (
-        <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+        <House className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),
-      href: "#",
+      href: "/",
     },
 
     {
-      title: "Products",
+      title: "Notes",
       icon: (
-        <IconNotebook className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+        <NotebookPen className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),
-      href: "#",
+      href: "/notes",
     },
     {
-      title: "Components",
+      title: "Sketch",
       icon: (
-        <IconNewSection className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+        <Pencil className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),
-      href: "#",
+      href: "/sketch",
     },
     {
-      title: "Aceternity UI",
+      title: "TODO",
       icon: (
-        <IconTerminal2 className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+        <ListTodo className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),
-      href: "#",
-    },
-    {
-      title: "Changelog",
-      icon: (
-        <IconExchange className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-      ),
-      href: "#",
+      href: "/todo",
     },
 
     {
       title: "Twitter",
       icon: (
-        <IconBrandX className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+        <IconBrandX className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),
-      href: "#",
+      href: "https://x.com/akshatbajetha",
+      newTab: true,
     },
     {
       title: "GitHub",
       icon: (
-        <IconBrandGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+        <IconBrandGithub className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),
-      href: "#",
+      href: "https://github.com/akshatbajetha/notekaro",
+      newTab: true,
     },
   ];
   return (
-    <div className="flex items-center justify-center h-max w-max fixed bottom-0">
+    <div className="flex items-center justify-center h-max w-max fixed bottom-2 left-[36vw]">
       <FloatingDock items={links} />
     </div>
   );

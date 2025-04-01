@@ -18,7 +18,12 @@ export const FloatingDock = ({
   desktopClassName,
   mobileClassName,
 }: {
-  items: { title: string; icon: React.ReactNode; href?: string }[];
+  items: {
+    title: string;
+    icon: React.ReactNode;
+    href?: string;
+    newTab?: boolean;
+  }[];
   desktopClassName?: string;
   mobileClassName?: string;
 }) => {
@@ -72,6 +77,7 @@ const FloatingDockMobile = ({
                 </Link>
               </motion.div>
             ))}
+            <ToggleTheme />
           </motion.div>
         )}
       </AnimatePresence>
@@ -120,11 +126,13 @@ function IconContainer({
   title,
   icon,
   href,
+  newTab,
 }: {
   mouseX: MotionValue;
   title: string;
   icon: React.ReactNode;
   href?: string;
+  newTab?: boolean;
 }) {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -134,14 +142,14 @@ function IconContainer({
     return val - bounds.x - bounds.width / 2;
   });
 
-  let widthTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-  let heightTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
+  let widthTransform = useTransform(distance, [-150, 0, 150], [40, 60, 40]);
+  let heightTransform = useTransform(distance, [-150, 0, 150], [40, 60, 40]);
 
-  let widthTransformIcon = useTransform(distance, [-150, 0, 150], [20, 40, 20]);
+  let widthTransformIcon = useTransform(distance, [-150, 0, 150], [20, 25, 20]);
   let heightTransformIcon = useTransform(
     distance,
     [-150, 0, 150],
-    [20, 40, 20]
+    [20, 25, 20]
   );
 
   let width = useSpring(widthTransform, {
@@ -169,7 +177,7 @@ function IconContainer({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <Link href={href ? href : "#"}>
+    <Link href={href ? href : "#"} target={newTab ? "_blank" : "_self"}>
       <motion.div
         ref={ref}
         style={{ width, height }}
@@ -183,7 +191,7 @@ function IconContainer({
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="px-2 py-0.5 whitespace-pre rounded-md bg-gray-100 border dark:bg-neutral-800 dark:border-neutral-900 dark:text-white border-gray-200 text-neutral-700 absolute left-1/2 -translate-x-1/2 -top-8 w-fit text-xs"
+              className="whitespace-pre rounded-md bg-gray-100 border dark:bg-neutral-800 dark:border-neutral-900 dark:text-white border-gray-200 text-neutral-700 absolute left-1/2 -translate-x-1/2 -top-8 w-fit text-xs"
             >
               {title}
             </motion.div>
