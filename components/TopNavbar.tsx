@@ -2,18 +2,10 @@
 import React from "react";
 import { FloatingDock } from "@/components/ui/floating-dock";
 import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
-import { House, NotebookPen, Pencil, ListTodo } from "lucide-react";
+import { NotebookPen, Pencil, ListTodo } from "lucide-react";
 
-export function BottomNavbar() {
+export function TopNavbar() {
   const links = [
-    {
-      title: "Home",
-      icon: (
-        <House className="h-full w-full text-neutral-700 dark:text-neutral-300" />
-      ),
-      href: "/",
-    },
-
     {
       title: "Notes",
       icon: (
@@ -54,7 +46,7 @@ export function BottomNavbar() {
     },
   ];
   return (
-    <div className="flex items-center justify-center h-max w-max fixed bottom-2 left-[36vw]">
+    <div className="flex items-center justify-center h-max w-max fixed top-2 left-1/3 border-2 border-muted-foreground rounded-2xl">
       <FloatingDock items={links} />
     </div>
   );
