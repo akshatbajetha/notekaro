@@ -1,53 +1,64 @@
 "use client";
 import React from "react";
-import { FloatingDock } from "@/components/ui/floating-dock";
 import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
 import { NotebookPen, Pencil, ListTodo } from "lucide-react";
+import { NavBar } from "./ui/tubelight-navbar";
+import { ToggleTheme } from "./ToggleTheme";
+import NoteKaroLogo from "./NoteKaroLogo";
 
 export function TopNavbar() {
   const links = [
     {
-      title: "Notes",
+      name: "Home",
+      url: "/",
+      icon: <NoteKaroLogo />,
+    },
+    {
+      name: "Notes",
+      url: "/notes",
       icon: (
         <NotebookPen className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),
-      href: "/notes",
     },
     {
-      title: "Sketch",
+      name: "Sketch",
+      url: "/sketch",
       icon: (
         <Pencil className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),
-      href: "/sketch",
     },
     {
-      title: "TODO",
+      name: "TODO",
+      url: "/todo",
       icon: (
         <ListTodo className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),
-      href: "/todo",
     },
 
     {
-      title: "Twitter",
+      name: "Twitter",
+      url: "https://x.com/akshatbajetha",
       icon: (
         <IconBrandX className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),
-      href: "https://x.com/akshatbajetha",
       newTab: true,
     },
     {
-      title: "GitHub",
+      name: "GitHub",
+      url: "https://github.com/akshatbajetha/notekaro",
       icon: (
         <IconBrandGithub className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),
-      href: "https://github.com/akshatbajetha/notekaro",
       newTab: true,
+    },
+    {
+      name: "Toggle Theme",
+      icon: <ToggleTheme />,
     },
   ];
   return (
-    <div className="flex items-center justify-center h-max w-max fixed top-2 left-1/3 border-2 border-muted-foreground rounded-2xl">
-      <FloatingDock items={links} />
-    </div>
+    <>
+      <NavBar items={links} />
+    </>
   );
 }
