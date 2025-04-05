@@ -1,7 +1,9 @@
+import { Editor } from "@/components/note/DynamicEditor";
+
 function page() {
   return (
-    <div className="h-screen w-full flex justify-center items-center">
-      NOTES APP
+    <div className="min-h-screen w-[75vw] right-1/2 flex justify-center items-center border-2 border-red-500">
+      <Editor />
     </div>
   );
 }

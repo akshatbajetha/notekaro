@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 interface NavItem {
   name: string;
@@ -21,6 +22,7 @@ export function NavBar({ items, className }: NavBarProps) {
   const [activeTab, setActiveTab] = useState(items[0].name);
   const [isMobile, setIsMobile] = useState(false);
   console.log(isMobile);
+  const currentPage = usePathname();
 
   useEffect(() => {
     const handleResize = () => {
@@ -31,6 +33,24 @@ export function NavBar({ items, className }: NavBarProps) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  useEffect(() => {
+    switch (currentPage) {
+      case "/":
+        setActiveTab(items[0].name);
+        break;
+      case "/notes":
+        setActiveTab(items[1].name);
+        break;
+      case "/sketch":
+        setActiveTab(items[2].name);
+        break;
+      case "/todo":
+        setActiveTab(items[3].name);
+        break;
+      default:
+        setActiveTab(items[0].name);
+    }
+  }, [currentPage]);
 
   return (
     <div
