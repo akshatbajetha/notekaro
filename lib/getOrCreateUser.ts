@@ -1,17 +1,17 @@
 import { useAuth } from "@clerk/nextjs";
 import { prisma } from "./db";
-import { clerkClient } from "@clerk/nextjs/server";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 
 export async function getOrCreateUser() {
-  const { userId } = useAuth();
+  const currUser = await currentUser();
 
-  if (!userId) {
+  if (!currUser) {
     throw new Error("User not found");
   }
 
   const existingUser = await prisma.user.findUnique({
     where: {
-      id: userId,
+      id: currUser.id,
     },
   });
 
@@ -20,7 +20,7 @@ export async function getOrCreateUser() {
   }
 
   const client = await clerkClient();
-  const user = await client.users.getUser(userId);
+  const user = await client.users.getUser(currUser.id);
 
   const newUser = await prisma.user.create({
     data: {

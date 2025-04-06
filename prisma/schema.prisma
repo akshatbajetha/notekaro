@@ -23,10 +23,11 @@ model User {
 
 model Note {
   id        String   @id @default(uuid())
-  title     String
-  content   Json // BlockNote.js content as JSON
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  title     String   @default("Untitled")
+  content   Json // BlockNote.js content as JSON
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
