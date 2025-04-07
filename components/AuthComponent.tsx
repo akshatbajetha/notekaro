@@ -16,7 +16,7 @@ function AuthComponent() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="secondary"
-          className="flex bg-transparent border-0 aspect-square rounded-full bg-gray-200 dark:bg-neutral-800 items-center justify-center fixed top-7 right-1/4 z-50 mb-6 p-0 min-w-12 min-h-12"
+          className="flex bg-transparent border-0 aspect-square rounded-full bg-gray-200 dark:bg-neutral-800 items-center justify-center fixed bottom-1 right-1/4 z-50 mb-6 p-0 min-w-12 min-h-12"
           aria-label="User Icon"
           title="Profile"
         >

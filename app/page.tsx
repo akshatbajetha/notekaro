@@ -5,7 +5,7 @@ import { Pen, StickyNote, CheckSquare, ArrowRight, Mail } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen dark:bg-[#191919] bg-[#F5F5F5]">
       {/* Hero Section */}
       <section className="py-20 h-screen flex justify-center items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -93,7 +93,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-6">
+      <footer className="border py-6 mb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center text-muted-foreground">
             <p>© 2025 NoteKaro. All rights reserved.</p>

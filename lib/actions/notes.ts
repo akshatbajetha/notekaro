@@ -100,9 +100,7 @@ export async function createNote(title: string, content: any) {
       },
     });
 
-    return Response.json({
-      "Note created successfully for user": { note, noteForUser },
-    });
+    return { note };
   } catch (error) {
     console.log("Error while creating notes: ", error);
     return;
