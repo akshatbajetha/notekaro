@@ -37,7 +37,7 @@ export async function getNotes() {
   }
 }
 
-export async function getNotesById(id: string) {
+export async function getNoteById(noteId: string) {
   const user = await getAuthUser();
 
   if (!user) {
@@ -45,22 +45,19 @@ export async function getNotesById(id: string) {
   }
 
   try {
-    const notes = await prisma.note.findMany({
+    const note = await prisma.note.findUnique({
       where: {
-        userId: user!.id,
-        id,
-      },
-      orderBy: {
-        createdAt: "desc",
+        userId: user.id,
+        id: noteId,
       },
       select: {
         id: true,
         title: true,
         content: true,
-        createdAt: true,
+        updatedAt: true,
       },
     });
-    return notes;
+    return note;
   } catch (error) {
     console.log("Error while fetching notes: ", error);
     return;
