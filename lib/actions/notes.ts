@@ -124,3 +124,26 @@ export async function deleteNote(noteId: string) {
     return;
   }
 }
+
+export async function updateNoteById(noteId: string, title?: string) {
+  const user = await getAuthUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  try {
+    const updatedNote = await prisma.note.update({
+      where: {
+        id: noteId,
+      },
+      data: {
+        title,
+      },
+    });
+    return { updatedNote };
+  } catch (error) {
+    console.log("Error while updating notes: ", error);
+    return;
+  }
+}

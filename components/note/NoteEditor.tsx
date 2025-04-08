@@ -51,6 +51,7 @@ export default function App() {
       onChange={() => {
         saveToStorage(editor.document);
       }}
+      className="w-full "
     />
   );
 }

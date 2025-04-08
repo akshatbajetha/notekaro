@@ -59,7 +59,7 @@ function Sidebar() {
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
-  }, []);
+  }, [notes]);
 
   const handleCreateNote = async () => {
     try {
