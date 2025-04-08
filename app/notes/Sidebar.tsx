@@ -1,19 +1,49 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Search, Plus, File, Loader2 } from "lucide-react";
+import { Search, Plus, File, Loader2, Trash2Icon } from "lucide-react";
 import Link from "next/link";
+import { redirect, usePathname } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 interface Note {
   id: string;
-  title: string;
-  content: string;
+  title?: string;
+  content?: string;
 }
 
 function Sidebar() {
-  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const pathName = usePathname();
+  const id = pathName.split("/")[2];
+
+  const [selectedNote, setSelectedNote] = useState<Note | null>(
+    id ? { id } : null
+  );
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  const handleDeleteNote = async (noteId: string) => {
+    try {
+      await fetch(`/api/notes`, {
+        method: "DELETE",
+        body: JSON.stringify({ noteId }),
+      });
+      setTimeout(() => {
+        setNotes(notes.filter((note) => note.id !== noteId));
+        toast({
+          title: "Note deleted successfully",
+        });
+      }, 500);
+      if (selectedNote?.id === noteId) {
+        setSelectedNote(null);
+        redirect("/notes");
+      }
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
+  };
   const fetchNotes = async () => {
     try {
       const response = await fetch("/api/notes");
@@ -43,12 +73,13 @@ function Sidebar() {
 
       const data = await response.json();
 
-      setNotes([...notes, data.note]);
+      setNotes([data.note, ...notes]);
       setSelectedNote({
         id: data.note.id,
         title: data.note.title,
         content: data.note.content,
       });
+      redirect(`/notes/${data.note.id}`);
     } catch (error) {
       console.error("Error creating note:", error);
     }
@@ -58,12 +89,12 @@ function Sidebar() {
     <div className="w-60 flex flex-col border-r border-gray-800">
       {/* Search */}
       <div className="p-2">
-        <div className="flex items-center space-x-2 px-3 py-1.5 bg-gray-800 rounded-md">
-          <Search className="w-4 h-4 text-gray-400" />
+        <div className="flex items-center space-x-2 px-3 py-1.5 dark:bg-gray-700 bg-gray-300 rounded-md">
+          <Search className="w-4 h-4 dark:text-gray-400 text-gray-600 " />
           <input
             type="text"
             placeholder="Search"
-            className="bg-transparent border-none focus:outline-none text-sm w-full text-gray-100"
+            className="bg-transparent border-none focus:outline-none text-sm w-full dark:text-gray-400 text-gray-600"
           />
         </div>
       </div>
@@ -81,21 +112,36 @@ function Sidebar() {
             />
           </div>
           {isLoading ? (
-            <div className="flex items-center justify-center">
-              <Loader2 className="animate-spin" />
+            <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
             </div>
           ) : (
             notes.map((note) => (
-              <Link
+              <div
                 key={note.id}
-                href={`/notes/${note.id}`}
-                className={`flex items-center space-x-2 px-2 py-1 dark:text-gray-100 text-gray-900 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md cursor-pointer ${
-                  selectedNote?.id === note.id ? "bg-pink-500" : ""
+                className={`flex flex-row mb-1 justify-between hover:bg-gray-200 dark:hover:bg-gray-800 items-center rounded-md pr-2 ${
+                  selectedNote?.id === note.id
+                    ? "bg-gray-200 dark:bg-gray-800"
+                    : ""
                 }`}
               >
-                <File className="w-4 h-4" />
-                <span className="text-sm">{note.title}</span>
-              </Link>
+                <Link
+                  key={note.id}
+                  href={`/notes/${note.id}`}
+                  onClick={() => setSelectedNote(note)}
+                  className="flex items-center space-x-2 px-2 py-1 dark:text-gray-100 text-gray-900  cursor-pointer w-full"
+                >
+                  <File className="w-4 h-4" />
+                  <span className="text-sm">{note.title}</span>
+                </Link>
+                <Trash2Icon
+                  onClick={() => handleDeleteNote(note.id)}
+                  className="w-4 h-4 rounded cursor-pointer"
+                />
+              </div>
             ))
           )}
         </div>

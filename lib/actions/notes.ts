@@ -104,7 +104,7 @@ export async function createNote(title: string, content: any) {
   }
 }
 
-export async function deleteNote(id: string) {
+export async function deleteNote(noteId: string) {
   const user = await getAuthUser();
 
   if (!user) {
@@ -114,7 +114,7 @@ export async function deleteNote(id: string) {
   try {
     const note = await prisma.note.delete({
       where: {
-        id,
+        id: noteId,
       },
     });
 
