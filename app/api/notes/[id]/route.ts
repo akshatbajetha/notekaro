@@ -1,4 +1,5 @@
 import { getNoteById, updateNoteById } from "@/lib/actions/notes";
+import { NextRequest } from "next/server";
 
 export async function GET({ params }: { params: { noteId: string } }) {
   const note = await getNoteById(params.noteId);
@@ -8,11 +9,16 @@ export async function GET({ params }: { params: { noteId: string } }) {
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { noteId: string } }
 ) {
-  const { title } = await req.json();
+  const { noteId } = params;
 
-  const updatedNote = await updateNoteById(params.id, title);
+  const { title, content } = await req.json();
 
+  const updatedNote = await updateNoteById({
+    noteId,
+    title,
+    content,
+  });
   return new Response(JSON.stringify(updatedNote));
 }

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { useNotesStore } from "@/store/noteStore";
 
 interface Note {
   id: string;
@@ -20,7 +21,7 @@ function Sidebar() {
   const [selectedNote, setSelectedNote] = useState<Note | null>(
     id ? { id } : null
   );
-  const [notes, setNotes] = useState<Note[]>([]);
+  const { notes, setNotes } = useNotesStore();
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
@@ -59,7 +60,7 @@ function Sidebar() {
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
-  }, [notes]);
+  }, []);
 
   const handleCreateNote = async () => {
     try {
@@ -118,7 +119,7 @@ function Sidebar() {
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-full" />
             </div>
-          ) : (
+          ) : notes.length !== 0 ? (
             notes.map((note) => (
               <div
                 key={note.id}
@@ -143,6 +144,12 @@ function Sidebar() {
                 />
               </div>
             ))
+          ) : (
+            <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
+              <p className="text-sm dark:text-gray-300 text-gray-700">
+                No notes found
+              </p>
+            </div>
           )}
         </div>
       </nav>

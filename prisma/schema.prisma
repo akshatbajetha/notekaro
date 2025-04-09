@@ -25,7 +25,7 @@ model Note {
   id        String   @id @default(uuid())
   userId    String
   title     String   @default("Untitled")
-  content   Json // BlockNote.js content as JSON
+  content   String // BlockNote.js content as JSON
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 

@@ -1,31 +1,37 @@
+import { updateNoteById } from "@/lib/actions/notes";
 import { Block, BlockNoteEditor, PartialBlock } from "@blocknote/core";
 import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
+import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
-async function saveToStorage(jsonBlocks: Block[]) {
-  // Save contents to local storage. You might want to debounce this or replace
-  // with a call to your API / database.
-  localStorage.setItem("editorContent", JSON.stringify(jsonBlocks));
-}
-
-async function loadFromStorage() {
-  // Gets the previously stored editor contents.
-  const storageString = localStorage.getItem("editorContent");
-  return storageString
-    ? (JSON.parse(storageString) as PartialBlock[])
-    : undefined;
-}
-
-export default function App() {
+export default function NoteEditor({
+  noteId,
+  noteContent,
+}: {
+  noteId: string;
+  noteContent: string;
+}) {
   const [initialContent, setInitialContent] = useState<
     PartialBlock[] | undefined | "loading"
   >("loading");
 
+  const { theme } = useTheme();
+
+  const debouncedSave = useDebouncedCallback(async (blocks: Block[]) => {
+    await updateNoteById({ noteId, content: JSON.stringify(blocks) });
+  }, 1000);
+
+  async function loadContent() {
+    const content = noteContent;
+    return content ? (JSON.parse(content) as PartialBlock[]) : undefined;
+  }
+
   // Loads the previously stored editor contents.
   useEffect(() => {
-    loadFromStorage().then((content) => {
+    loadContent().then((content) => {
       setInitialContent(content);
     });
   }, []);
@@ -49,9 +55,10 @@ export default function App() {
     <BlockNoteView
       editor={editor}
       onChange={() => {
-        saveToStorage(editor.document);
+        debouncedSave(editor.document);
       }}
-      className="w-full "
+      className="w-full"
+      color={theme === "dark" ? "#1R1E1E" : "#F5F5F5"}
     />
   );
 }

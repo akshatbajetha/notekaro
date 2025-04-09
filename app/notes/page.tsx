@@ -1,15 +1,3 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-
-import Sidebar from "./Sidebar";
-
-interface Note {
-  id: string;
-  title: string;
-  content: string;
-}
-
 function page() {
   return (
     <div className="flex-1 flex items-center justify-center">
