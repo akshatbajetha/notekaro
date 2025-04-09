@@ -9,14 +9,11 @@ import { useNotesStore } from "@/store/noteStore";
 export default function TitleEditor({
   initialTitle,
   noteId,
-}: // onChange,
-{
+}: {
   initialTitle: string;
   noteId: string;
-  // onChange: (title: string) => void;
 }) {
   const [title, setTitle] = useState(initialTitle);
-  // const [isSaving, setIsSaving] = useState(false);
 
   const { updateNoteTitle } = useNotesStore();
 
@@ -43,8 +40,8 @@ export default function TitleEditor({
           debouncedSave(newTitle);
           debouncedTitleSave(newTitle);
         }}
+        placeholder="Untitled"
       />
-      {/* {isSaving && <span className="text-sm text-muted">Saving...</span>} */}
     </div>
   );
 }

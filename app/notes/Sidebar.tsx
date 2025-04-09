@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Search, Plus, File, Loader2, Trash2Icon } from "lucide-react";
 import Link from "next/link";
-import { redirect, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useNotesStore } from "@/store/noteStore";
@@ -17,6 +17,7 @@ interface Note {
 function Sidebar() {
   const pathName = usePathname();
   const id = pathName.split("/")[2];
+  const router = useRouter();
 
   const [selectedNote, setSelectedNote] = useState<Note | null>(
     id ? { id } : null
@@ -39,7 +40,7 @@ function Sidebar() {
       }, 500);
       if (selectedNote?.id === noteId) {
         setSelectedNote(null);
-        redirect("/notes");
+        router.push("/notes");
       }
     } catch (error) {
       console.error("Error deleting note:", error);
@@ -80,7 +81,7 @@ function Sidebar() {
         title: data.note.title,
         content: data.note.content,
       });
-      redirect(`/notes/${data.note.id}`);
+      router.push(`/notes/${data.note.id}`);
     } catch (error) {
       console.error("Error creating note:", error);
     }

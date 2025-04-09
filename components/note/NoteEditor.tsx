@@ -58,7 +58,6 @@ export default function NoteEditor({
         debouncedSave(editor.document);
       }}
       className="w-full"
-      color={theme === "dark" ? "#1R1E1E" : "#F5F5F5"}
     />
   );
 }
