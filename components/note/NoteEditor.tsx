@@ -54,6 +54,8 @@ export default function NoteEditor({
   return (
     <BlockNoteView
       editor={editor}
+      data-theming-css-variables-demo
+      data-color-scheme={theme === "dark" ? "dark" : "light"}
       onChange={() => {
         debouncedSave(editor.document);
       }}

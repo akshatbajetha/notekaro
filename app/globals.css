@@ -6,6 +6,19 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.bn-container[data-theming-css-variables-demo][data-color-scheme="light"] {
+  --bn-colors-editor-text: #111827;
+  --bn-colors-editor-background: #f5f5f5;
+  --bn-colors-side-menu: #000000;
+}
+
+/* Changes for dark mode */
+.bn-container[data-theming-css-variables-demo][data-color-scheme="dark"] {
+  --bn-colors-editor-text: #f3f4f6;
+  --bn-colors-editor-background: #1e1e1e;
+  --bn-colors-side-menu: #ffffff;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
