@@ -31,3 +31,22 @@ model Note {
 
   user User @relation(fields: [userId], references: [id])
 }
+
+model TodoList {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  todos     Todo[]
+}
+
+model Todo {
+  id        String   @id @default(cuid())
+  content   String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  listId    String
+  list      TodoList @relation(fields: [listId], references: [id])
+}

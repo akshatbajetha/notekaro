@@ -33,7 +33,7 @@ function page({ children }: { children: React.ReactNode }) {
     >
       <Sidebar width={sidebarWidth} />
       <div
-        className="w-[2px] bg-gray-500 dark:bg-gray-400 cursor-col-resize transition-colors"
+        className="w-[2px] bg-gray-500 dark:bg-gray-400 cursor-col-resize  transition-colors"
         onMouseDown={startResizing}
       />
       <div className="flex-1 flex flex-col">{children}</div>

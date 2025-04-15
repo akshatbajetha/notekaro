@@ -12,6 +12,11 @@ body {
   --bn-colors-side-menu: #000000;
 }
 
+.extra-small-text {
+  font-size: 0.5rem;
+  line-height: 0.75rem;
+}
+
 /* Changes for dark mode */
 .bn-container[data-theming-css-variables-demo][data-color-scheme="dark"] {
   --bn-colors-editor-text: #f3f4f6;
