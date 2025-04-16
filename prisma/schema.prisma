@@ -15,10 +15,11 @@ datasource db {
 }
 
 model User {
-  id        String   @id
-  email     String   @unique
+  id        String     @id
+  email     String     @unique
   notes     Note[]
-  createdAt DateTime @default(now())
+  todos     TodoList[]
+  createdAt DateTime   @default(now())
 }
 
 model Note {
@@ -39,6 +40,8 @@ model TodoList {
   updatedAt DateTime @updatedAt
   userId    String
   todos     Todo[]
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Todo {
