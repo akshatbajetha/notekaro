@@ -1,4 +1,3 @@
-import { updateNoteById } from "@/lib/actions/notes";
 import { Block, BlockNoteEditor, PartialBlock } from "@blocknote/core";
 import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/mantine";
@@ -21,7 +20,16 @@ export default function NoteEditor({
   const { theme } = useTheme();
 
   const debouncedSave = useDebouncedCallback(async (blocks: Block[]) => {
-    await updateNoteById({ noteId, content: JSON.stringify(blocks) });
+    await fetch(`/api/notes/${noteId}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        title: undefined,
+        content: JSON.stringify(blocks),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }, 1000);
 
   async function loadContent() {

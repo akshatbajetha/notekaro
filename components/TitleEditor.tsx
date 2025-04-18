@@ -22,7 +22,13 @@ export default function TitleEditor({
   }, 100);
 
   const debouncedSave = useDebouncedCallback(async (title: string) => {
-    await updateNoteById({ noteId, title });
+    await fetch(`/api/notes/${noteId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ title: title, content: undefined }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }, 1000);
 
   useEffect(() => {

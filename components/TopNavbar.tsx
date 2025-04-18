@@ -56,9 +56,5 @@ export function TopNavbar() {
       icon: <ToggleTheme />,
     },
   ];
-  return (
-    <>
-      <NavBar items={links} />
-    </>
-  );
+  return <NavBar items={links} />;
 }

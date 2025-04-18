@@ -93,7 +93,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border py-6 mb-20">
+      <footer className="border py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center text-muted-foreground">
             <p>© 2025 NoteKaro. All rights reserved.</p>

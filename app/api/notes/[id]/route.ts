@@ -9,9 +9,9 @@ export async function GET({ params }: { params: { noteId: string } }) {
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { noteId: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { noteId } = params;
+  const noteId = params.id;
 
   const { title, content } = await req.json();
 
