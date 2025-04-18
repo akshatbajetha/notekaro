@@ -29,7 +29,7 @@ export function TopNavbar() {
     },
     {
       name: "TODO",
-      url: "/todo",
+      url: "/todos",
       icon: (
         <ListTodo className="h-full w-full text-neutral-700 dark:text-neutral-300" />
       ),

@@ -201,7 +201,7 @@ function Sidebar({ width }: { width: number }) {
         {/* Notes section */}
         <div className="px-3 py-2">
           <div className="flex items-center justify-between pb-2 dark:text-gray-100 text-gray-900">
-            <span className="text-xs font-medium uppercase">TodoLists</span>
+            <span className="text-xs font-medium uppercase">Todo Lists</span>
             <CreateTodoListModal />
           </div>
           {isLoading ? (

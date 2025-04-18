@@ -17,6 +17,7 @@ export default function Home() {
               An Open Source Tool for Organizing Notes, Tasks, and Ideas.
             </h2>
             <div className="mt-8">
+              {/* TODO: USE DROPDOWN FOR 3 LINKS INSTEAD */}
               <Button size="lg" className="h-14 w-40">
                 Get Started <ArrowRight className="ml-2" />
               </Button>

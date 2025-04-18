@@ -46,7 +46,7 @@ model TodoList {
 
 model Todo {
   id        String   @id @default(cuid())
-  content   String
+  title     String
   completed Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

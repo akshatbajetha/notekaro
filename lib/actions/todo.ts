@@ -80,6 +80,37 @@ export async function createTodoList(title: string) {
   }
 }
 
+export async function createTodoInList(
+  listId: string,
+  title: string,
+  completed: boolean
+) {
+  const user = await getAuthUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  try {
+    const todo = await prisma.todo.create({
+      data: {
+        title,
+        completed,
+        list: {
+          connect: {
+            id: listId,
+          },
+        },
+      },
+    });
+
+    return todo;
+  } catch (error) {
+    console.log("Error while creating todo list: ", error);
+    return;
+  }
+}
+
 export async function deleteTodoList(listId: string) {
   const user = await getAuthUser();
 
