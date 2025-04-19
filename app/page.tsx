@@ -1,7 +1,22 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Pen, StickyNote, CheckSquare, ArrowRight, Mail } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Pen,
+  StickyNote,
+  CheckSquare,
+  Mail,
+  NotebookPen,
+  Pencil,
+  ListTodo,
+} from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -18,9 +33,62 @@ export default function Home() {
             </h2>
             <div className="mt-8">
               {/* TODO: USE DROPDOWN FOR 3 LINKS INSTEAD */}
-              <Button size="lg" className="h-14 w-40">
-                Get Started <ArrowRight className="ml-2" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    size="lg"
+                    variant="default"
+                    className="h-14 w-40 text-lg"
+                    aria-label="Get Started"
+                  >
+                    Get Started
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="pb-2">
+                  <DropdownMenuItem
+                    className="cursor-pointer py-1 focus:bg-transparent focus:underline"
+                    asChild
+                  >
+                    <Link href="/notes">
+                      <NotebookPen
+                        size={16}
+                        strokeWidth={2}
+                        className="opacity-60"
+                        aria-hidden="true"
+                      />
+                      Notes
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer py-1 focus:bg-transparent focus:underline"
+                    asChild
+                  >
+                    <Link href="/sketch">
+                      <Pencil
+                        size={16}
+                        strokeWidth={2}
+                        className="opacity-60"
+                        aria-hidden="true"
+                      />
+                      Sketch
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer py-1 focus:bg-transparent focus:underline"
+                    asChild
+                  >
+                    <Link href="/todos">
+                      <ListTodo
+                        size={16}
+                        strokeWidth={2}
+                        className="opacity-60"
+                        aria-hidden="true"
+                      />
+                      Todo
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>

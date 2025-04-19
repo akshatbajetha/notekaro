@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useTodoStore } from "@/store/todoStore";
-import { CreateTodoListModal } from "@/components/CreateTodoListModal";
+import { CreateTodoListModal } from "@/components/todo/CreateTodoListModal";
 
 function Sidebar({ width }: { width: number }) {
   const pathName = usePathname();
@@ -85,7 +85,7 @@ function Sidebar({ width }: { width: number }) {
       setTimeout(() => {
         setTodoList(todoLists.filter((todoList) => todoList.id !== todoListId));
         toast({
-          title: "TodoList deleted successfully",
+          title: "Todo List deleted successfully",
         });
       }, 500);
       if (selectedListId === todoListId) {
@@ -93,7 +93,7 @@ function Sidebar({ width }: { width: number }) {
         router.push("/todos");
       }
     } catch (error) {
-      console.error("Error deleting TodoList:", error);
+      console.error("Error deleting Todo List:", error);
     }
   };
   const fetchTodoLists = async () => {
@@ -128,11 +128,11 @@ function Sidebar({ width }: { width: number }) {
             onClick={() => setIsCommandPaletteOpen(true)}
             className="bg-transparent border-none focus:outline-none w-full flex flex-row items-center justify-between"
           >
-            <span className=" dark:text-gray-400 text-gray-600 flex flex-row items-center gap-x-2">
+            <span className=" dark:text-gray-400 text-gray-600 flex flex-row text-sm items-center gap-x-2">
               <Search className="w-4 h-4 dark:text-gray-400 text-gray-600 " />
               Search TodoLists
             </span>
-            <span className="extra-small-text whitespace-nowrap dark:text-gray-400 text-gray-300">
+            <span className="extra-small-text whitespace-nowrap dark:text-gray-400 text-gray-600">
               CTRL + K
             </span>
           </button>

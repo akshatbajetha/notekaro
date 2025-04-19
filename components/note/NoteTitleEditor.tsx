@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { useNotesStore } from "@/store/noteStore";
 
-export default function TitleEditor({
+export default function NoteTitleEditor({
   initialTitle,
   noteId,
 }: {

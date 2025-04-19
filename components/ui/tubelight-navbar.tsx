@@ -41,10 +41,10 @@ export function NavBar({ items, className }: NavBarProps) {
       case currentPage.startsWith("/notes") && currentPage:
         setActiveTab(items[1].name);
         break;
-      case "/sketch":
+      case currentPage.startsWith("/sketch") && currentPage:
         setActiveTab(items[2].name);
         break;
-      case "/todo":
+      case currentPage.startsWith("/todos") && currentPage:
         setActiveTab(items[3].name);
         break;
       default:
