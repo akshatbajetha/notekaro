@@ -1,6 +1,6 @@
 function NoteKaroLogo() {
   return (
-    <h1 className="text-xl font-bold tracking-tight text-neutral-700 dark:text-neutral-300">
+    <h1 className="text-xl font-bold tracking-tight text-blue-600 dark:text-blue-400">
       NoteKaro
     </h1>
   );

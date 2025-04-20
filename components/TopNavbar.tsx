@@ -17,21 +17,21 @@ export function TopNavbar() {
       name: "Notes",
       url: "/notes",
       icon: (
-        <NotebookPen className="h-full w-full text-neutral-700 dark:text-neutral-300" />
+        <NotebookPen className="h-full w-full text-blue-600 dark:text-blue-400" />
       ),
     },
     {
       name: "Sketch",
       url: "/sketch",
       icon: (
-        <Pencil className="h-full w-full text-neutral-700 dark:text-neutral-300" />
+        <Pencil className="h-full w-full text-purple-600 dark:text-purple-400" />
       ),
     },
     {
       name: "TODO",
       url: "/todos",
       icon: (
-        <ListTodo className="h-full w-full text-neutral-700 dark:text-neutral-300" />
+        <ListTodo className="h-full w-full text-green-600 dark:text-green-400" />
       ),
     },
 
@@ -39,7 +39,7 @@ export function TopNavbar() {
       name: "Twitter",
       url: "https://x.com/akshatbajetha",
       icon: (
-        <IconBrandX className="h-full w-full text-neutral-700 dark:text-neutral-300" />
+        <IconBrandX className="h-full w-full text-neutral-700 dark:text-neutral-300 " />
       ),
       newTab: true,
     },

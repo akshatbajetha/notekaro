@@ -128,9 +128,9 @@ function Sidebar({ width }: { width: number }) {
             onClick={() => setIsCommandPaletteOpen(true)}
             className="bg-transparent border-none focus:outline-none w-full flex flex-row items-center justify-between"
           >
-            <span className=" dark:text-gray-400 text-gray-600 flex flex-row text-sm items-center gap-x-2">
+            <span className=" dark:text-gray-400 text-gray-600 flex flex-row items-center gap-x-2">
               <Search className="w-4 h-4 dark:text-gray-400 text-gray-600 " />
-              Search TodoLists
+              Search Todo Lists
             </span>
             <span className="extra-small-text whitespace-nowrap dark:text-gray-400 text-gray-600">
               CTRL + K
@@ -200,7 +200,7 @@ function Sidebar({ width }: { width: number }) {
       <nav className="flex-1 overflow-y-auto">
         {/* Notes section */}
         <div className="px-3 py-2">
-          <div className="flex items-center justify-between pb-2 dark:text-gray-100 text-gray-900">
+          <div className="flex items-center justify-between px-2 py-1 dark:text-gray-100 text-gray-900">
             <span className="text-xs font-medium uppercase">Todo Lists</span>
             <CreateTodoListModal />
           </div>
