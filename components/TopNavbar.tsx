@@ -17,21 +17,21 @@ export function TopNavbar() {
       name: "Notes",
       url: "/notes",
       icon: (
-        <NotebookPen className="h-full w-full text-blue-600 dark:text-blue-400" />
+        <NotebookPen className="h-full w-full text-blue-600 dark:text-blue-400 hover:scale-110 transition-transform duration-150" />
       ),
     },
     {
       name: "Sketch",
       url: "/sketch",
       icon: (
-        <Pencil className="h-full w-full text-purple-600 dark:text-purple-400" />
+        <Pencil className="h-full w-full text-purple-600 dark:text-purple-400 hover:scale-110 transition-transform duration-150" />
       ),
     },
     {
       name: "TODO",
       url: "/todos",
       icon: (
-        <ListTodo className="h-full w-full text-green-600 dark:text-green-400" />
+        <ListTodo className="h-full w-full text-green-600 dark:text-green-400 hover:scale-110 transition-transform duration-150" />
       ),
     },
 
@@ -39,7 +39,7 @@ export function TopNavbar() {
       name: "Twitter",
       url: "https://x.com/akshatbajetha",
       icon: (
-        <IconBrandX className="h-full w-full text-neutral-700 dark:text-neutral-300 " />
+        <IconBrandX className="h-full w-full text-neutral-700 dark:text-neutral-300 hover:scale-110 transition-transform duration-150" />
       ),
       newTab: true,
     },
@@ -47,7 +47,7 @@ export function TopNavbar() {
       name: "GitHub",
       url: "https://github.com/akshatbajetha/notekaro",
       icon: (
-        <IconBrandGithub className="h-full w-full text-neutral-700 dark:text-neutral-300" />
+        <IconBrandGithub className="h-full w-full text-neutral-700 dark:text-neutral-300 hover:scale-110 transition-transform duration-150" />
       ),
       newTab: true,
     },

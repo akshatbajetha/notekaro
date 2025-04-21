@@ -21,7 +21,7 @@ export async function getNotes() {
         userId: user.id,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: "asc",
       },
       select: {
         id: true,

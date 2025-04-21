@@ -10,7 +10,7 @@ async function page({ params }: { params: { id: string } }) {
   const note = await getNoteById(noteId);
 
   return note ? (
-    <div className="flex-1 dark:bg-[#1E1E1E] bg-[#F5F5F5] flex items-start justify-start flex-col mt-24 pl-4">
+    <div className="flex-1 dark:bg-[#1E1E1E] bg-[#F5F5F5] flex items-start justify-start flex-col mt-24 pt-14 pl-4 mb-4">
       <NoteTitleEditor initialTitle={note.title} noteId={noteId} />
       <Separator className="mb-4" />
 

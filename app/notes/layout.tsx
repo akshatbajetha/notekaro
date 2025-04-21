@@ -26,7 +26,7 @@ function page({ children }: { children: React.ReactNode }) {
   );
   return (
     <div
-      className="flex h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900"
+      className="flex min-h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900"
       onMouseMove={resize}
       onMouseUp={stopResizing}
       onMouseLeave={stopResizing}

@@ -1,7 +1,7 @@
 "use client";
 
 import { updateNoteById } from "@/lib/actions/notes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useDebouncedCallback } from "use-debounce";
 import { useNotesStore } from "@/store/noteStore";
@@ -14,6 +14,7 @@ export default function NoteTitleEditor({
   noteId: string;
 }) {
   const [title, setTitle] = useState(initialTitle);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { updateNoteTitle } = useNotesStore();
 
@@ -35,10 +36,19 @@ export default function NoteTitleEditor({
     setTitle(initialTitle);
   }, []);
 
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto"; // Reset height
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set to scrollHeight
+    }
+  }, [title]);
+
   return (
     <div>
-      <input
-        className="text-3xl font-bold outline-none bg-transparent w-full h-max py-4"
+      <textarea
+        className="text-3xl font-bold outline-none bg-transparent w-[75vw] resize-none overflow-hidden"
+        ref={textareaRef}
         value={title}
         onChange={(e) => {
           const newTitle = e.target.value;

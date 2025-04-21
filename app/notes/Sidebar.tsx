@@ -148,7 +148,7 @@ function Sidebar({ width }: { width: number }) {
       className="w-60 flex flex-col"
       style={{
         width: `${width}px`,
-        minWidth: "150px",
+        minWidth: "200px",
         maxWidth: "600px",
       }}
     >
@@ -163,7 +163,7 @@ function Sidebar({ width }: { width: number }) {
               <Search className="w-4 h-4 dark:text-gray-400 text-gray-600 " />
               Search Notes
             </span>
-            <span className="extra-small-text whitespace-nowrap dark:text-gray-400 text-gray-300">
+            <span className="extra-small-text whitespace-nowrap dark:text-gray-400 text-gray-600">
               CTRL + K
             </span>
           </button>
@@ -262,7 +262,7 @@ function Sidebar({ width }: { width: number }) {
                   onClick={() => setSelectedNote(note)}
                   className="flex items-center space-x-2 px-2 py-1 dark:text-gray-100 text-gray-900  cursor-pointer w-full"
                 >
-                  <File className="w-4 h-4" />
+                  <File className="w-4 h-4 flex-shrink-0" />
                   <span className="text-sm">{note.title}</span>
                 </Link>
                 <Trash2Icon
