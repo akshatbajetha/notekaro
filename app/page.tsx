@@ -10,6 +10,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import GetStartedButton from "@/components/GetStartedButton";
 import { useTheme } from "next-themes";
 import { AppsCarousel } from "@/components/AppsCarousel";
+import BenefitsImage from "@/components/BenefitsImage";
+import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
 
 export default function Home() {
   const { theme } = useTheme();
@@ -274,103 +276,8 @@ export default function Home() {
                 </div>
               </div>
               <div className="order-1 md:order-2">
-                <div className="relative rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
-                  <Image
-                    src="/placeholder.svg?height=400&width=600"
-                    width={600}
-                    height={400}
-                    alt="NoteKaro benefits"
-                    className="w-full"
-                  />
-                  <div className="absolute top-4 right-4">
-                    <Badge className="bg-blue-600 dark:bg-blue-500 text-white">
-                      Productivity Boost
-                    </Badge>
-                  </div>
-                </div>
+                <BenefitsImage />
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="how-it-works"
-          className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E]"
-        >
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl dark:text-white">
-                How It Works
-              </h2>
-              <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                Get started with NoteKaro in three simple steps
-              </p>
-            </div>
-
-            <div className="grid gap-8 md:grid-cols-3">
-              <div className="flex flex-col items-center text-center">
-                <div className="relative mb-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500 text-white text-2xl font-bold">
-                    1
-                  </div>
-                  <div className="absolute top-0 right-0 -mr-2 -mt-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white">
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2 dark:text-white">
-                  Sign Up
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Create your account and download the app on your preferred
-                  devices.
-                </p>
-              </div>
-              <div className="flex flex-col items-center text-center">
-                <div className="mb-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500 text-white text-2xl font-bold">
-                    2
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2 dark:text-white">
-                  Set Up Your Workspace
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Customize your workspace with folders and tags to organize
-                  your content.
-                </p>
-              </div>
-              <div className="flex flex-col items-center text-center">
-                <div className="mb-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500 text-white text-2xl font-bold">
-                    3
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2 dark:text-white">
-                  Start Creating
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Begin taking notes, sketching ideas, and managing your tasks
-                  all in one place.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-12 text-center">
-              <Button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white">
-                Get Started Now
-              </Button>
             </div>
           </div>
         </section>
@@ -512,25 +419,17 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E] text-white">
+        <section className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-white text-black ">
           <div className="container mx-auto px-4 md:px-6 text-center">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-6">
               Ready to Transform Your Productivity?
             </h2>
-            <p className="text-lg text-blue-100 max-w-3xl mx-auto mb-8">
+            <p className="text-lg dark:text-blue-100 text-blue-500 max-w-3xl mx-auto mb-8">
               Join thousands of professionals who have already made the switch
               to NoteKaro
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-white text-blue-600 hover:bg-blue-50 dark:hover:bg-white/90">
-                Try Free For 14 Days
-              </Button>
-              <Button
-                variant="outline"
-                className="bg-white text-blue-600 hover:bg-blue-50 dark:hover:bg-white/90"
-              >
-                Schedule a Demo
-              </Button>
+              <GetStartedButton />
             </div>
           </div>
         </section>
@@ -550,40 +449,18 @@ export default function Home() {
               </p>
               <div className="flex space-x-4">
                 <a
-                  href="#"
+                  href="https://x.com/akshatbajetha"
+                  target="_blank"
                   className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
                 >
-                  <svg
-                    className="h-5 w-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" />
-                  </svg>
+                  <IconBrandX className="h-full w-full text-neutral-700 dark:text-neutral-300 hover:scale-110 transition-transform duration-150" />
                 </a>
                 <a
-                  href="#"
+                  href="https://github.com/akshatbajetha/NoteKaro"
+                  target="_blank"
                   className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
                 >
-                  <svg
-                    className="h-5 w-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z" />
-                  </svg>
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  <svg
-                    className="h-5 w-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm-1-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm5 7h-2v-3c0-.55-.45-1-1-1s-1 .45-1 1v3h-2v-6h2v1.1c.52-.62 1.45-1.1 2.5-1.1 1.38 0 2.5 1.12 2.5 2.5v3.5z" />
-                  </svg>
+                  <IconBrandGithub className="h-full w-full text-neutral-700 dark:text-neutral-300 hover:scale-110 transition-transform duration-150" />
                 </a>
               </div>
             </div>

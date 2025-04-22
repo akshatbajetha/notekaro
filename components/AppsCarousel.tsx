@@ -37,12 +37,12 @@ export function AppsCarousel() {
   }
 
   return (
-    <Carousel className="w-full max-h-[500px]">
+    <Carousel className="w-full rounded-2xl max-h-[500px] shadow-lg shadow-black/30 dark:shadow-white/10">
       <CarouselContent>
         {(theme === "dark" ? darkImages : lightImages).map((image, index) => (
           <CarouselItem key={index}>
             {/* Image container with frame */}
-            <div className="w-full h-full rounded-xl border-[10px] border-[#CBD5E1] bg-[#F8FAFC] dark:border-[#4B5563] dark:bg-[#1F2937]">
+            <div className="w-full h-full rounded-2xl border-[10px] border-[#3c3e41] bg-[#a1a4a6] dark:border-[#a1a4a6] dark:bg-[#1e1f21]">
               {/* Image */}
               <Image
                 src={image}

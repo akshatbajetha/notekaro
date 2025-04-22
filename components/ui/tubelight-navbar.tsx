@@ -10,7 +10,6 @@ interface NavItem {
   name: string;
   url?: string;
   icon: React.ReactNode;
-  newTab?: boolean;
 }
 
 interface NavBarProps {
@@ -69,8 +68,7 @@ export function NavBar({ items, className }: NavBarProps) {
               key={item.name}
               href={item.url}
               title={item.name}
-              target={item.newTab ? "_blank" : "_self"}
-              onClick={() => (!item.newTab ? setActiveTab(item.name) : null)}
+              onClick={() => setActiveTab(item.name)}
               className={cn(
                 "relative cursor-pointer text-sm font-semibold px-5 py-2 rounded-full transition-colors",
                 "text-foreground/80 hover:text-primary",
@@ -79,7 +77,7 @@ export function NavBar({ items, className }: NavBarProps) {
             >
               {/* <span className="hidden md:inline">{item.name}</span> */}
               <span>{Icon}</span>
-              {isActive && !item.newTab && (
+              {isActive && (
                 <motion.div
                   layoutId="lamp"
                   className="absolute inset-0 w-full bg-primary/5 rounded-full -z-10"

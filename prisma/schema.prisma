@@ -18,8 +18,9 @@ model User {
   id        String     @id
   email     String     @unique
   notes     Note[]
-  todos     TodoList[]
-  createdAt DateTime   @default(now())
+  todolists TodoList[]
+
+  createdAt DateTime @default(now())
 }
 
 model Note {
@@ -34,6 +35,18 @@ model Note {
 }
 
 model TodoList {
+  id        String    @id @default(cuid())
+  title     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String
+  todos     Todo[]
+  sections  Section[]
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Section {
   id        String   @id @default(cuid())
   title     String
   createdAt DateTime @default(now())
@@ -41,15 +54,28 @@ model TodoList {
   userId    String
   todos     Todo[]
 
-  user User @relation(fields: [userId], references: [id])
+  TodoList   TodoList? @relation(fields: [todoListId], references: [id])
+  todoListId String
+}
+
+enum Priority {
+  P1
+  P2
+  P3
+  P4
 }
 
 model Todo {
-  id        String   @id @default(cuid())
-  title     String
-  completed Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  listId    String
-  list      TodoList @relation(fields: [listId], references: [id])
+  id         String    @id @default(cuid())
+  title      String
+  completed  Boolean   @default(false)
+  priority   Priority  @default(P4) // 1 = High, 4 = None
+  todoList   TodoList  @relation(fields: [todoListId], references: [id])
+  todoListId String
+  section    Section?  @relation(fields: [sectionId], references: [id])
+  sectionId  String?
+  userId     String
+  dueDate    DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }

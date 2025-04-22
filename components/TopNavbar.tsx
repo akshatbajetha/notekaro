@@ -36,22 +36,6 @@ export function TopNavbar() {
     },
 
     {
-      name: "Twitter",
-      url: "https://x.com/akshatbajetha",
-      icon: (
-        <IconBrandX className="h-full w-full text-neutral-700 dark:text-neutral-300 hover:scale-110 transition-transform duration-150" />
-      ),
-      newTab: true,
-    },
-    {
-      name: "GitHub",
-      url: "https://github.com/akshatbajetha/notekaro",
-      icon: (
-        <IconBrandGithub className="h-full w-full text-neutral-700 dark:text-neutral-300 hover:scale-110 transition-transform duration-150" />
-      ),
-      newTab: true,
-    },
-    {
       name: "Toggle Theme",
       icon: <ToggleTheme />,
     },

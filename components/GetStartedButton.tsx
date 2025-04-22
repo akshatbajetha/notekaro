@@ -13,10 +13,10 @@ function GetStartedButton() {
         <Button
           size="lg"
           variant="default"
-          className="shadow-none bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-gray-300 dark:text-gray-300 h-12 text-base"
+          className="shadow-none bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-gray-100 h-12 text-base"
           aria-label="Get Started"
         >
-          Get Started
+          Try NoteKaro
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="pb-2">
