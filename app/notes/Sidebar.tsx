@@ -85,16 +85,17 @@ function Sidebar({ width }: { width: number }) {
   };
   const handleDeleteNote = async (noteId: string) => {
     try {
-      await fetch(`/api/notes`, {
-        method: "DELETE",
-        body: JSON.stringify({ noteId }),
-      });
       setTimeout(() => {
         setNotes(notes.filter((note) => note.id !== noteId));
         toast({
           title: "Note deleted successfully",
         });
-      }, 500);
+      }, 1000);
+      await fetch(`/api/notes`, {
+        method: "DELETE",
+        body: JSON.stringify({ noteId }),
+      });
+
       if (selectedNote?.id === noteId) {
         setSelectedNote(null);
         router.push("/notes");

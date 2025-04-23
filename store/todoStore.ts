@@ -1,23 +1,92 @@
 import { create } from "zustand";
 
+export interface Todo {
+  id: string;
+  title: string;
+  completed: boolean;
+  priority: number;
+  todoListId?: string;
+  sectionId?: string;
+}
+
 export interface TodoList {
   id: string;
   title: string;
+  todos?: Todo[];
 }
 
-interface TodoListState {
+export interface Section {
+  id: string;
+  title: string;
+  todos?: Todo[];
+  todoListId: string;
+}
+
+interface TodoStoreState {
+  // TodoLists
   todoLists: TodoList[];
-  setTodoList: (todoLists: TodoList[]) => void;
+  setTodoLists: (todoLists: TodoList[]) => void;
   updateTodoListTitle: (todoListId: string, title: string) => void;
+
+  // Sections
+  sections: Section[];
+  setSections: (sections: Section[]) => void;
+  updateSectionTitle: (sectionId: string, title: string) => void;
+
+  // Todos
+  todos: Todo[];
+  setTodos: (todos: Todo[]) => void;
+  updateTodoTitle: (todoId: string, title: string) => void;
+  updateTodoStatus: (todoId: string, completed: boolean) => void;
+  updateTodoPriority: (todoId: string, priority: number) => void;
+
+  selectedTodoListId: string | null;
+  setSelectedTodoListId: (id: string | null) => void;
 }
 
-export const useTodoStore = create<TodoListState>((set) => ({
+export const useTodoStore = create<TodoStoreState>((set) => ({
+  // TodoLists
   todoLists: [],
-  setTodoList: (todoLists) => set({ todoLists }),
+  setTodoLists: (todoLists) => set({ todoLists }),
   updateTodoListTitle: (todoListId, title) =>
     set((state) => ({
-      todoLists: state.todoLists.map((todoList) =>
-        todoList.id === todoListId ? { ...todoList, title } : todoList
+      todoLists: state.todoLists.map((list) =>
+        list.id === todoListId ? { ...list, title } : list
       ),
     })),
+
+  // Sections
+  sections: [],
+  setSections: (sections) => set({ sections }),
+  updateSectionTitle: (sectionId, title) =>
+    set((state) => ({
+      sections: state.sections.map((section) =>
+        section.id === sectionId ? { ...section, title } : section
+      ),
+    })),
+
+  // Todos
+  todos: [],
+  setTodos: (todos) => set({ todos }),
+  updateTodoTitle: (todoId, title) =>
+    set((state) => ({
+      todos: state.todos.map((todo) =>
+        todo.id === todoId ? { ...todo, title } : todo
+      ),
+    })),
+  updateTodoStatus: (todoId, completed) =>
+    set((state) => ({
+      todos: state.todos.map((todo) =>
+        todo.id === todoId ? { ...todo, completed } : todo
+      ),
+    })),
+  updateTodoPriority: (todoId, priority) =>
+    set((state) => ({
+      todos: state.todos.map((todo) =>
+        todo.id === todoId ? { ...todo, priority } : todo
+      ),
+    })),
+
+  selectedTodoListId: null,
+  setSelectedTodoListId: (id) => set({ selectedTodoListId: id }),
 }));

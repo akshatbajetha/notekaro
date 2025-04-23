@@ -297,7 +297,7 @@ export default function Home() {
             </div>
 
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+              <Card className="border-gray-200 dark:border-gray-800 dark:bg-[#1E1E1E] bg-[#F5F5F5]">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0">
@@ -336,7 +336,7 @@ export default function Home() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+              <Card className="border-gray-200 dark:border-gray-800 dark:bg-[#1E1E1E] bg-[#F5F5F5]">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0">
@@ -376,7 +376,7 @@ export default function Home() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+              <Card className="border-gray-200 dark:border-gray-800 dark:bg-[#1E1E1E] bg-[#F5F5F5]">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0">

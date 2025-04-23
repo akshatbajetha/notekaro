@@ -1,0 +1,168 @@
+"use client";
+
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon, Flag } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+
+interface AddTodoProps {
+  todoListId: string;
+  sectionId?: string;
+  // onAdd: (content: string) => void;
+  onCancel: () => void;
+}
+
+export default function AddTodo({
+  todoListId,
+  sectionId,
+  onCancel,
+}: // onAdd,
+AddTodoProps) {
+  const [content, setContent] = useState("");
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [priority, setPriority] = useState<1 | 2 | 3 | 4>(4);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (content.trim()) {
+      // onAdd(content);
+      setContent("");
+      setDate(undefined);
+      setPriority(1);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      onCancel();
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="px-2 py-1">
+      <Input
+        placeholder="Task name"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        autoFocus
+        onKeyDown={handleKeyDown}
+        className="text-sm mb-2"
+      />
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "text-xs pr-2 h-7",
+                  date ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-1 h-3.5 w-3.5" />
+                {date ? format(date, "MMM d") : "Add date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="text-xs h-7"
+              >
+                <Flag className="h-3.5 w-3.5 mr-1" />P{priority}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-2" align="start">
+              <div className="grid gap-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPriority(4)}
+                  className="justify-start h-7 text-xs"
+                >
+                  <span className="w-2 h-2 rounded-full bg-red-500 mr-2"></span>
+                  Priority 1 (Urgent)
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPriority(3)}
+                  className="justify-start h-7 text-xs"
+                >
+                  <span className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
+                  Priority 2 (High)
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPriority(2)}
+                  className="justify-start h-7 text-xs"
+                >
+                  <span className="w-2 h-2 rounded-full bg-blue-400 mr-2"></span>
+                  Priority 3 (Medium)
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPriority(1)}
+                  className="justify-start h-7 text-xs"
+                >
+                  <span className="w-2 h-2 rounded-full bg-slate-300 mr-2"></span>
+                  Priority 4 (Low)
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            // onClick={onCancel}
+            className="h-7 text-xs"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="default"
+            size="sm"
+            disabled={!content.trim()}
+            className="h-7 text-xs"
+          >
+            Add task
+          </Button>
+        </div>
+      </div>
+    </form>
+  );
+}

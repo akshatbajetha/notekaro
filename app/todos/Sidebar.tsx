@@ -15,10 +15,8 @@ function Sidebar({ width }: { width: number }) {
   const id = pathName.split("/")[2];
   const router = useRouter();
 
-  const [selectedListId, setSelectedListId] = useState<string | null>(
-    id ? id : null
-  );
-  const { todoLists, setTodoList } = useTodoStore();
+  const { selectedTodoListId, setSelectedTodoListId } = useTodoStore();
+  const { todoLists, setTodoLists } = useTodoStore();
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,7 +66,7 @@ function Sidebar({ width }: { width: number }) {
         e.preventDefault();
         const currList = searchResults[selectedIndex];
         if (currList) {
-          setSelectedListId(currList.id);
+          setSelectedTodoListId(currList.id);
           router.push(`/todos/${currList.id}`);
           setIsCommandPaletteOpen(false);
           setSearchQuery("");
@@ -78,18 +76,21 @@ function Sidebar({ width }: { width: number }) {
   };
   const handleDeleteTodoList = async (todoListId: string) => {
     try {
+      setTimeout(() => {
+        setTodoLists(
+          todoLists.filter((todoList) => todoList.id !== todoListId)
+        );
+        toast({
+          title: "Todo List deleted successfully",
+        });
+      }, 1000);
       await fetch(`/api/todos`, {
         method: "DELETE",
         body: JSON.stringify({ todoListId }),
       });
-      setTimeout(() => {
-        setTodoList(todoLists.filter((todoList) => todoList.id !== todoListId));
-        toast({
-          title: "Todo List deleted successfully",
-        });
-      }, 500);
-      if (selectedListId === todoListId) {
-        setSelectedListId(null);
+
+      if (selectedTodoListId === todoListId) {
+        setSelectedTodoListId(null);
         router.push("/todos");
       }
     } catch (error) {
@@ -100,7 +101,7 @@ function Sidebar({ width }: { width: number }) {
     try {
       const response = await fetch("/api/todos");
       const data = await response.json();
-      setTodoList(data);
+      setTodoLists(data);
     } catch (error) {
       console.error("Error fetching TodoLists:", error);
     } finally {
@@ -111,6 +112,14 @@ function Sidebar({ width }: { width: number }) {
   useEffect(() => {
     fetchTodoLists();
   }, []);
+
+  useEffect(() => {
+    if (id) {
+      setSelectedTodoListId(id);
+    } else {
+      setSelectedTodoListId(null);
+    }
+  }, [id, setSelectedTodoListId]);
 
   return (
     <div
@@ -173,7 +182,7 @@ function Sidebar({ width }: { width: number }) {
                             : ""
                         )}
                         onClick={() => {
-                          setSelectedListId(todoList.id);
+                          setSelectedTodoListId(todoList.id);
                           router.push(`/todos/${todoList.id}`);
                           setIsCommandPaletteOpen(false);
                         }}
@@ -216,7 +225,7 @@ function Sidebar({ width }: { width: number }) {
               <div
                 key={todoList.id}
                 className={`flex flex-row mb-1 justify-between hover:bg-gray-200 dark:hover:bg-gray-800 items-center rounded-md pr-2 ${
-                  selectedListId === todoList.id
+                  selectedTodoListId === todoList.id
                     ? "bg-gray-200 dark:bg-gray-800"
                     : ""
                 }`}
@@ -224,7 +233,7 @@ function Sidebar({ width }: { width: number }) {
                 <Link
                   key={todoList.id}
                   href={`/todos/${todoList.id}`}
-                  onClick={() => setSelectedListId(todoList.id)}
+                  onClick={() => setSelectedTodoListId(todoList.id)}
                   className="flex items-center space-x-2 px-2 py-1 dark:text-gray-100 text-gray-900  cursor-pointer w-full"
                 >
                   <Hash className="w-4 h-4" />

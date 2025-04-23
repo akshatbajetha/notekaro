@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function CreateTodoListModal() {
-  const { todoLists, setTodoList } = useTodoStore();
+  const { todoLists, setTodoLists } = useTodoStore();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -38,7 +38,7 @@ export function CreateTodoListModal() {
       const newId = data.id;
       const newTitle = data.title;
 
-      setTodoList([{ id: newId, title: newTitle }, ...todoLists]);
+      setTodoLists([{ id: newId, title: newTitle }, ...todoLists]);
       setOpen(false);
       router.push(`/todos/${newId}`);
 
