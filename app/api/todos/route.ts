@@ -1,8 +1,4 @@
-import {
-  createTodoList,
-  deleteTodoList,
-  getTodoLists,
-} from "@/lib/actions/todo";
+import { createTodoList, deleteTodo, getTodoLists } from "@/lib/actions/todo";
 
 export async function GET() {
   const todoLists = await getTodoLists();
@@ -12,16 +8,16 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const body = await req.json();
+  const title = body.title;
 
-  const todoList = await createTodoList(body.title);
+  const todoList = await createTodoList({ title });
 
   return new Response(JSON.stringify(todoList));
 }
 
 export async function DELETE(req: Request) {
   const body = await req.json();
-  const todoListId = body.todoListId;
-  const note = await deleteTodoList(todoListId);
-
+  const todoId = body.todoId;
+  const note = await deleteTodo({ todoId });
   return new Response(JSON.stringify(note));
 }

@@ -5,14 +5,27 @@ import AddTodo from "@/components/todo/AddTodo";
 import SectionComponent from "@/components/todo/SectionComponent";
 import TodoComponent from "@/components/todo/TodoComponent";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getSectionsByListId, getTodosByListId } from "@/lib/actions/todo";
+import { useTodoStore } from "@/store/todoStore";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 
-function page({ params }: { params: { listId: string } }) {
-  const { listId } = params;
+function page({ params }: { params: { id: string } }) {
+  const { id } = params;
   const [isAddingTodo, setisAddingTodo] = useState(false);
   const [isAddingSection, setIsAddingSection] = useState(false);
+  const [todoListTitle, setTodoListTitle] = useState<string | null>(null);
+
+  const getTodoListById = useTodoStore((state) => state.getTodoListById);
+
+  useEffect(() => {
+    const todoList = getTodoListById(id);
+    if (todoList) {
+      setTodoListTitle(todoList.title);
+    }
+  }, [id, getTodoListById]);
 
   const [sections, setSections] = useState<
     { id: string; title: string }[] | null
@@ -22,12 +35,18 @@ function page({ params }: { params: { listId: string } }) {
   >([]);
 
   const getSections = async () => {
-    const sections = await getSectionsByListId(listId);
-    return sections;
+    try {
+      const response = await fetch(`/api/todos/sections/${id}`);
+      const sections = await response.json();
+      return sections;
+    } catch (error) {
+      console.error("Error fetching sections: ", error);
+      return null;
+    }
   };
 
   const getTodos = async () => {
-    const todos = await getTodosByListId(listId);
+    const todos = await getTodosByListId(id);
     return todos;
   };
 
@@ -35,23 +54,27 @@ function page({ params }: { params: { listId: string } }) {
     const fetchData = async () => {
       const sections = await getSections();
       const todos = await getTodos();
-
       setSections(sections);
       setTodos(todos);
     };
 
     fetchData();
-  }, [listId]);
+  }, [id]);
+
+  console.log("TodoList Title: ", todoListTitle);
 
   return (
     <div className="px-4 mt-20 py-6 max-w-3xl ">
       <header className="mb-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold flex items-center">
+          <h1 className="text-2xl font-bold flex items-center text-black dark:text-white">
             <span className="w-4 h-4 rounded-full mr-3 bg-red-500" />
+            {todoListTitle ? todoListTitle : <Skeleton className="w-32" />}
           </h1>
         </div>
       </header>
+
+      <Separator className="mb-4" />
 
       <div className="space-y-6">
         {/* Tasks directly in project (no section) */}
@@ -69,14 +92,14 @@ function page({ params }: { params: { listId: string } }) {
             <SectionComponent
               key={section.id}
               section={section}
-              todoListId={listId}
+              todoListId={id}
             />
           ))}
 
         {/* Add task form */}
         {isAddingTodo ? (
           <AddTodo
-            todoListId={listId}
+            todoListId={id}
             // onAdd={handleAddTask}
             onCancel={() => setisAddingTodo(false)}
           />
@@ -94,7 +117,7 @@ function page({ params }: { params: { listId: string } }) {
         {/* Add section button */}
         {isAddingSection ? (
           <AddSection
-            todoListId={listId}
+            todoListId={id}
             onCancel={() => setIsAddingSection(false)}
           />
         ) : (

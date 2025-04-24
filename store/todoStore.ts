@@ -27,6 +27,7 @@ interface TodoStoreState {
   todoLists: TodoList[];
   setTodoLists: (todoLists: TodoList[]) => void;
   updateTodoListTitle: (todoListId: string, title: string) => void;
+  getTodoListById: (todoListId: string) => TodoList | undefined;
 
   // Sections
   sections: Section[];
@@ -44,7 +45,7 @@ interface TodoStoreState {
   setSelectedTodoListId: (id: string | null) => void;
 }
 
-export const useTodoStore = create<TodoStoreState>((set) => ({
+export const useTodoStore = create<TodoStoreState>((set, get) => ({
   // TodoLists
   todoLists: [],
   setTodoLists: (todoLists) => set({ todoLists }),
@@ -54,6 +55,8 @@ export const useTodoStore = create<TodoStoreState>((set) => ({
         list.id === todoListId ? { ...list, title } : list
       ),
     })),
+  getTodoListById: (todoListId) =>
+    get().todoLists.find((todoList) => todoList.id === todoListId),
 
   // Sections
   sections: [],

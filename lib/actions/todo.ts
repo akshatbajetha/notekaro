@@ -30,7 +30,8 @@ export async function getTodoLists() {
     return;
   }
 }
-export async function getSectionsByListId(listId: string) {
+
+export async function getSectionsByListId({ listId }: { listId: string }) {
   const user = await getAuthUser();
 
   if (!user) {
@@ -53,7 +54,11 @@ export async function getSectionsByListId(listId: string) {
   }
 }
 
-export async function getTodosBySectionId(sectionId: string) {
+export async function getTodosBySectionId({
+  sectionId,
+}: {
+  sectionId: string;
+}) {
   const user = await getAuthUser();
 
   if (!user) {
@@ -76,7 +81,7 @@ export async function getTodosBySectionId(sectionId: string) {
   }
 }
 
-export async function getTodosByListId(listId: string) {
+export async function getTodosByListId({ listId }: { listId: string }) {
   const user = await getAuthUser();
 
   if (!user) {
@@ -99,7 +104,7 @@ export async function getTodosByListId(listId: string) {
   }
 }
 
-export async function createTodoList(title: string) {
+export async function createTodoList({ title }: { title: string }) {
   const user = await getAuthUser();
 
   if (!user) {
@@ -125,12 +130,17 @@ export async function createTodoList(title: string) {
   }
 }
 
-export async function createTodoInList(
-  listId: string,
-  title: string,
-  completed: boolean,
-  priority: number
-) {
+export async function createTodoInList({
+  listId,
+  title,
+  completed,
+  priority,
+}: {
+  listId: string;
+  title: string;
+  completed: boolean;
+  priority: number;
+}) {
   const user = await getAuthUser();
 
   if (!user) {
@@ -189,12 +199,17 @@ export async function createSectionInList({
   }
 }
 
-export async function createTodoInSection(
-  sectionId: string,
-  title: string,
-  completed: boolean,
-  priority: number
-) {
+export async function createTodoInSection({
+  sectionId,
+  title,
+  completed,
+  priority,
+}: {
+  sectionId: string;
+  title: string;
+  completed: boolean;
+  priority: number;
+}) {
   const user = await getAuthUser();
 
   if (!user) {
@@ -221,7 +236,7 @@ export async function createTodoInSection(
   }
 }
 
-export async function deleteTodoList(listId: string) {
+export async function deleteTodoList({ listId }: { listId: string }) {
   const user = await getAuthUser();
 
   if (!user) {
@@ -242,7 +257,7 @@ export async function deleteTodoList(listId: string) {
   }
 }
 
-export async function deleteSection(sectionId: string) {
+export async function deleteSection({ sectionId }: { sectionId: string }) {
   const user = await getAuthUser();
 
   if (!user) {
@@ -263,7 +278,7 @@ export async function deleteSection(sectionId: string) {
   }
 }
 
-export async function deleteTodo(todoId: string) {
+export async function deleteTodo({ todoId }: { todoId: string }) {
   const user = await getAuthUser();
 
   if (!user) {
