@@ -23,10 +23,6 @@ type Todo = {
   priority: number;
 };
 
-interface TodoProps {
-  todo: Todo;
-}
-
 const priorityColors = {
   1: "bg-red-500 dark:bg-red-600", // Urgent priority
   2: "bg-yellow-500 dark:bg-yellow-600", // High priority
@@ -34,43 +30,50 @@ const priorityColors = {
   4: "bg-slate-300 dark:bg-slate-700", // Low priority
 };
 
-export default function TodoComponent({ todo }: TodoProps) {
+export default function TodoComponent({ todo }: { todo: Todo }) {
   // const { toggleTaskCompletion, updateTask, deleteTask } = useTodoist();
   const [isEditing, setIsEditing] = useState(false);
-  // const [content, setContent] = useState(task.content);
+  const [title, setTitle] = useState(todo.title);
   // const [date, setDate] = useState<Date | undefined>(task.dueDate);
 
-  // const handleToggleCompletion = () => {
-  //   toggleTaskCompletion(task.id);
-  // };
+  const handleToggleCompletion = () => {
+    todo.completed = !todo.completed;
+  };
 
-  // const handleDeleteTask = () => {
-  //   deleteTask(task.id);
-  // };
+  const handleDeleteTodo = async () => {
+    try {
+      await fetch("/api/todos", {
+        method: "DELETE",
+        body: JSON.stringify({ todoId: todo.id }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error("Error deleting todo: ", error);
+    }
+  };
 
-  // const handleUpdateTask = () => {
-  //   if (content.trim()) {
-  //     updateTask(task.id, {
-  //       content: content.trim(),
-  //       dueDate: date,
-  //     });
-  //   }
-  //   setIsEditing(false);
-  // };
+  const handleUpdateTodo = () => {
+    if (title.trim()) {
+      // Code to update Todo in the database
+    }
+    setIsEditing(false);
+  };
 
-  // const handleKeyDown = (e: React.KeyboardEvent) => {
-  //   if (e.key === "Enter") {
-  //     handleUpdateTask();
-  //   } else if (e.key === "Escape") {
-  //     setIsEditing(false);
-  //     setContent(task.content);
-  //     setDate(task.dueDate);
-  //   }
-  // };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleUpdateTodo();
+    } else if (e.key === "Escape") {
+      setIsEditing(false);
+      setTitle(todo.title);
+      // setDate(task.dueDate);
+    }
+  };
 
-  // const handlePriorityChange = (priority: Priority) => {
-  //   updateTask(task.id, { priority });
-  // };
+  const handlePriorityChange = (priority: 1 | 2 | 3 | 4) => {
+    // Code to update priority in the database
+  };
 
   return (
     <div
@@ -82,7 +85,7 @@ export default function TodoComponent({ todo }: TodoProps) {
       <div className="mt-0.5 flex-shrink-0">
         <Checkbox
           checked={todo.completed}
-          // onCheckedChange={handleToggleCompletion}
+          onCheckedChange={handleToggleCompletion}
           className={cn(
             "transition-all duration-200",
             todo.completed && "bg-primary border-primary"
@@ -94,10 +97,10 @@ export default function TodoComponent({ todo }: TodoProps) {
         {isEditing ? (
           <div className="space-y-2">
             <Input
-              // value={content}
-              // onChange={(e) => setContent(e.target.value)}
-              // onBlur={handleUpdateTask}
-              // onKeyDown={handleKeyDown}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              onBlur={handleUpdateTodo}
+              onKeyDown={handleKeyDown}
               autoFocus
               className="text-sm py-1"
             />
@@ -139,7 +142,7 @@ export default function TodoComponent({ todo }: TodoProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        // onClick={() => handlePriorityChange(4)}
+                        onClick={() => handlePriorityChange(1)}
                         className="justify-start h-7 text-xs"
                       >
                         <span className="w-2 h-2 rounded-full bg-red-500 mr-2"></span>
@@ -148,7 +151,7 @@ export default function TodoComponent({ todo }: TodoProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        // onClick={() => handlePriorityChange(3)}
+                        onClick={() => handlePriorityChange(3)}
                         className="justify-start h-7 text-xs"
                       >
                         <span className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
@@ -157,7 +160,7 @@ export default function TodoComponent({ todo }: TodoProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        // onClick={() => handlePriorityChange(2)}
+                        onClick={() => handlePriorityChange(2)}
                         className="justify-start h-7 text-xs"
                       >
                         <span className="w-2 h-2 rounded-full bg-blue-400 mr-2"></span>
@@ -166,7 +169,7 @@ export default function TodoComponent({ todo }: TodoProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        // onClick={() => handlePriorityChange(1)}
+                        onClick={() => handlePriorityChange(1)}
                         className="justify-start h-7 text-xs"
                       >
                         <span className="w-2 h-2 rounded-full bg-slate-300 mr-2"></span>
@@ -226,7 +229,7 @@ export default function TodoComponent({ todo }: TodoProps) {
                 variant="ghost"
                 size="sm"
                 className="h-6 w-6 p-0"
-                // onClick={handleDeleteTask}
+                onClick={handleDeleteTodo}
               >
                 <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
               </Button>

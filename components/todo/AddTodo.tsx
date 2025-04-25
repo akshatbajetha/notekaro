@@ -14,9 +14,9 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
 interface AddTodoProps {
-  todoListId: string;
+  todoListId?: string;
   sectionId?: string;
-  // onAdd: (content: string) => void;
+  onAdd: (title: string) => void;
   onCancel: () => void;
 }
 
@@ -24,19 +24,19 @@ export default function AddTodo({
   todoListId,
   sectionId,
   onCancel,
-}: // onAdd,
-AddTodoProps) {
-  const [content, setContent] = useState("");
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  onAdd,
+}: AddTodoProps) {
+  const [title, setTitle] = useState("");
+  // const [date, setDate] = useState<Date | undefined>(undefined);
   const [priority, setPriority] = useState<1 | 2 | 3 | 4>(4);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (content.trim()) {
-      // onAdd(content);
-      setContent("");
-      setDate(undefined);
-      setPriority(1);
+    if (title.trim()) {
+      onAdd(title);
+      setTitle("");
+      // setDate(undefined);
+      setPriority(4);
     }
   };
 
@@ -49,9 +49,9 @@ AddTodoProps) {
   return (
     <form onSubmit={handleSubmit} className="px-2 py-1">
       <Input
-        placeholder="Task name"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
+        placeholder="Todo name"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         autoFocus
         onKeyDown={handleKeyDown}
         className="text-sm mb-2"
@@ -66,19 +66,19 @@ AddTodoProps) {
                 variant="outline"
                 size="sm"
                 className={cn(
-                  "text-xs pr-2 h-7",
-                  date ? "text-foreground" : "text-muted-foreground"
+                  "text-xs pr-2 h-7"
+                  // date ? "text-foreground" : "text-muted-foreground"
                 )}
               >
                 <CalendarIcon className="mr-1 h-3.5 w-3.5" />
-                {date ? format(date, "MMM d") : "Add date"}
+                {/* {date ? format(date, "MMM d") : "Add date"} */}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
-                selected={date}
-                onSelect={setDate}
+                // selected={date}
+                // onSelect={setDate}
                 initialFocus
               />
             </PopoverContent>
@@ -92,7 +92,14 @@ AddTodoProps) {
                 size="sm"
                 className="text-xs h-7"
               >
-                <Flag className="h-3.5 w-3.5 mr-1" />P{priority}
+                <Flag
+                  className={`h-3.5 w-3.5 mr-1 ${
+                    priority === 1 ? "text-red-500" : ""
+                  } ${priority === 2 ? "text-yellow-500" : ""} ${
+                    priority === 3 ? "text-blue-400" : ""
+                  } ${priority === 4 ? "text-slate-300" : ""}`}
+                />
+                P{priority}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-2" align="start">
@@ -101,7 +108,7 @@ AddTodoProps) {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => setPriority(4)}
+                  onClick={() => setPriority(1)}
                   className="justify-start h-7 text-xs"
                 >
                   <span className="w-2 h-2 rounded-full bg-red-500 mr-2"></span>
@@ -111,7 +118,7 @@ AddTodoProps) {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => setPriority(3)}
+                  onClick={() => setPriority(2)}
                   className="justify-start h-7 text-xs"
                 >
                   <span className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
@@ -121,7 +128,7 @@ AddTodoProps) {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => setPriority(2)}
+                  onClick={() => setPriority(3)}
                   className="justify-start h-7 text-xs"
                 >
                   <span className="w-2 h-2 rounded-full bg-blue-400 mr-2"></span>
@@ -131,7 +138,7 @@ AddTodoProps) {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => setPriority(1)}
+                  onClick={() => setPriority(4)}
                   className="justify-start h-7 text-xs"
                 >
                   <span className="w-2 h-2 rounded-full bg-slate-300 mr-2"></span>
@@ -156,7 +163,7 @@ AddTodoProps) {
             type="submit"
             variant="default"
             size="sm"
-            disabled={!content.trim()}
+            disabled={!title.trim()}
             className="h-7 text-xs"
           >
             Add task

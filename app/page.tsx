@@ -14,7 +14,6 @@ import BenefitsImage from "@/components/BenefitsImage";
 import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
 
 export default function Home() {
-  const { theme } = useTheme();
   return (
     <div className="flex min-h-screen flex-col bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-gray-200">
       <div className="container mx-auto flex h-24 items-center justify-between px-4 md:px-6 top-0 z-40 w-full bg-[#F5F5F5]/95 dark:bg-[#1E1E1E]/95">
@@ -22,7 +21,7 @@ export default function Home() {
       </div>
 
       <main className="flex-1">
-        <section className="container mx-auto py-12 md:py-24 px-8">
+        <section className="container px-12 py-12 md:py-24 ">
           <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
             <div className="space-y-6">
               <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-gray-900 dark:text-white">

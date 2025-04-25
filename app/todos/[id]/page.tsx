@@ -20,13 +20,6 @@ function page({ params }: { params: { id: string } }) {
 
   const getTodoListById = useTodoStore((state) => state.getTodoListById);
 
-  useEffect(() => {
-    const todoList = getTodoListById(id);
-    if (todoList) {
-      setTodoListTitle(todoList.title);
-    }
-  }, [id, getTodoListById]);
-
   const [sections, setSections] = useState<
     { id: string; title: string }[] | null
   >([]);
@@ -36,7 +29,7 @@ function page({ params }: { params: { id: string } }) {
 
   const getSections = async () => {
     try {
-      const response = await fetch(`/api/todos/sections/${id}`);
+      const response = await fetch(`/api/todos/${id}sections`);
       const sections = await response.json();
       return sections;
     } catch (error) {
@@ -45,15 +38,39 @@ function page({ params }: { params: { id: string } }) {
     }
   };
 
-  const getTodos = async () => {
-    const todos = await getTodosByListId(id);
-    return todos;
+  const getTodosWithoutSections = async () => {
+    try {
+      const response = await fetch(`/api/todos/${id}`);
+      const todos = await response.json();
+      return todos;
+    } catch (error) {
+      console.error("Error fetching todos: ", error);
+      return null;
+    }
+  };
+
+  const handleAddTodo = async (title: string) => {
+    try {
+      const response = await fetch(`/api/todos/${id}`, {
+        method: "POST",
+        body: JSON.stringify({ title, completed: false, priority: 4 }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const newTodo = await response.json();
+      setTodos((prevTodos) =>
+        prevTodos ? [...prevTodos, newTodo] : [newTodo]
+      );
+    } catch (error) {
+      console.error("Error adding todo: ", error);
+    }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       const sections = await getSections();
-      const todos = await getTodos();
+      const todos = await getTodosWithoutSections();
       setSections(sections);
       setTodos(todos);
     };
@@ -61,7 +78,12 @@ function page({ params }: { params: { id: string } }) {
     fetchData();
   }, [id]);
 
-  console.log("TodoList Title: ", todoListTitle);
+  useEffect(() => {
+    const todoList = getTodoListById(id);
+    if (todoList) {
+      setTodoListTitle(todoList.title);
+    }
+  }, [id, getTodoListById]);
 
   return (
     <div className="px-4 mt-20 py-6 max-w-3xl ">
@@ -100,7 +122,7 @@ function page({ params }: { params: { id: string } }) {
         {isAddingTodo ? (
           <AddTodo
             todoListId={id}
-            // onAdd={handleAddTask}
+            onAdd={handleAddTodo}
             onCancel={() => setisAddingTodo(false)}
           />
         ) : (
