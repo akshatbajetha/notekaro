@@ -47,6 +47,7 @@ export async function getSectionsByListId({ listId }: { listId: string }) {
         createdAt: "asc",
       },
     });
+
     return sections;
   } catch (error) {
     console.log("Error while fetching todo lists: ", error);
@@ -295,6 +296,42 @@ export async function deleteTodo({ todoId }: { todoId: string }) {
     return todo;
   } catch (error) {
     console.log("Error while deleting todo in section: ", error);
+    return;
+  }
+}
+
+export async function updateTodoList({
+  id,
+  title,
+  completed,
+  priority,
+}: {
+  id: string;
+  title: string;
+  completed: boolean;
+  priority: number;
+}) {
+  const user = await getAuthUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  try {
+    const todo = await prisma.todo.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        completed,
+        priority,
+      },
+    });
+
+    return todo;
+  } catch (error) {
+    console.log("Error while updating todo in section: ", error);
     return;
   }
 }

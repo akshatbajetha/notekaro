@@ -7,7 +7,10 @@ import {
   getSectionsByListId,
 } from "@/lib/actions/todo";
 
-export async function GET({ params }: { params: { id: string } }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
   const { id } = params;
 
   const sections = await getSectionsByListId({ listId: id });

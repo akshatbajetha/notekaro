@@ -26,7 +26,7 @@ export function CreateTodoListModal() {
   const handleCreateNote = async (title: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/todos", {
+      const response = await fetch("/api/todolists", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

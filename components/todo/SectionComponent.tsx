@@ -38,13 +38,19 @@ export default function SectionComponent({
   const [newTitle, setNewTitle] = useState(section.title);
   const [collapsed, setCollapsed] = useState(false); // Replace with actual collapsed state
   const [todos, setTodos] = useState<
-    { id: string; title: string; completed: boolean; priority: number }[] | null
+    | {
+        id: string;
+        title: string;
+        completed: boolean;
+        priority: 1 | 2 | 3 | 4;
+      }[]
+    | null
   >([]);
 
   const getTodosForSection = async () => {
     try {
       const response = await fetch(
-        `/api/todos/${todoListId}/sections/${section.id}`
+        `/api/todolists/${todoListId}/sections/${section.id}`
       );
       const todos = await response.json();
       return todos;
@@ -77,7 +83,7 @@ export default function SectionComponent({
 
   const handleAddTodo = (title: string) => {
     try {
-      fetch(`/api/todos/${todoListId}/sections/${section.id}`, {
+      fetch(`/api/todolists/${todoListId}/sections/${section.id}`, {
         method: "POST",
         body: JSON.stringify({ title }),
         headers: {
@@ -175,7 +181,7 @@ export default function SectionComponent({
           {isAddingTask ? (
             <AddTodo
               sectionId={section.id}
-              onAdd={handleAddTodo}
+              flag="section"
               onCancel={() => setIsAddingTask(false)}
             />
           ) : (

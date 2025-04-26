@@ -15,8 +15,8 @@ function Sidebar({ width }: { width: number }) {
   const id = pathName.split("/")[2];
   const router = useRouter();
 
-  const { selectedTodoListId, setSelectedTodoListId } = useTodoStore();
-  const { todoLists, setTodoLists } = useTodoStore();
+  const { todoLists, setTodoLists, selectedTodoListId, setSelectedTodoListId } =
+    useTodoStore();
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
@@ -99,7 +99,7 @@ function Sidebar({ width }: { width: number }) {
   };
   const fetchTodoLists = async () => {
     try {
-      const response = await fetch("/api/todos");
+      const response = await fetch("/api/todolists");
       const data = await response.json();
       setTodoLists(data);
     } catch (error) {

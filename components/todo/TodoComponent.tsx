@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CalendarIcon, Pencil, Trash2, Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -15,12 +15,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { useDebouncedCallback } from "use-debounce";
 
 type Todo = {
   id: string;
   title: string;
   completed: boolean;
-  priority: number;
+  priority: 1 | 2 | 3 | 4;
 };
 
 const priorityColors = {
@@ -34,15 +35,19 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
   // const { toggleTaskCompletion, updateTask, deleteTask } = useTodoist();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(todo.title);
+  const [isCompleted, setIsCompleted] = useState(todo.completed);
+  const [priority, setPriority] = useState<1 | 2 | 3 | 4>(todo.priority);
   // const [date, setDate] = useState<Date | undefined>(task.dueDate);
 
   const handleToggleCompletion = () => {
     todo.completed = !todo.completed;
+    setIsCompleted(todo.completed);
+    debounceCompletedUpdate(todo.completed);
   };
 
   const handleDeleteTodo = async () => {
     try {
-      await fetch("/api/todos", {
+      await fetch("/api/todolists", {
         method: "DELETE",
         body: JSON.stringify({ todoId: todo.id }),
         headers: {
@@ -54,9 +59,43 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
     }
   };
 
+  const debounceCompletedUpdate = useDebouncedCallback(
+    async (completed: boolean) => {
+      try {
+        await fetch("/api/todolists", {
+          method: "PATCH",
+          body: JSON.stringify({ todoId: todo.id, title, priority, completed }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        console.error("Error updating todo completion: ", error);
+      }
+    },
+    1000
+  );
+
   const handleUpdateTodo = () => {
     if (title.trim()) {
+      setTitle(title.trim());
       // Code to update Todo in the database
+      try {
+        fetch("/api/todolists", {
+          method: "PATCH",
+          body: JSON.stringify({
+            todoId: todo.id,
+            title,
+            completed: isCompleted,
+            priority,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        console.error("Error updating todo: ", error);
+      }
     }
     setIsEditing(false);
   };
@@ -71,10 +110,6 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
     }
   };
 
-  const handlePriorityChange = (priority: 1 | 2 | 3 | 4) => {
-    // Code to update priority in the database
-  };
-
   return (
     <div
       className={cn(
@@ -84,7 +119,7 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
     >
       <div className="mt-0.5 flex-shrink-0">
         <Checkbox
-          checked={todo.completed}
+          checked={isCompleted}
           onCheckedChange={handleToggleCompletion}
           className={cn(
             "transition-all duration-200",
@@ -95,11 +130,10 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
 
       <div className="flex-1 min-w-0">
         {isEditing ? (
-          <div className="space-y-2">
+          <div className="space-y-2" onKeyDown={handleKeyDown}>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              onBlur={handleUpdateTodo}
               onKeyDown={handleKeyDown}
               autoFocus
               className="text-sm py-1"
@@ -134,7 +168,15 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" size="sm" className="text-xs h-7">
-                      <Flag className="h-3.5 w-3.5 mr-1" />P{todo.priority}
+                      <Flag
+                        className={`h-3.5 w-3.5 mr-1 ${
+                          priority === 1 ? "text-red-500" : ""
+                        } ${priority === 2 ? "text-yellow-500" : ""} ${
+                          priority === 3 ? "text-blue-400" : ""
+                        } ${priority === 4 ? "text-slate-300" : ""}
+                        }`}
+                      />
+                      P{priority}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-2" align="start">
@@ -142,7 +184,7 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handlePriorityChange(1)}
+                        onClick={() => setPriority(1)}
                         className="justify-start h-7 text-xs"
                       >
                         <span className="w-2 h-2 rounded-full bg-red-500 mr-2"></span>
@@ -151,7 +193,7 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handlePriorityChange(3)}
+                        onClick={() => setPriority(2)}
                         className="justify-start h-7 text-xs"
                       >
                         <span className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
@@ -160,7 +202,7 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handlePriorityChange(2)}
+                        onClick={() => setPriority(3)}
                         className="justify-start h-7 text-xs"
                       >
                         <span className="w-2 h-2 rounded-full bg-blue-400 mr-2"></span>
@@ -169,7 +211,7 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handlePriorityChange(1)}
+                        onClick={() => setPriority(4)}
                         className="justify-start h-7 text-xs"
                       >
                         <span className="w-2 h-2 rounded-full bg-slate-300 mr-2"></span>
@@ -180,6 +222,28 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
                 </Popover>
               </div>
             </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setIsEditing(false);
+                setTitle(todo.title);
+              }}
+              className="h-7 text-xs"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="default"
+              size="sm"
+              onClick={handleUpdateTodo}
+              disabled={!title.trim()}
+              className="h-7 text-xs"
+            >
+              Save
+            </Button>
           </div>
         ) : (
           <div className="flex items-center justify-between">
@@ -187,10 +251,10 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
               <div
                 className={cn(
                   "text-sm",
-                  todo.completed && "line-through text-muted-foreground"
+                  isCompleted && "line-through text-muted-foreground"
                 )}
               >
-                {todo.title}
+                {title}
               </div>
 
               <div className="flex items-center mt-0.5 space-x-2">
@@ -199,10 +263,10 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
                     <span
                       className={cn(
                         "w-2 h-2 rounded-full mr-1",
-                        priorityColors[todo.priority as 1 | 2 | 3 | 4]
+                        priorityColors[priority as 1 | 2 | 3 | 4]
                       )}
                     ></span>
-                    P{todo.priority}
+                    P{priority}
                   </span>
                 )}
 

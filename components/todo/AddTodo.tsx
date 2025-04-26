@@ -12,11 +12,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useTodoStore } from "@/store/todoStore";
 
 interface AddTodoProps {
   todoListId?: string;
   sectionId?: string;
-  onAdd: (title: string) => void;
+  flag: "list" | "section";
   onCancel: () => void;
 }
 
@@ -24,16 +25,17 @@ export default function AddTodo({
   todoListId,
   sectionId,
   onCancel,
-  onAdd,
+  flag,
 }: AddTodoProps) {
   const [title, setTitle] = useState("");
   // const [date, setDate] = useState<Date | undefined>(undefined);
   const [priority, setPriority] = useState<1 | 2 | 3 | 4>(4);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim()) {
-      onAdd(title);
+      handleAddTodo({ title, priority, completed: isCompleted, flag });
       setTitle("");
       // setDate(undefined);
       setPriority(4);
@@ -43,6 +45,42 @@ export default function AddTodo({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
       onCancel();
+    }
+  };
+
+  const handleAddTodo = async ({
+    title,
+    priority,
+    completed,
+    flag,
+    date,
+  }: {
+    title: string;
+    priority: number;
+    completed: boolean;
+    flag: "list" | "section";
+    date?: Date;
+  }) => {
+    try {
+      if (flag === "list") {
+        await fetch(`/api/todolists/${todoListId}/todos`, {
+          method: "POST",
+          body: JSON.stringify({ title, completed, priority }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else if (flag === "section") {
+        await fetch(`/api/todolists/${todoListId}/sections/${sectionId}`, {
+          method: "POST",
+          body: JSON.stringify({ title, completed, priority }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error adding todo: ", error);
     }
   };
 
@@ -154,7 +192,7 @@ export default function AddTodo({
             type="button"
             variant="ghost"
             size="sm"
-            // onClick={onCancel}
+            onClick={onCancel}
             className="h-7 text-xs"
           >
             Cancel
@@ -166,10 +204,14 @@ export default function AddTodo({
             disabled={!title.trim()}
             className="h-7 text-xs"
           >
-            Add task
+            Add todo
           </Button>
         </div>
       </div>
     </form>
   );
 }
+
+/*
+Create a single handleAddTodo function that takes title, priority, completed, flag and date (date in the future) as parameters and based on the flag = "list" | "section" send req on appropriate API endpoint and create the todo in the database.  
+ */

@@ -3,7 +3,10 @@
 
 import { createTodoInList, getTodosByListId } from "@/lib/actions/todo";
 
-export async function GET({ params }: { params: { id: string } }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
   const { id } = params;
 
   const todos = await getTodosByListId({ listId: id });
@@ -28,4 +31,6 @@ export async function POST(
     completed: completed,
     priority: priority,
   });
+
+  return new Response(JSON.stringify(todo));
 }
