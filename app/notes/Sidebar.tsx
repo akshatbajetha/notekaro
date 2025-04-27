@@ -150,7 +150,7 @@ function Sidebar({ width }: { width: number }) {
       style={{
         width: `${width}px`,
         minWidth: "200px",
-        maxWidth: "600px",
+        maxWidth: "500px",
       }}
     >
       {/* Search */}

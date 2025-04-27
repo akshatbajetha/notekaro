@@ -16,12 +16,15 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { useDebouncedCallback } from "use-debounce";
+import { useTodoStore } from "@/store/todoStore";
 
 type Todo = {
   id: string;
   title: string;
   completed: boolean;
   priority: 1 | 2 | 3 | 4;
+  todoListId?: string;
+  sectionId?: string;
 };
 
 const priorityColors = {
@@ -31,7 +34,13 @@ const priorityColors = {
   4: "bg-slate-300 dark:bg-slate-700", // Low priority
 };
 
-export default function TodoComponent({ todo }: { todo: Todo }) {
+export default function TodoComponent({
+  todo,
+  deleteTodo,
+}: {
+  todo: Todo;
+  deleteTodo: (id: string) => void;
+}) {
   // const { toggleTaskCompletion, updateTask, deleteTask } = useTodoist();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(todo.title);
@@ -43,20 +52,6 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
     todo.completed = !todo.completed;
     setIsCompleted(todo.completed);
     debounceCompletedUpdate(todo.completed);
-  };
-
-  const handleDeleteTodo = async () => {
-    try {
-      await fetch("/api/todolists", {
-        method: "DELETE",
-        body: JSON.stringify({ todoId: todo.id }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    } catch (error) {
-      console.error("Error deleting todo: ", error);
-    }
   };
 
   const debounceCompletedUpdate = useDebouncedCallback(
@@ -293,7 +288,7 @@ export default function TodoComponent({ todo }: { todo: Todo }) {
                 variant="ghost"
                 size="sm"
                 className="h-6 w-6 p-0"
-                onClick={handleDeleteTodo}
+                onClick={() => deleteTodo(todo.id)}
               >
                 <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
               </Button>

@@ -37,19 +37,19 @@ export function AppsCarousel() {
   }
 
   return (
-    <Carousel className="w-full rounded-2xl max-h-[500px] shadow-lg shadow-black/30 dark:shadow-white/10">
+    <Carousel className=" rounded-2xl shadow-lg shadow-black/30 dark:shadow-white/10">
       <CarouselContent>
         {(theme === "dark" ? darkImages : lightImages).map((image, index) => (
           <CarouselItem key={index}>
             {/* Image container with frame */}
-            <div className="w-full h-full rounded-2xl border-[10px] border-[#3c3e41] bg-[#a1a4a6] dark:border-[#a1a4a6] dark:bg-[#1e1f21]">
+            <div className="rounded-2xl border-[10px] border-[#3c3e41] bg-[#a1a4a6] dark:border-[#a1a4a6] dark:bg-[#1e1f21]">
               {/* Image */}
               <Image
                 src={image}
                 alt="App screenshot"
                 width={800}
                 height={500}
-                className="w-full h-full object-cover rounded-xl"
+                className="object-cover rounded-xl"
               />
             </div>
           </CarouselItem>
@@ -59,18 +59,4 @@ export function AppsCarousel() {
       <CarouselPrevious />
     </Carousel>
   );
-}
-
-{
-  /* <Image
-  src={
-    theme === "dark"
-      ? "/note-dark-screenshot.png"
-      : "/note-light-screenshot.png"
-  }
-  width={800}
-  height={500}
-  alt="App screenshot"
-  className="w-full"
-/>; */
 }

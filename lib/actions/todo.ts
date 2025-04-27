@@ -31,6 +31,26 @@ export async function getTodoLists() {
   }
 }
 
+export async function getTodoListById({ listId }: { listId: string }) {
+  const user = await getAuthUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  try {
+    const todoList = await prisma.todoList.findUnique({
+      where: {
+        id: listId,
+      },
+    });
+    return todoList;
+  } catch (error) {
+    console.log("Error while fetching todo list: ", error);
+    return null;
+  }
+}
+
 export async function getSectionsByListId({ listId }: { listId: string }) {
   const user = await getAuthUser();
 

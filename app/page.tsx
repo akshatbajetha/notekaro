@@ -3,7 +3,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Pencil, CheckSquare, FileEdit, Clock, Zap, Bell } from "lucide-react";
+import videoPoster from "@/public/benefits-light.png";
+
+import {
+  Pencil,
+  CheckSquare,
+  FileEdit,
+  Clock,
+  Zap,
+  Bell,
+  Play,
+} from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,7 +25,7 @@ import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-gray-200">
+    <div className="flex min-h-screen flex-col bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-gray-200  max-w-screen-lg mx-auto">
       <div className="container mx-auto flex h-24 items-center justify-between px-4 md:px-6 top-0 z-40 w-full bg-[#F5F5F5]/95 dark:bg-[#1E1E1E]/95">
         <MobileNav />
       </div>
@@ -149,6 +159,36 @@ export default function Home() {
                 <p className="text-gray-600 dark:text-gray-400">
                   Never miss a deadline with intelligent notification system.
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="how-it-works" className="py-16 px-4 max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-4xl font-bold mb-4">How It Works</h2>
+            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+              Getting started with NoteKaro is simple. Our intuitive workflow
+              helps you capture and organize your ideas effortlessly.
+            </p>
+          </div>
+
+          <div className="relative rounded-lg overflow-hidden bg-gray-300 aspect-video max-w-4xl mx-auto shadow-lg">
+            {/* Video placeholder - replace src with your actual video */}
+            <video
+              className="w-full h-full object-cover"
+              poster={videoPoster.src}
+              controls
+              preload="none"
+            >
+              <source type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+
+            {/* Play button overlay */}
+            <div className="absolute inset-0 flex items-center justify-center group cursor-pointer">
+              <div className="bg-blue-500 rounded-full p-4 flex items-center justify-center">
+                <Play className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
@@ -435,152 +475,50 @@ export default function Home() {
       </main>
       <footer className="border-t border-gray-200 dark:border-gray-800 bg-[#F5F5F5] dark:bg-[#1E1E1E]">
         <div className="container mx-auto px-4 pt-12 pb-6 md:px-6">
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <div className="mb-4 flex items-center">
-                <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                  NoteKaro
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                One app for all your productivity needs. Combine note-taking,
-                sketching, and task management.
-              </p>
-              <div className="flex space-x-4">
-                <a
-                  href="https://x.com/akshatbajetha"
-                  target="_blank"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  <IconBrandX className="h-full w-full text-neutral-700 dark:text-neutral-300 hover:scale-110 transition-transform duration-150" />
-                </a>
-                <a
-                  href="https://github.com/akshatbajetha/NoteKaro"
-                  target="_blank"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  <IconBrandGithub className="h-full w-full text-neutral-700 dark:text-neutral-300 hover:scale-110 transition-transform duration-150" />
-                </a>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">
-                Product
-              </h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="#features"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#pricing"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Integrations
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Changelog
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">
-                Resources
-              </h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Documentation
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Tutorials
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Support
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">
-                Company
-              </h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Careers
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Terms of Service
-                  </Link>
-                </li>
-              </ul>
-            </div>
+          <div className="flex space-x-4 flex-row justify-center items-center w-full">
+            <a
+              href="https://github.com/akshatbajetha/NoteKaro"
+              target="_blank"
+              className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+            >
+              <IconBrandGithub className=" text-neutral-700 dark:text-neutral-300 hover:scale-110 transition-transform duration-150" />
+            </a>
+            <span>
+              <Link
+                href="#features"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Features
+              </Link>
+            </span>
+            <span>
+              <Link
+                href="#how-it-works"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 text-nowrap"
+              >
+                How It Works
+              </Link>
+            </span>
+            <span>
+              <Link
+                href="#benefits"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Benefits
+              </Link>
+            </span>
+            <span>
+              <Link
+                href="#testimonials"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Testimonials
+              </Link>
+            </span>
           </div>
+
+          <div className="flex flex-row gap-x-2"></div>
+
           <div className="mt-8 border-t border-gray-200 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between">
             <p className="text-sm text-gray-500 dark:text-gray-500">
               &copy; {new Date().getFullYear()} NoteKaro. All rights reserved.
@@ -589,7 +527,9 @@ export default function Home() {
               <p className="text-sm text-gray-500 dark:text-gray-500">
                 Made with ❤️ by{" "}
                 <span className="hover:underline text-gray-600 dark:text-gray-400">
-                  <a href="https://github.com/akshatbajetha">Akshat Bajetha</a>
+                  <a target="_blank" href="https://github.com/akshatbajetha">
+                    Akshat Bajetha
+                  </a>
                 </span>
               </p>
             </div>

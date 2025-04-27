@@ -9,9 +9,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Flag } from "lucide-react";
+import { CalendarIcon, Flag, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { useTodoStore } from "@/store/todoStore";
 
 interface AddTodoProps {
@@ -31,9 +31,12 @@ export default function AddTodo({
   // const [date, setDate] = useState<Date | undefined>(undefined);
   const [priority, setPriority] = useState<1 | 2 | 3 | 4>(4);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isAddingTodo, setIsAddingTodo] = useState(false);
+  const { addTodo } = useTodoStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsAddingTodo(true);
     if (title.trim()) {
       handleAddTodo({ title, priority, completed: isCompleted, flag });
       setTitle("");
@@ -62,8 +65,9 @@ export default function AddTodo({
     date?: Date;
   }) => {
     try {
+      let response;
       if (flag === "list") {
-        await fetch(`/api/todolists/${todoListId}/todos`, {
+        response = await fetch(`/api/todolists/${todoListId}/todos`, {
           method: "POST",
           body: JSON.stringify({ title, completed, priority }),
           headers: {
@@ -71,14 +75,34 @@ export default function AddTodo({
           },
         });
       } else if (flag === "section") {
-        await fetch(`/api/todolists/${todoListId}/sections/${sectionId}`, {
-          method: "POST",
-          body: JSON.stringify({ title, completed, priority }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        response = await fetch(
+          `/api/todolists/${todoListId}/sections/${sectionId}`,
+          {
+            method: "POST",
+            body: JSON.stringify({ title, completed, priority }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
       }
+      if (!response?.ok) {
+        throw new Error("No response received while creating todo.");
+      }
+
+      const todo = await response.json();
+
+      const newTodo = {
+        id: todo.id,
+        title: todo.title,
+        completed: todo.completed,
+        priority: todo.priority,
+        todoListId: todo.todoListId ?? undefined, // because store expects optional
+        sectionId: todo.sectionId ?? undefined,
+      };
+
+      addTodo(newTodo);
+      setIsAddingTodo(false);
     } catch (error) {
       console.error("Error adding todo: ", error);
     }
@@ -91,6 +115,7 @@ export default function AddTodo({
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         autoFocus
+        required={true}
         onKeyDown={handleKeyDown}
         className="text-sm mb-2"
       />
@@ -201,10 +226,10 @@ export default function AddTodo({
             type="submit"
             variant="default"
             size="sm"
-            disabled={!title.trim()}
+            disabled={isAddingTodo}
             className="h-7 text-xs"
           >
-            Add todo
+            {isAddingTodo ? <Loader2 className="animate-spin" /> : "Add todo"}
           </Button>
         </div>
       </div>

@@ -1,6 +1,16 @@
 // Todo List operations
 
-import { deleteTodoList } from "@/lib/actions/todo";
+import { deleteTodoList, getTodoListById } from "@/lib/actions/todo";
+
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+  const todoList = await getTodoListById({ listId: id });
+
+  return new Response(JSON.stringify(todoList));
+}
 
 export async function DELETE(req: Request) {
   const body = await req.json();

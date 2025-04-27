@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 interface AddSectionProps {
   todoListId: string;
@@ -9,30 +10,53 @@ interface AddSectionProps {
 }
 
 export default function AddSection({ todoListId, onCancel }: AddSectionProps) {
-  //   const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
 
-  //   const handleSubmit = (e: React.FormEvent) => {
-  //     e.preventDefault();
-  //     if (name.trim()) {
-  //       addSection(name.trim(), projectId);
-  //       onCancel();
-  //     }
-  //   };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (title.trim()) {
+      handleAddSection({ title, todoListId });
+      onCancel();
+    }
+  };
 
-  //   const handleKeyDown = (e: React.KeyboardEvent) => {
-  //     if (e.key === "Escape") {
-  //       onCancel();
-  //     }
-  //   };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      onCancel();
+    }
+  };
+
+  const handleAddSection = async ({
+    title,
+    todoListId,
+  }: {
+    title: string;
+    todoListId: string;
+  }) => {
+    try {
+      const response = await fetch(`/api/todolists/${todoListId}/sections`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error adding section:", error);
+    }
+  };
 
   return (
-    <form className="px-2 py-2 space-y-2">
+    <form onSubmit={handleSubmit} className="px-2 py-2 space-y-2">
       <Input
         placeholder="Section name"
-        // value={name}
-        // onChange={(e) => setName(e.target.value)}
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         autoFocus
-        // onKeyDown={handleKeyDown}
+        onKeyDown={handleKeyDown}
         className="text-sm"
       />
 
@@ -50,7 +74,7 @@ export default function AddSection({ todoListId, onCancel }: AddSectionProps) {
           type="submit"
           variant="default"
           size="sm"
-          //   disabled={!name.trim()}
+          disabled={!title.trim()}
           className="h-7 text-xs"
         >
           Add section
