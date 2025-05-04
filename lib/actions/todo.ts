@@ -265,6 +265,21 @@ export async function deleteTodoList({ listId }: { listId: string }) {
   }
 
   try {
+    // First delete all todos in the list
+    await prisma.todo.deleteMany({
+      where: {
+        todoListId: listId,
+      },
+    });
+
+    // Then delete all sections in the list
+    await prisma.section.deleteMany({
+      where: {
+        todoListId: listId,
+      },
+    });
+
+    // Finally delete the list itself
     const todoList = await prisma.todoList.delete({
       where: {
         id: listId,
@@ -286,6 +301,14 @@ export async function deleteSection({ sectionId }: { sectionId: string }) {
   }
 
   try {
+    // First delete all todos in the section
+    await prisma.todo.deleteMany({
+      where: {
+        sectionId: sectionId,
+      },
+    });
+
+    // Then delete the section itself
     const section = await prisma.section.delete({
       where: {
         id: sectionId,

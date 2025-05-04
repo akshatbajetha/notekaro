@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronDown, Plus, Trash2, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import TodoComponent from "./TodoComponent";
 import AddTodo from "./AddTodo";
 import { useTodoStore } from "@/store/todoStore";
+import { Skeleton } from "../ui/skeleton";
 
 interface Section {
   id: string;
@@ -37,20 +38,48 @@ export default function SectionComponent({
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(section.title);
   const [collapsed, setCollapsed] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     sectionsByListId,
     setSectionsForList,
-    todosByListId,
-    setTodosForList,
-    removeTodo,
+    getTodosBySectionId,
+    setTodosForSection,
+    removeTodoFromSection,
+    removeTodoFromList,
   } = useTodoStore();
 
-  // Get todos for this section from the cache
-  const todosInSection =
-    (todosByListId[todoListId] || []).filter(
-      (todo) => todo.sectionId === section.id
-    ) || [];
+  // Fetch todos for this section
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        // First check if we have todos in the store
+        const existingTodos = getTodosBySectionId(section.id);
+
+        if (existingTodos.length === 0) {
+          // If no todos in store, fetch from DB
+          const res = await fetch(
+            `/api/todolists/${todoListId}/sections/${section.id}`
+          );
+
+          if (res.ok) {
+            const todos = await res.json();
+            // Update store with fetched todos
+            setTodosForSection(section.id, todos);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching todos:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTodos();
+  }, [section.id, todoListId, getTodosBySectionId, setTodosForSection]);
+
+  // Get todos for this section from the store
+  const todosInSection = getTodosBySectionId(section.id);
 
   // --- Section actions ---
 
@@ -91,14 +120,11 @@ export default function SectionComponent({
         (sectionsByListId[todoListId] || []).filter((s) => s.id !== section.id)
       );
       // Remove todos in this section from cache
-      setTodosForList(
-        todoListId,
-        (todosByListId[todoListId] || []).filter(
-          (todo) => todo.sectionId !== section.id
-        )
-      );
-      await fetch(`/api/todolists/${todoListId}/sections/${section.id}`, {
+      setTodosForSection(section.id, []);
+      await fetch(`/api/todolists/${todoListId}/sections`, {
         method: "DELETE",
+        body: JSON.stringify({ sectionId: section.id }),
+        headers: { "Content-Type": "application/json" },
       });
     } catch (error) {
       console.error("Error deleting section:", error);
@@ -109,11 +135,10 @@ export default function SectionComponent({
 
   // Delete a todo in this section
   const handleDeleteTodo = async (todoId: string) => {
-    removeTodo(todoId);
-    setTodosForList(
-      todoListId,
-      (todosByListId[todoListId] || []).filter((todo) => todo.id !== todoId)
-    );
+    // Remove from both list and section caches
+    removeTodoFromSection(todoId, section.id);
+    removeTodoFromList(todoId, todoListId);
+
     try {
       await fetch("/api/todolists", {
         method: "DELETE",
@@ -197,14 +222,6 @@ export default function SectionComponent({
       {/* Section tasks */}
       {!collapsed && (
         <div className="pl-6 space-y-1">
-          {todosInSection.map((todo) => (
-            <TodoComponent
-              key={todo.id}
-              todo={todo}
-              deleteTodo={() => handleDeleteTodo(todo.id)}
-            />
-          ))}
-
           {/* Add task form */}
           {isAddingTask ? (
             <AddTodo
@@ -222,6 +239,20 @@ export default function SectionComponent({
             >
               <Plus className="h-4 w-4 mr-1" /> Add task
             </Button>
+          )}
+
+          {isLoading ? (
+            <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
+              <Skeleton className="h-4 w-[75%]" />
+            </div>
+          ) : (
+            todosInSection.map((todo) => (
+              <TodoComponent
+                key={todo.id}
+                todo={todo}
+                deleteTodo={() => handleDeleteTodo(todo.id)}
+              />
+            ))
           )}
         </div>
       )}

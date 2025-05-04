@@ -35,20 +35,34 @@ interface TodoStoreState {
   getSectionsByListId: (todoListId: string) => Section[];
   updateSectionTitle: (sectionId: string, title: string) => void;
 
-  // Todos (flat)
-  todos: Todo[];
-  setTodos: (todos: Todo[]) => void;
+  // Todos
+  todosByListId: { [listId: string]: Todo[] };
+  todosBySectionId: { [sectionId: string]: Todo[] };
+
+  // Todo List operations
   getTodosByListId: (todoListId: string) => Todo[];
-  addTodo: (todo: Todo) => void;
-  removeTodo: (todoId: string) => void;
-  updateTodoTitle: (todoId: string, title: string) => void;
-  updateTodoStatus: (todoId: string, completed: boolean) => void;
-  updateTodoPriority: (todoId: string, priority: 1 | 2 | 3 | 4) => void;
+  setTodosForList: (listId: string, todos: Todo[]) => void;
+  addTodoToList: (todo: Todo) => void;
+  removeTodoFromList: (todoId: string, listId: string) => void;
+  updateTodoInList: (
+    todoId: string,
+    listId: string,
+    updates: Partial<Todo>
+  ) => void;
+
+  // Todo Section operations
+  getTodosBySectionId: (sectionId: string) => Todo[];
+  setTodosForSection: (sectionId: string, todos: Todo[]) => void;
+  addTodoToSection: (todo: Todo) => void;
+  removeTodoFromSection: (todoId: string, sectionId: string) => void;
+  updateTodoInSection: (
+    todoId: string,
+    sectionId: string,
+    updates: Partial<Todo>
+  ) => void;
 
   // Caching by listId
-  todosByListId: { [listId: string]: Todo[] };
   sectionsByListId: { [listId: string]: Section[] };
-  setTodosForList: (listId: string, todos: Todo[]) => void;
   setSectionsForList: (listId: string, sections: Section[]) => void;
 
   selectedTodoListId: string | null;
@@ -80,45 +94,84 @@ export const useTodoStore = create<TodoStoreState>((set, get) => ({
       ),
     })),
 
-  // Todos (flat)
-  todos: [],
-  setTodos: (todos) => set({ todos }),
-  getTodosByListId: (todoListId: string) =>
-    get().todos.filter((todo) => todo.todoListId === todoListId),
-  addTodo: (todo) =>
-    set((state) => ({
-      todos: [...state.todos, todo],
-    })),
-  removeTodo: (todoId) =>
-    set((state) => ({
-      todos: state.todos.filter((todo) => todo.id !== todoId),
-    })),
-  updateTodoTitle: (todoId, title) =>
-    set((state) => ({
-      todos: state.todos.map((todo) =>
-        todo.id === todoId ? { ...todo, title } : todo
-      ),
-    })),
-  updateTodoStatus: (todoId, completed) =>
-    set((state) => ({
-      todos: state.todos.map((todo) =>
-        todo.id === todoId ? { ...todo, completed } : todo
-      ),
-    })),
-  updateTodoPriority: (todoId, priority) =>
-    set((state) => ({
-      todos: state.todos.map((todo) =>
-        todo.id === todoId ? { ...todo, priority } : todo
-      ),
-    })),
-
-  // Caching by listId
+  // Todos
   todosByListId: {},
-  sectionsByListId: {},
+  todosBySectionId: {},
+
+  // Todo List operations
+  getTodosByListId: (todoListId: string) =>
+    get().todosByListId[todoListId] || [],
   setTodosForList: (listId, todos) =>
     set((state) => ({
       todosByListId: { ...state.todosByListId, [listId]: todos },
     })),
+  addTodoToList: (todo) =>
+    set((state) => ({
+      todosByListId: {
+        ...state.todosByListId,
+        [todo.todoListId!]: [
+          ...(state.todosByListId[todo.todoListId!] || []),
+          todo,
+        ],
+      },
+    })),
+  removeTodoFromList: (todoId, listId) =>
+    set((state) => ({
+      todosByListId: {
+        ...state.todosByListId,
+        [listId]: (state.todosByListId[listId] || []).filter(
+          (todo) => todo.id !== todoId
+        ),
+      },
+    })),
+  updateTodoInList: (todoId, listId, updates) =>
+    set((state) => ({
+      todosByListId: {
+        ...state.todosByListId,
+        [listId]: (state.todosByListId[listId] || []).map((todo) =>
+          todo.id === todoId ? { ...todo, ...updates } : todo
+        ),
+      },
+    })),
+
+  // Todo Section operations
+  getTodosBySectionId: (sectionId: string) =>
+    get().todosBySectionId[sectionId] || [],
+  setTodosForSection: (sectionId, todos) =>
+    set((state) => ({
+      todosBySectionId: { ...state.todosBySectionId, [sectionId]: todos },
+    })),
+  addTodoToSection: (todo) =>
+    set((state) => ({
+      todosBySectionId: {
+        ...state.todosBySectionId,
+        [todo.sectionId!]: [
+          ...(state.todosBySectionId[todo.sectionId!] || []),
+          todo,
+        ],
+      },
+    })),
+  removeTodoFromSection: (todoId, sectionId) =>
+    set((state) => ({
+      todosBySectionId: {
+        ...state.todosBySectionId,
+        [sectionId]: (state.todosBySectionId[sectionId] || []).filter(
+          (todo) => todo.id !== todoId
+        ),
+      },
+    })),
+  updateTodoInSection: (todoId, sectionId, updates) =>
+    set((state) => ({
+      todosBySectionId: {
+        ...state.todosBySectionId,
+        [sectionId]: (state.todosBySectionId[sectionId] || []).map((todo) =>
+          todo.id === todoId ? { ...todo, ...updates } : todo
+        ),
+      },
+    })),
+
+  // Caching by listId
+  sectionsByListId: {},
   setSectionsForList: (listId, sections) =>
     set((state) => ({
       sectionsByListId: { ...state.sectionsByListId, [listId]: sections },

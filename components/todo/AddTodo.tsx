@@ -32,7 +32,7 @@ export default function AddTodo({
   const [priority, setPriority] = useState<1 | 2 | 3 | 4>(4);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isAddingTodo, setIsAddingTodo] = useState(false);
-  const { addTodo } = useTodoStore();
+  const { addTodoToList, addTodoToSection } = useTodoStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,11 +97,17 @@ export default function AddTodo({
         title: todo.title,
         completed: todo.completed,
         priority: todo.priority,
-        todoListId: todo.todoListId ?? undefined, // because store expects optional
+        todoListId: todo.todoListId ?? undefined,
         sectionId: todo.sectionId ?? undefined,
       };
 
-      addTodo(newTodo);
+      // Add todo to appropriate store based on flag
+      if (flag === "list") {
+        addTodoToList(newTodo);
+      } else if (flag === "section" && sectionId) {
+        addTodoToSection(newTodo);
+      }
+
       setIsAddingTodo(false);
     } catch (error) {
       console.error("Error adding todo: ", error);
@@ -226,7 +232,7 @@ export default function AddTodo({
             type="submit"
             variant="default"
             size="sm"
-            disabled={isAddingTodo}
+            disabled={isAddingTodo || !title.trim()}
             className="h-7 text-xs"
           >
             {isAddingTodo ? <Loader2 className="animate-spin" /> : "Add todo"}

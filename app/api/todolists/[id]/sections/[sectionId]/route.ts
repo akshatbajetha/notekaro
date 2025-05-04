@@ -7,8 +7,16 @@ import {
   getTodosBySectionId,
 } from "@/lib/actions/todo";
 
-export async function GET({ params }: { params: { sectionId: string } }) {
+export async function GET(
+  _req: Request,
+  {
+    params,
+  }: {
+    params: { id: string; sectionId: string };
+  }
+) {
   const { sectionId } = params;
+
   const todos = await getTodosBySectionId({ sectionId: sectionId });
   return new Response(JSON.stringify(todos));
 }

@@ -31,7 +31,8 @@ function page({ params }: { params: { id: string } }) {
 
   const {
     getTodoListById,
-    removeTodo,
+    removeTodoFromList,
+    removeTodoFromSection,
     todosByListId,
     setTodosForList,
     sectionsByListId,
@@ -105,11 +106,17 @@ function page({ params }: { params: { id: string } }) {
 
   // When deleting, update the cache for the current list
   const handleDeleteTodo = async ({ id: todoId }: { id: string }) => {
-    removeTodo(todoId); // Remove from UI immediately (flat array, if you use it elsewhere)
-    setTodosForList(
-      id,
-      (todosByListId[id] || []).filter((todo) => todo.id !== todoId)
-    );
+    // Find the todo to get its sectionId
+    const todoToDelete = todosInCurrentList.find((todo) => todo.id === todoId);
+
+    // Remove from list cache
+    removeTodoFromList(todoId, id);
+
+    // If the todo belongs to a section, remove it from section cache
+    if (todoToDelete?.sectionId) {
+      removeTodoFromSection(todoId, todoToDelete.sectionId);
+    }
+
     try {
       await fetch("/api/todolists", {
         method: "DELETE",
@@ -142,6 +149,41 @@ function page({ params }: { params: { id: string } }) {
 
       <div className="space-y-6">
         {/* Tasks directly in project (no section) */}
+        {/* Add task form */}
+        {isAddingTodo ? (
+          <AddTodo
+            todoListId={id}
+            flag="list"
+            onCancel={() => setisAddingTodo(false)}
+          />
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground flex items-center mt-2"
+            onClick={() => setisAddingTodo(true)}
+          >
+            <Plus className="h-4 w-4 mr-1" /> Add todo
+          </Button>
+        )}
+
+        {/* Add section button */}
+        {isAddingSection ? (
+          <AddSection
+            todoListId={id}
+            onCancel={() => setIsAddingSection(false)}
+          />
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground flex items-center mt-4"
+            onClick={() => setIsAddingSection(true)}
+          >
+            <Plus className="h-4 w-4 mr-1" /> Add section
+          </Button>
+        )}
+
         {isLoadingTodos ? (
           <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
             <Skeleton className="h-4 w-[75%]" />
@@ -175,41 +217,6 @@ function page({ params }: { params: { id: string } }) {
               todoListId={id}
             />
           ))
-        )}
-
-        {/* Add task form */}
-        {isAddingTodo ? (
-          <AddTodo
-            todoListId={id}
-            flag="list"
-            onCancel={() => setisAddingTodo(false)}
-          />
-        ) : (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-foreground flex items-center mt-2"
-            onClick={() => setisAddingTodo(true)}
-          >
-            <Plus className="h-4 w-4 mr-1" /> Add task
-          </Button>
-        )}
-
-        {/* Add section button */}
-        {isAddingSection ? (
-          <AddSection
-            todoListId={id}
-            onCancel={() => setIsAddingSection(false)}
-          />
-        ) : (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-foreground flex items-center mt-4"
-            onClick={() => setIsAddingSection(true)}
-          >
-            <Plus className="h-4 w-4 mr-1" /> Add section
-          </Button>
         )}
       </div>
     </div>

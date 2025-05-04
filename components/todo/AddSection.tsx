@@ -3,6 +3,8 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useTodoStore } from "@/store/todoStore";
+import { Loader2 } from "lucide-react";
 
 interface AddSectionProps {
   todoListId: string;
@@ -11,12 +13,16 @@ interface AddSectionProps {
 
 export default function AddSection({ todoListId, onCancel }: AddSectionProps) {
   const [title, setTitle] = useState("");
+  const setSectionsForList = useTodoStore((state) => state.setSectionsForList);
+  const sectionsByListId = useTodoStore((state) => state.sectionsByListId);
+  const [isAddingSection, setIsAddingSection] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsAddingSection(true);
     if (title.trim()) {
       handleAddSection({ title, todoListId });
-      onCancel();
+      setTitle("");
     }
   };
 
@@ -42,10 +48,16 @@ export default function AddSection({ todoListId, onCancel }: AddSectionProps) {
         body: JSON.stringify({ title }),
       });
 
-      const data = await response.json();
-      console.log(data);
+      const newSection = await response.json();
+      // Update the store with the new section
+      setSectionsForList(todoListId, [
+        ...(sectionsByListId[todoListId] || []),
+        newSection,
+      ]);
     } catch (error) {
       console.error("Error adding section:", error);
+    } finally {
+      setIsAddingSection(false);
     }
   };
 
@@ -56,6 +68,7 @@ export default function AddSection({ todoListId, onCancel }: AddSectionProps) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         autoFocus
+        required={true}
         onKeyDown={handleKeyDown}
         className="text-sm"
       />
@@ -74,10 +87,14 @@ export default function AddSection({ todoListId, onCancel }: AddSectionProps) {
           type="submit"
           variant="default"
           size="sm"
-          disabled={!title.trim()}
+          disabled={isAddingSection || !title.trim()}
           className="h-7 text-xs"
         >
-          Add section
+          {isAddingSection ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            "Add section"
+          )}
         </Button>
       </div>
     </form>
