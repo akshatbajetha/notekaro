@@ -225,11 +225,13 @@ export async function createTodoInSection({
   title,
   completed,
   priority,
+  dueDate,
 }: {
   sectionId: string;
   title: string;
   completed: boolean;
   priority: number;
+  dueDate?: Date;
 }) {
   const user = await getAuthUser();
 
@@ -243,6 +245,7 @@ export async function createTodoInSection({
         title,
         completed,
         priority,
+        dueDate,
         section: {
           connect: {
             id: sectionId,

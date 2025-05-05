@@ -30,11 +30,13 @@ export async function POST(
   const title = body.title;
   const completed = body.completed || false;
   const priority = body.priority || 4;
+  const dueDate = body.date || null;
   const todo = await createTodoInSection({
     sectionId,
     title,
     completed,
     priority,
+    dueDate,
   });
   return new Response(JSON.stringify(todo));
 }

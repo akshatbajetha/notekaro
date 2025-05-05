@@ -11,7 +11,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Flag, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format, set } from "date-fns";
+import { format, isBefore, set, startOfDay } from "date-fns";
 import { useTodoStore } from "@/store/todoStore";
 
 interface AddTodoProps {
@@ -28,7 +28,7 @@ export default function AddTodo({
   flag,
 }: AddTodoProps) {
   const [title, setTitle] = useState("");
-  // const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const [priority, setPriority] = useState<1 | 2 | 3 | 4>(4);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isAddingTodo, setIsAddingTodo] = useState(false);
@@ -40,7 +40,7 @@ export default function AddTodo({
     if (title.trim()) {
       handleAddTodo({ title, priority, completed: isCompleted, flag });
       setTitle("");
-      // setDate(undefined);
+      setDate(undefined);
       setPriority(4);
     }
   };
@@ -69,7 +69,7 @@ export default function AddTodo({
       if (flag === "list") {
         response = await fetch(`/api/todolists/${todoListId}/todos`, {
           method: "POST",
-          body: JSON.stringify({ title, completed, priority }),
+          body: JSON.stringify({ title, completed, priority, date }),
           headers: {
             "Content-Type": "application/json",
           },
@@ -79,7 +79,7 @@ export default function AddTodo({
           `/api/todolists/${todoListId}/sections/${sectionId}`,
           {
             method: "POST",
-            body: JSON.stringify({ title, completed, priority }),
+            body: JSON.stringify({ title, completed, priority, date }),
             headers: {
               "Content-Type": "application/json",
             },
@@ -135,19 +135,24 @@ export default function AddTodo({
                 variant="outline"
                 size="sm"
                 className={cn(
-                  "text-xs pr-2 h-7"
-                  // date ? "text-foreground" : "text-muted-foreground"
+                  "text-xs pr-2 h-7",
+                  date ? "text-foreground" : "text-muted-foreground"
                 )}
               >
                 <CalendarIcon className="mr-1 h-3.5 w-3.5" />
-                {/* {date ? format(date, "MMM d") : "Add date"} */}
+                {date ? format(date, "MMM d") : "Add date"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
-                // selected={date}
-                // onSelect={setDate}
+                selected={date}
+                onSelect={setDate}
+                disabled={(date) => {
+                  const today = startOfDay(new Date());
+                  const current = startOfDay(date);
+                  return isBefore(current, today);
+                }}
                 initialFocus
               />
             </PopoverContent>

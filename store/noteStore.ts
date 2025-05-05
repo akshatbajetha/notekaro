@@ -10,6 +10,7 @@ interface NotesState {
   notes: Note[];
   setNotes: (notes: Note[]) => void;
   updateNoteTitle: (noteId: string, title: string) => void;
+  updateNoteContent: (noteId: string, content: string) => void; // Added
 }
 
 export const useNotesStore = create<NotesState>((set) => ({
@@ -19,6 +20,14 @@ export const useNotesStore = create<NotesState>((set) => ({
     set((state) => ({
       notes: state.notes.map((note) =>
         note.id === noteId ? { ...note, title } : note
+      ),
+    })),
+  updateNoteContent: (noteId, content) =>
+    set((state) => ({
+      notes: state.notes.map((note) =>
+        note.id === noteId && note.content !== content
+          ? { ...note, content }
+          : note
       ),
     })),
 }));

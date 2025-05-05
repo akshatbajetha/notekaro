@@ -5,6 +5,7 @@ import "@blocknote/mantine/style.css";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { useNotesStore } from "@/store/noteStore";
 
 export default function NoteEditor({
   noteId,
@@ -19,12 +20,19 @@ export default function NoteEditor({
 
   const { theme } = useTheme();
 
+  const note = useNotesStore((state) =>
+    state.notes.find((n) => n.id === noteId)
+  );
+  const updateNoteContent = useNotesStore((state) => state.updateNoteContent);
+
   const debouncedSave = useDebouncedCallback(async (blocks: Block[]) => {
+    const contentString = JSON.stringify(blocks);
+    updateNoteContent(noteId, contentString);
     await fetch(`/api/notes/${noteId}`, {
       method: "PATCH",
       body: JSON.stringify({
         title: undefined,
-        content: JSON.stringify(blocks),
+        content: contentString,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -32,21 +40,13 @@ export default function NoteEditor({
     });
   }, 1000);
 
-  async function loadContent() {
-    const content = noteContent;
-    return content ? (JSON.parse(content) as PartialBlock[]) : undefined;
-  }
-
-  // Loads the previously stored editor contents.
   useEffect(() => {
-    loadContent().then((content) => {
-      setInitialContent(content);
-    });
-  }, []);
+    const content = note?.content ?? noteContent;
+    setInitialContent(
+      content ? (JSON.parse(content) as PartialBlock[]) : undefined
+    );
+  }, [noteId, note?.content, noteContent]);
 
-  // Creates a new editor instance.
-  // We use useMemo + createBlockNoteEditor instead of useCreateBlockNote so we
-  // can delay the creation of the editor until the initial content is loaded.
   const editor = useMemo(() => {
     if (initialContent === "loading") {
       return undefined;
@@ -58,7 +58,6 @@ export default function NoteEditor({
     return "Loading content...";
   }
 
-  // Renders the editor instance.
   return (
     <BlockNoteView
       editor={editor}

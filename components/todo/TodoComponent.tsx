@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CalendarIcon, Pencil, Trash2, Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format, set } from "date-fns";
+import { format, isBefore, set, startOfDay } from "date-fns";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -23,6 +23,7 @@ type Todo = {
   title: string;
   completed: boolean;
   priority: 1 | 2 | 3 | 4;
+  dueDate: Date | null;
   todoListId?: string;
   sectionId?: string;
 };
@@ -46,7 +47,7 @@ export default function TodoComponent({
   const [title, setTitle] = useState(todo.title);
   const [isCompleted, setIsCompleted] = useState(todo.completed);
   const [priority, setPriority] = useState<1 | 2 | 3 | 4>(todo.priority);
-  // const [date, setDate] = useState<Date | undefined>(task.dueDate);
+  const [date, setDate] = useState<Date | null | undefined>(todo.dueDate);
 
   const handleToggleCompletion = () => {
     todo.completed = !todo.completed;
@@ -101,7 +102,7 @@ export default function TodoComponent({
     } else if (e.key === "Escape") {
       setIsEditing(false);
       setTitle(todo.title);
-      // setDate(task.dueDate);
+      setDate(todo.dueDate);
     }
   };
 
@@ -141,19 +142,24 @@ export default function TodoComponent({
                     variant="outline"
                     size="sm"
                     className={cn(
-                      "text-xs pr-2 h-7"
-                      // date ? "text-foreground" : "text-muted-foreground"
+                      "text-xs pr-2 h-7",
+                      date ? "text-foreground" : "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-1 h-3.5 w-3.5" />
-                    {/* {date ? format(date, "MMM d") : "Add date"} */}
+                    {date ? format(date, "MMM d") : "Add date"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    // selected={date}
-                    // onSelect={setDate}
+                    selected={date ?? undefined}
+                    onSelect={setDate}
+                    disabled={(date) => {
+                      const today = startOfDay(new Date());
+                      const current = startOfDay(date);
+                      return isBefore(current, today);
+                    }}
                     initialFocus
                   />
                 </PopoverContent>
@@ -265,12 +271,12 @@ export default function TodoComponent({
                   </span>
                 )}
 
-                {/* {task.dueDate && (
+                {todo.dueDate && (
                   <span className="text-xs text-muted-foreground flex items-center">
                     <CalendarIcon className="h-3 w-3 mr-1" />
-                    {format(new Date(task.dueDate), "MMM d")}
+                    {format(new Date(todo.dueDate), "MMM d")}
                   </span>
-                )} */}
+                )}
               </div>
             </div>
 

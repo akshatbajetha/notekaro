@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Search, Plus, File, Loader2, Trash2Icon, X, Hash } from "lucide-react";
+import {
+  Search,
+  Plus,
+  File,
+  Loader2,
+  Trash2Icon,
+  X,
+  Hash,
+  CalendarCheck,
+  CalendarClock,
+  CircleCheckBig,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -208,7 +219,30 @@ function Sidebar({ width }: { width: number }) {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto">
         {/* Notes section */}
-        <div className="px-3 py-2">
+        <div className="flex flex-col mt-4 gap-y-2">
+          <Link
+            href={"/todos/today"}
+            className="flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md"
+          >
+            <CalendarCheck className="w-4 h-4" />
+            <span className="text-xs font-medium uppercase">Today</span>
+          </Link>
+          <Link
+            href={"/todos/upcoming"}
+            className="flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md"
+          >
+            <CalendarClock className="w-4 h-4" />
+            <span className="text-xs font-medium uppercase">Upcoming</span>
+          </Link>
+          <Link
+            href={"/todos/completed"}
+            className="flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md"
+          >
+            <CircleCheckBig className="w-4 h-4" />
+            <span className="text-xs font-medium uppercase">Completed</span>
+          </Link>
+        </div>
+        <div className="px-3 py-2 mt-4">
           <div className="flex items-center justify-between px-2 py-1 dark:text-gray-100 text-gray-900">
             <span className="text-xs font-medium uppercase">Todo Lists</span>
             <CreateTodoListModal />

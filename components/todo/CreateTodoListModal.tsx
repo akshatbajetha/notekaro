@@ -60,7 +60,7 @@ export function CreateTodoListModal() {
     <div className="flex items-center justify-center" title="Create TodoList">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger className="flex justify-center group/modal-btn dark:bg-[#1E1E1E] bg-[#F5F5F5]">
-          <Plus className="w-4 h-4 hover:bg-gray-800 rounded cursor-pointer" />
+          <Plus className="w-4 h-4 hover:bg-gray-300 dark:hover:bg-gray-800 rounded cursor-pointer" />
         </DialogTrigger>
         <DialogContent className=" overflow-y-auto">
           <DialogHeader>
@@ -83,6 +83,7 @@ export function CreateTodoListModal() {
               <Button
                 type="submit"
                 className="md:mt-10 mt-4 ml-2 h-max w-max bg-foreground md:text-lg text-xs font-bold"
+                disabled={isLoading}
               >
                 {isLoading ? (
                   <Loader2 className="animate-spin my-2 mx-4" />
