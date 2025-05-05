@@ -21,6 +21,7 @@ interface Todo {
   title: string;
   completed: boolean;
   priority: 1 | 2 | 3 | 4;
+  dueDate: Date | null;
   todoListId?: string;
   sectionId?: string;
 }

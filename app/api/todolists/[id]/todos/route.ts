@@ -24,12 +24,14 @@ export async function POST(
   const todoTitle = body.title;
   const completed = body.completed || false;
   const priority = body.priority || 4;
+  const dueDate = body.dueDate || null;
 
   const todo = await createTodoInList({
     listId: todoListId,
     title: todoTitle,
     completed: completed,
     priority: priority,
+    dueDate: dueDate,
   });
 
   return new Response(JSON.stringify(todo));

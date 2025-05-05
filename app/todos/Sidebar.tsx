@@ -12,6 +12,8 @@ import {
   CalendarCheck,
   CalendarClock,
   CircleCheckBig,
+  ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -33,6 +35,7 @@ function Sidebar({ width }: { width: number }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -95,7 +98,7 @@ function Sidebar({ width }: { width: number }) {
           title: "Todo List deleted successfully",
         });
       }, 1000);
-      await fetch(`/api/todos`, {
+      await fetch(`/api/todolists/${todoListId}`, {
         method: "DELETE",
         body: JSON.stringify({ todoListId }),
       });
@@ -134,7 +137,7 @@ function Sidebar({ width }: { width: number }) {
 
   return (
     <div
-      className="w-60 flex flex-col"
+      className="w-60 flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg"
       style={{
         width: `${width}px`,
         minWidth: "240px",
@@ -242,48 +245,71 @@ function Sidebar({ width }: { width: number }) {
             <span className="text-xs font-medium uppercase">Completed</span>
           </Link>
         </div>
-        <div className="px-3 py-2 mt-4">
+        <div className=" mt-4">
           <div className="flex items-center justify-between px-2 py-1 dark:text-gray-100 text-gray-900">
-            <span className="text-xs font-medium uppercase">Todo Lists</span>
+            <button
+              onClick={() => setCollapsed((c) => !c)}
+              className="flex items-center text-xs font-medium uppercase hover:text-foreground"
+              aria-label={
+                collapsed ? "Expand Todo Lists" : "Collapse Todo Lists"
+              }
+            >
+              {collapsed ? (
+                <ChevronRight className="h-4 w-4 mr-1 flex-shrink-0" />
+              ) : (
+                <ChevronDown className="h-4 w-4 mr-1 flex-shrink-0" />
+              )}
+              <span>Todo Lists</span>
+            </button>
             <CreateTodoListModal />
           </div>
-          {isLoading ? (
-            <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-            </div>
-          ) : todoLists.length !== 0 ? (
-            todoLists.map((todoList) => (
-              <div
-                key={todoList.id}
-                className={`flex flex-row mb-1 justify-between hover:bg-gray-200 dark:hover:bg-gray-800 items-center rounded-md pr-2 ${
-                  selectedTodoListId === todoList.id
-                    ? "bg-gray-200 dark:bg-gray-800"
-                    : ""
-                }`}
-              >
-                <Link
-                  key={todoList.id}
-                  href={`/todos/${todoList.id}`}
-                  onClick={() => setSelectedTodoListId(todoList.id)}
-                  className="flex items-center space-x-2 px-2 py-1 dark:text-gray-100 text-gray-900  cursor-pointer w-full"
-                >
-                  <Hash className="w-4 h-4" />
-                  <span className="text-sm">{todoList.title}</span>
-                </Link>
-                <Trash2Icon
-                  onClick={() => handleDeleteTodoList(todoList.id)}
-                  className="w-4 h-4 rounded cursor-pointer"
-                />
-              </div>
-            ))
-          ) : (
-            <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
-              <p className="text-sm dark:text-gray-300 text-gray-700">
-                No todo lists found
-              </p>
+
+          {!collapsed && (
+            <div className="mt-2 h-[40vh] overflow-y-auto">
+              {isLoading ? (
+                <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              ) : todoLists.length !== 0 ? (
+                todoLists.map((todoList) => (
+                  <div
+                    key={todoList.id}
+                    className={`flex flex-row mb-1 justify-between hover:bg-gray-200 dark:hover:bg-gray-800 items-center rounded-md pr-2 ${
+                      selectedTodoListId === todoList.id
+                        ? "bg-gray-200 dark:bg-gray-800"
+                        : ""
+                    }`}
+                  >
+                    <Link
+                      key={todoList.id}
+                      title={todoList.title}
+                      href={`/todos/${todoList.id}`}
+                      onClick={() => setSelectedTodoListId(todoList.id)}
+                      className="flex flex-1 overflow-hidden items-center space-x-2 px-2 py-1 dark:text-gray-100 text-gray-900  cursor-pointer"
+                    >
+                      <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                        <Hash className="w-4 h-4" />
+                      </div>
+                      <span className="text-sm truncate block w-full">
+                        {todoList.title}
+                      </span>
+                    </Link>
+                    <Trash2Icon
+                      onClick={() => handleDeleteTodoList(todoList.id)}
+                      className="w-4 h-4 rounded cursor-pointer flex-shrink-0"
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
+                  <p className="text-sm dark:text-gray-300 text-gray-700">
+                    No todo lists found
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>

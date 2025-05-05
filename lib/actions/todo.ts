@@ -21,7 +21,7 @@ export async function getTodoLists() {
         userId: user.id,
       },
       orderBy: {
-        createdAt: "asc",
+        createdAt: "desc",
       },
     });
     return todoLists;
@@ -156,11 +156,13 @@ export async function createTodoInList({
   title,
   completed,
   priority,
+  dueDate,
 }: {
   listId: string;
   title: string;
   completed: boolean;
   priority: number;
+  dueDate?: Date;
 }) {
   const user = await getAuthUser();
 
@@ -174,6 +176,7 @@ export async function createTodoInList({
         title,
         completed,
         priority,
+        dueDate,
         todoList: {
           connect: {
             id: listId,

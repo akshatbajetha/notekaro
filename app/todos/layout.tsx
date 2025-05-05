@@ -19,7 +19,10 @@ function page({ children }: { children: React.ReactNode }) {
   const resize = useCallback(
     (e: React.MouseEvent) => {
       if (isResizing) {
-        setSidebarWidth(e.clientX);
+        const minWidth = 240;
+        const maxWidth = 500;
+        const newWidth = Math.min(Math.max(e.clientX, minWidth), maxWidth);
+        setSidebarWidth(newWidth);
       }
     },
     [isResizing]
@@ -33,10 +36,16 @@ function page({ children }: { children: React.ReactNode }) {
     >
       <Sidebar width={sidebarWidth} />
       <div
-        className="w-[2px] bg-gray-500 dark:bg-gray-400 cursor-col-resize  transition-colors"
+        className="w-[2px] fixed h-screen z-50 bg-gray-500 dark:bg-gray-400 cursor-col-resize  transition-colors"
+        style={{ left: sidebarWidth }}
         onMouseDown={startResizing}
       />
-      <div className="flex-1 flex flex-col">{children}</div>
+      <div
+        style={{ marginLeft: sidebarWidth }}
+        className="flex-1 overflow-y-auto flex flex-col"
+      >
+        {children}
+      </div>
     </div>
   );
 }

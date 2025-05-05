@@ -258,9 +258,16 @@ export default function TodoComponent({
                 {title}
               </div>
 
-              <div className="flex items-center mt-0.5 space-x-2">
+              <div className="flex items-center mt-0.5 space-x-4">
+                {todo.dueDate && (
+                  <span className="text-xs text-foreground/75 flex items-center">
+                    <CalendarIcon className="h-3 w-3 mr-1" />
+                    {format(new Date(todo.dueDate), "MMM d")}
+                  </span>
+                )}
+
                 {todo.priority > 1 && (
-                  <span className="flex items-center text-xs text-muted-foreground">
+                  <span className="flex items-center text-xs text-foreground/75">
                     <span
                       className={cn(
                         "w-2 h-2 rounded-full mr-1",
@@ -268,13 +275,6 @@ export default function TodoComponent({
                       )}
                     ></span>
                     P{priority}
-                  </span>
-                )}
-
-                {todo.dueDate && (
-                  <span className="text-xs text-muted-foreground flex items-center">
-                    <CalendarIcon className="h-3 w-3 mr-1" />
-                    {format(new Date(todo.dueDate), "MMM d")}
                   </span>
                 )}
               </div>

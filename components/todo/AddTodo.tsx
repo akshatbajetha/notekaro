@@ -11,7 +11,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Flag, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format, isBefore, set, startOfDay } from "date-fns";
+import { format, isBefore, startOfDay } from "date-fns";
 import { useTodoStore } from "@/store/todoStore";
 
 interface AddTodoProps {
@@ -38,7 +38,7 @@ export default function AddTodo({
     e.preventDefault();
     setIsAddingTodo(true);
     if (title.trim()) {
-      handleAddTodo({ title, priority, completed: isCompleted, flag });
+      handleAddTodo({ title, priority, completed: isCompleted, flag, date });
       setTitle("");
       setDate(undefined);
       setPriority(4);
@@ -69,7 +69,12 @@ export default function AddTodo({
       if (flag === "list") {
         response = await fetch(`/api/todolists/${todoListId}/todos`, {
           method: "POST",
-          body: JSON.stringify({ title, completed, priority, date }),
+          body: JSON.stringify({
+            title,
+            completed,
+            priority,
+            dueDate: date ? date.toISOString() : null,
+          }),
           headers: {
             "Content-Type": "application/json",
           },
@@ -79,7 +84,12 @@ export default function AddTodo({
           `/api/todolists/${todoListId}/sections/${sectionId}`,
           {
             method: "POST",
-            body: JSON.stringify({ title, completed, priority, date }),
+            body: JSON.stringify({
+              title,
+              completed,
+              priority,
+              dueDate: date ? date.toISOString() : null,
+            }),
             headers: {
               "Content-Type": "application/json",
             },
@@ -97,6 +107,7 @@ export default function AddTodo({
         title: todo.title,
         completed: todo.completed,
         priority: todo.priority,
+        dueDate: todo.dueDate ? new Date(todo.dueDate) : null,
         todoListId: todo.todoListId ?? undefined,
         sectionId: todo.sectionId ?? undefined,
       };
@@ -247,7 +258,3 @@ export default function AddTodo({
     </form>
   );
 }
-
-/*
-Create a single handleAddTodo function that takes title, priority, completed, flag and date (date in the future) as parameters and based on the flag = "list" | "section" send req on appropriate API endpoint and create the todo in the database.  
- */
