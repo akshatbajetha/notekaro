@@ -237,7 +237,7 @@ function Sidebar({ width }: { width: number }) {
 
             <Plus
               onClick={handleCreateNote}
-              className="w-4 h-4 hover:bg-gray-800 rounded cursor-pointer"
+              className="w-4 h-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded cursor-pointer"
             />
           </div>
           {isLoading ? (

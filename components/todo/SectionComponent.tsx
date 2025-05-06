@@ -2,13 +2,22 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, ChevronDown, Plus, Trash2, Pencil } from "lucide-react";
+import {
+  ChevronRight,
+  ChevronDown,
+  Plus,
+  Trash2,
+  Pencil,
+  Check,
+  Loader2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import TodoComponent from "./TodoComponent";
 import AddTodo from "./AddTodo";
 import { useTodoStore } from "@/store/todoStore";
 import { Skeleton } from "../ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 interface Section {
   id: string;
@@ -40,6 +49,8 @@ export default function SectionComponent({
   const [newTitle, setNewTitle] = useState(section.title);
   const [collapsed, setCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const { toast } = useToast();
 
   const {
     sectionsByListId,
@@ -87,6 +98,7 @@ export default function SectionComponent({
   // Edit section title
   const handleUpdateSectionTitle = async () => {
     if (newTitle.trim() && newTitle !== section.title) {
+      setIsUpdating(true);
       try {
         const res = await fetch(
           `/api/todolists/${todoListId}/sections/${section.id}`,
@@ -107,6 +119,8 @@ export default function SectionComponent({
         }
       } catch (error) {
         console.error("Error updating section title:", error);
+      } finally {
+        setIsUpdating(false);
       }
     }
     setIsEditing(false);
@@ -116,12 +130,20 @@ export default function SectionComponent({
   const handleDeleteSection = async () => {
     try {
       // Remove section from cache
-      setSectionsForList(
-        todoListId,
-        (sectionsByListId[todoListId] || []).filter((s) => s.id !== section.id)
-      );
-      // Remove todos in this section from cache
-      setTodosForSection(section.id, []);
+      setTimeout(() => {
+        setSectionsForList(
+          todoListId,
+          (sectionsByListId[todoListId] || []).filter(
+            (s) => s.id !== section.id
+          )
+        );
+        // Remove todos in this section from cache
+        setTodosForSection(section.id, []);
+        toast({
+          title: "Section deleted successfully",
+        });
+      }, 1000);
+
       await fetch(`/api/todolists/${todoListId}/sections`, {
         method: "DELETE",
         body: JSON.stringify({ sectionId: section.id }),
@@ -137,8 +159,13 @@ export default function SectionComponent({
   // Delete a todo in this section
   const handleDeleteTodo = async (todoId: string) => {
     // Remove from both list and section caches
-    removeTodoFromSection(todoId, section.id);
-    removeTodoFromList(todoId, todoListId);
+    setTimeout(() => {
+      removeTodoFromSection(todoId, section.id);
+      removeTodoFromList(todoId, todoListId);
+      toast({
+        title: "Todo deleted successfully",
+      });
+    }, 1000);
 
     try {
       await fetch("/api/todolists", {
@@ -187,11 +214,33 @@ export default function SectionComponent({
               <Input
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
-                onBlur={handleUpdateSectionTitle}
+                // onBlur={handleUpdateSectionTitle}
                 onKeyDown={handleKeyDown}
                 autoFocus
                 className="h-7 text-sm py-0"
               />
+
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setIsEditing(false);
+                }}
+                className="ml-2 h-7 text-xs"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="default"
+                size="sm"
+                // onClick={handleUpdateSectionTitle}
+                disabled={!newTitle.trim() || isUpdating}
+                className="h-7 text-xs"
+              >
+                {isUpdating ? <Loader2 className="animate-spin" /> : "Save"}
+              </Button>
             </form>
           ) : (
             <span>{section.title}</span>

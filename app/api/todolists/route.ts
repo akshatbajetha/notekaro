@@ -2,7 +2,7 @@ import {
   createTodoList,
   deleteTodo,
   getTodoLists,
-  updateTodoList,
+  updateTodo,
 } from "@/lib/actions/todo";
 
 export async function GET() {
@@ -34,7 +34,7 @@ export async function PATCH(req: Request) {
   const completed = body.completed;
   const priority = body.priority;
 
-  const todo = await updateTodoList({
+  const todo = await updateTodo({
     id: todoId,
     title,
     completed,

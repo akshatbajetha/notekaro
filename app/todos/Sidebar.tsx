@@ -98,15 +98,14 @@ function Sidebar({ width }: { width: number }) {
           title: "Todo List deleted successfully",
         });
       }, 1000);
-      await fetch(`/api/todolists/${todoListId}`, {
-        method: "DELETE",
-        body: JSON.stringify({ todoListId }),
-      });
-
       if (selectedTodoListId === todoListId) {
         setSelectedTodoListId(null);
         router.push("/todos");
       }
+      await fetch(`/api/todolists/${todoListId}`, {
+        method: "DELETE",
+        body: JSON.stringify({ todoListId }),
+      });
     } catch (error) {
       console.error("Error deleting Todo List:", error);
     }

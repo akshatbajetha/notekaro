@@ -5,6 +5,7 @@ import {
   createTodoInSection,
   deleteTodo,
   getTodosBySectionId,
+  updateSection,
 } from "@/lib/actions/todo";
 
 export async function GET(
@@ -44,6 +45,22 @@ export async function POST(
 export async function DELETE(req: Request) {
   const body = await req.json();
   const todoId = body.todoId;
-  const note = await deleteTodo({ todoId });
-  return new Response(JSON.stringify(note));
+  const todo = await deleteTodo({ todoId });
+  return new Response(JSON.stringify(todo));
+}
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: { sectionId: string } }
+) {
+  const body = await req.json();
+  const sectionId = params.sectionId;
+  const title = body.title;
+
+  const section = await updateSection({
+    sectionId,
+    title,
+  });
+
+  return new Response(JSON.stringify(section));
 }

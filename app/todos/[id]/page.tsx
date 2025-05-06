@@ -4,6 +4,7 @@ import AddSection from "@/components/todo/AddSection";
 import AddTodo from "@/components/todo/AddTodo";
 import SectionComponent from "@/components/todo/SectionComponent";
 import TodoComponent from "@/components/todo/TodoComponent";
+import TodoListTitleEditor from "@/components/todo/TodoListTitleEditor";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,7 +25,7 @@ function page({ params }: { params: { id: string } }) {
   const { id } = params;
   const [isAddingTodo, setisAddingTodo] = useState(false);
   const [isAddingSection, setIsAddingSection] = useState(false);
-  const [todoListTitle, setTodoListTitle] = useState<string | null>(null);
+  const [todoListTitle, setTodoListTitle] = useState<string>("");
   const [isLoadingTodos, setIsLoadingTodos] = useState(true);
   const [isLoadingSections, setIsLoadingSections] = useState(true);
   const [isLoadingTitle, setIsLoadingTitle] = useState(true);
@@ -133,13 +134,16 @@ function page({ params }: { params: { id: string } }) {
 
   return (
     <div className="px-4 mt-20 py-6 max-w-3xl ">
-      <header className="mb-6">
+      <header className="mt-4">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold flex items-center text-black dark:text-white">
             {isLoadingTitle ? (
               <Skeleton className="w-32 text-gray-700 dark:text-gray-300" />
             ) : (
-              todoListTitle
+              <TodoListTitleEditor
+                initialTitle={todoListTitle}
+                todoListId={id}
+              />
             )}
           </h1>
         </div>
@@ -223,15 +227,3 @@ function page({ params }: { params: { id: string } }) {
   );
 }
 export default page;
-
-/* TODO: Collapsible sections, basically a section header which contains todos, every section has an add task button, and an add task button at the top, Draggable tasks to reorder or change sections, delete and edit button in front of every todo Option menu in front of section to edit name and delete
-      
-Every add task can have Date, priority level, and by defaulted completed is false
-*/
-
-/* 
-TODO: First start with basic things, 
-A top add task button,
-On click, open a input section and A few dummy buttons Date and Priority below it,
-On the bottom right cancel and Add task button
-*/

@@ -1,31 +1,27 @@
-"use client";
-
-import { updateNoteById } from "@/lib/actions/notes";
+import { useTodoStore } from "@/store/todoStore";
 import { useEffect, useRef, useState } from "react";
-
 import { useDebouncedCallback } from "use-debounce";
-import { useNotesStore } from "@/store/noteStore";
 
-export default function NoteTitleEditor({
+function TodoListTitleEditor({
   initialTitle,
-  noteId,
+  todoListId,
 }: {
   initialTitle: string;
-  noteId: string;
+  todoListId: string;
 }) {
   const [title, setTitle] = useState(initialTitle);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const { updateNoteTitle } = useNotesStore();
+  const { updateTodoListTitle } = useTodoStore();
 
   const debouncedTitleSave = useDebouncedCallback(async (title: string) => {
-    updateNoteTitle(noteId, title);
+    updateTodoListTitle(todoListId, title);
   }, 100);
 
   const debouncedSave = useDebouncedCallback(async (title: string) => {
-    await fetch(`/api/notes/${noteId}`, {
+    await fetch(`/api/todolists/${todoListId}`, {
       method: "PATCH",
-      body: JSON.stringify({ title: title, content: undefined }),
+      body: JSON.stringify({ title: title }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -56,8 +52,8 @@ export default function NoteTitleEditor({
           debouncedSave(newTitle);
           debouncedTitleSave(newTitle);
         }}
-        placeholder="Untitled"
       />
     </div>
   );
 }
+export default TodoListTitleEditor;

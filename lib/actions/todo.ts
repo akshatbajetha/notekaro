@@ -350,6 +350,66 @@ export async function deleteTodo({ todoId }: { todoId: string }) {
 }
 
 export async function updateTodoList({
+  listId,
+  title,
+}: {
+  listId: string;
+  title: string;
+}) {
+  const user = await getAuthUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  try {
+    const todoList = await prisma.todoList.update({
+      where: {
+        id: listId,
+      },
+      data: {
+        title,
+      },
+    });
+
+    return todoList;
+  } catch (error) {
+    console.log("Error while updating todo list: ", error);
+    return;
+  }
+}
+
+export async function updateSection({
+  sectionId,
+  title,
+}: {
+  sectionId: string;
+  title: string;
+}) {
+  const user = await getAuthUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  try {
+    const section = await prisma.section.update({
+      where: {
+        id: sectionId,
+      },
+      data: {
+        title,
+      },
+    });
+
+    return section;
+  } catch (error) {
+    console.log("Error while updating section in list: ", error);
+    return;
+  }
+}
+
+export async function updateTodo({
   id,
   title,
   completed,

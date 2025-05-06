@@ -284,19 +284,19 @@ export default function TodoComponent({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0"
+                className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
                 onClick={() => setIsEditing(true)}
               >
-                <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                <Pencil className="h-3.5 w-3.5 " />
               </Button>
 
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0"
+                className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
                 onClick={() => deleteTodo(todo.id)}
               >
-                <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>
