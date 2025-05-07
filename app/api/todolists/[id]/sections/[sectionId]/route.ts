@@ -24,9 +24,9 @@ export async function GET(
 
 export async function POST(
   req: Request,
-  { params }: { params: { sectionId: string } }
+  { params }: { params: { id: string; sectionId: string } }
 ) {
-  const { sectionId } = params;
+  const { sectionId, id: todoListId } = params;
   const body = await req.json();
   const title = body.title;
   const completed = body.completed || false;
@@ -34,6 +34,7 @@ export async function POST(
   const dueDate = body.dueDate || null;
   const todo = await createTodoInSection({
     sectionId,
+    todoListId,
     title,
     completed,
     priority,

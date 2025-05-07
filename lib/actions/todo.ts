@@ -113,6 +113,7 @@ export async function getTodosByListId({ listId }: { listId: string }) {
     const todos = await prisma.todo.findMany({
       where: {
         todoListId: listId,
+        sectionId: null,
       },
       orderBy: {
         createdAt: "asc",
@@ -122,6 +123,42 @@ export async function getTodosByListId({ listId }: { listId: string }) {
   } catch (error) {
     console.log("Error while fetching todo lists: ", error);
     return null;
+  }
+}
+
+export async function getCompletedTodos() {
+  const user = await getAuthUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  try {
+    const completedTodos = await prisma.todo.findMany({
+      where: {
+        completed: true,
+      },
+      select: {
+        id: true,
+        title: true,
+        completed: true,
+        updatedAt: true,
+        todoList: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    return completedTodos;
+  } catch (error) {
+    console.error("Error fetching completed todos: ", error);
+    throw error;
   }
 }
 
@@ -229,12 +266,14 @@ export async function createTodoInSection({
   completed,
   priority,
   dueDate,
+  todoListId,
 }: {
   sectionId: string;
   title: string;
   completed: boolean;
   priority: number;
   dueDate?: Date;
+  todoListId: string;
 }) {
   const user = await getAuthUser();
 
@@ -252,6 +291,11 @@ export async function createTodoInSection({
         section: {
           connect: {
             id: sectionId,
+          },
+        },
+        todoList: {
+          connect: {
+            id: todoListId,
           },
         },
       },
