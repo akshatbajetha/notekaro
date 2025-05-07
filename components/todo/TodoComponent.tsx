@@ -24,7 +24,7 @@ type Todo = {
   completed: boolean;
   priority: 1 | 2 | 3 | 4;
   dueDate: Date | null;
-  todoListId?: string;
+  todoListId: string;
   sectionId?: string;
 };
 
@@ -48,11 +48,46 @@ export default function TodoComponent({
   const [isCompleted, setIsCompleted] = useState(todo.completed);
   const [priority, setPriority] = useState<1 | 2 | 3 | 4>(todo.priority);
   const [date, setDate] = useState<Date | null | undefined>(todo.dueDate);
+  const {
+    updateTodoInList,
+    updateTodoInSection,
+    addCompletedTodo,
+    removeCompletedTodo,
+  } = useTodoStore();
 
   const handleToggleCompletion = () => {
-    todo.completed = !todo.completed;
-    setIsCompleted(todo.completed);
-    debounceCompletedUpdate(todo.completed);
+    const newCompleted = !todo.completed;
+    todo.completed = newCompleted;
+    setIsCompleted(newCompleted);
+
+    // Update in store immediately
+    if (todo.todoListId) {
+      updateTodoInList(todo.id, todo.todoListId, { completed: newCompleted });
+    }
+    if (todo.sectionId) {
+      updateTodoInSection(todo.id, todo.sectionId, { completed: newCompleted });
+    }
+
+    // Update completed todos in store
+    if (newCompleted) {
+      // Add to completed todos
+      const completedTodo = {
+        ...todo,
+        completed: true,
+        updatedAt: new Date(),
+        todoList: {
+          id: todo.todoListId,
+          title: "Todo List", // You might want to get this from the store
+        },
+      };
+      addCompletedTodo(completedTodo);
+    } else {
+      // Remove from completed todos
+      removeCompletedTodo(todo.id);
+    }
+
+    // Debounce the API call
+    debounceCompletedUpdate(newCompleted);
   };
 
   const debounceCompletedUpdate = useDebouncedCallback(
@@ -67,6 +102,31 @@ export default function TodoComponent({
         });
       } catch (error) {
         console.error("Error updating todo completion: ", error);
+        // Revert the optimistic update on error
+        if (todo.todoListId) {
+          updateTodoInList(todo.id, todo.todoListId, { completed: !completed });
+        }
+        if (todo.sectionId) {
+          updateTodoInSection(todo.id, todo.sectionId, {
+            completed: !completed,
+          });
+        }
+        // Revert completed todos store
+        if (completed) {
+          removeCompletedTodo(todo.id);
+        } else {
+          const completedTodo = {
+            ...todo,
+            completed: true,
+            updatedAt: new Date(),
+            todoList: {
+              id: todo.todoListId || "",
+              title: "Todo List",
+            },
+          };
+          addCompletedTodo(completedTodo);
+        }
+        setIsCompleted(!completed);
       }
     },
     1000

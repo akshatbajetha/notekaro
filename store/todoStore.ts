@@ -6,8 +6,17 @@ export interface Todo {
   completed: boolean;
   priority: 1 | 2 | 3 | 4;
   dueDate: Date | null;
-  todoListId?: string;
+  todoListId: string;
   sectionId?: string;
+  updatedAt?: Date;
+}
+
+export interface CompletedTodo extends Todo {
+  updatedAt: Date;
+  todoList: {
+    id: string;
+    title: string;
+  };
 }
 
 export interface TodoList {
@@ -39,6 +48,14 @@ interface TodoStoreState {
   // Todos
   todosByListId: { [listId: string]: Todo[] };
   todosBySectionId: { [sectionId: string]: Todo[] };
+  completedTodos: CompletedTodo[];
+  setCompletedTodos: (todos: CompletedTodo[]) => void;
+  addCompletedTodo: (todo: CompletedTodo) => void;
+  removeCompletedTodo: (todoId: string) => void;
+  updateCompletedTodo: (
+    todoId: string,
+    updates: Partial<CompletedTodo>
+  ) => void;
 
   // Todo List operations
   getTodosByListId: (todoListId: string) => Todo[];
@@ -98,6 +115,22 @@ export const useTodoStore = create<TodoStoreState>((set, get) => ({
   // Todos
   todosByListId: {},
   todosBySectionId: {},
+  completedTodos: [],
+  setCompletedTodos: (todos) => set({ completedTodos: todos }),
+  addCompletedTodo: (todo) =>
+    set((state) => ({
+      completedTodos: [...state.completedTodos, todo],
+    })),
+  removeCompletedTodo: (todoId) =>
+    set((state) => ({
+      completedTodos: state.completedTodos.filter((todo) => todo.id !== todoId),
+    })),
+  updateCompletedTodo: (todoId, updates) =>
+    set((state) => ({
+      completedTodos: state.completedTodos.map((todo) =>
+        todo.id === todoId ? { ...todo, ...updates } : todo
+      ),
+    })),
 
   // Todo List operations
   getTodosByListId: (todoListId: string) =>

@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import Link from "next/link";
 import { CircleCheckBig, Hash } from "lucide-react";
+import { useTodoStore } from "@/store/todoStore";
 
 interface CompletedTodo {
   id: string;
@@ -18,11 +19,17 @@ interface CompletedTodo {
 }
 
 export default function CompletedTodosPage() {
-  const [completedTodos, setCompletedTodos] = useState<CompletedTodo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { completedTodos, setCompletedTodos } = useTodoStore();
 
   useEffect(() => {
     const fetchCompletedTodos = async () => {
+      // If we already have completed todos in the store, use them
+      if (completedTodos.length > 0) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const response = await fetch("/api/todolists/completed");
         if (!response.ok) throw new Error("Failed to fetch completed todos");
@@ -36,7 +43,7 @@ export default function CompletedTodosPage() {
     };
 
     fetchCompletedTodos();
-  }, []);
+  }, [completedTodos.length, setCompletedTodos]);
 
   if (isLoading) {
     return (

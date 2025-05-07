@@ -13,9 +13,11 @@ import { CalendarIcon, Flag, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format, isBefore, startOfDay } from "date-fns";
 import { useTodoStore } from "@/store/todoStore";
+import type { Todo } from "@/store/todoStore";
+import { useToast } from "@/hooks/use-toast";
 
 interface AddTodoProps {
-  todoListId?: string;
+  todoListId: string;
   sectionId?: string;
   flag: "list" | "section";
   onCancel: () => void;
@@ -31,12 +33,19 @@ export default function AddTodo({
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [priority, setPriority] = useState<1 | 2 | 3 | 4>(4);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [isAddingTodo, setIsAddingTodo] = useState(false);
-  const { addTodoToList, addTodoToSection } = useTodoStore();
+  const { toast } = useToast();
+
+  const {
+    addTodoToList,
+    addTodoToSection,
+    todosByListId,
+    todosBySectionId,
+    setTodosForList,
+    setTodosForSection,
+  } = useTodoStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsAddingTodo(true);
     if (title.trim()) {
       handleAddTodo({ title, priority, completed: isCompleted, flag, date });
       setTitle("");
@@ -59,12 +68,40 @@ export default function AddTodo({
     date,
   }: {
     title: string;
-    priority: number;
+    priority: 1 | 2 | 3 | 4;
     completed: boolean;
     flag: "list" | "section";
     date?: Date;
   }) => {
     try {
+      // Create a temporary ID for optimistic update
+      const tempId = `temp-${Date.now()}`;
+
+      // Create the optimistic todo object
+      const optimisticTodo: Todo = {
+        id: tempId,
+        title,
+        completed,
+        priority,
+        dueDate: date || null,
+        todoListId,
+        sectionId: flag === "section" ? sectionId : undefined,
+      };
+
+      // Immediately update the UI with the optimistic todo
+      if (flag === "list") {
+        addTodoToList(optimisticTodo);
+        toast({
+          title: "Todo created successfully",
+        });
+      } else if (flag === "section" && sectionId) {
+        addTodoToSection(optimisticTodo);
+        toast({
+          title: "Todo created successfully",
+        });
+      }
+
+      // Make the API request
       let response;
       if (flag === "list") {
         response = await fetch(`/api/todolists/${todoListId}/todos`, {
@@ -79,7 +116,7 @@ export default function AddTodo({
             "Content-Type": "application/json",
           },
         });
-      } else if (flag === "section") {
+      } else if (flag === "section" && sectionId) {
         response = await fetch(
           `/api/todolists/${todoListId}/sections/${sectionId}`,
           {
@@ -96,32 +133,61 @@ export default function AddTodo({
           }
         );
       }
+
       if (!response?.ok) {
         throw new Error("No response received while creating todo.");
       }
 
       const todo = await response.json();
 
-      const newTodo = {
-        id: todo.id,
-        title: todo.title,
-        completed: todo.completed,
-        priority: todo.priority,
-        dueDate: todo.dueDate ? new Date(todo.dueDate) : null,
-        todoListId: todo.todoListId ?? undefined,
-        sectionId: todo.sectionId ?? undefined,
-      };
-
-      // Add todo to appropriate store based on flag
+      // Replace the optimistic todo with the real one
       if (flag === "list") {
-        addTodoToList(newTodo);
+        // Remove the optimistic todo and add the real one
+        const currentTodos = todosByListId[todoListId] || [];
+        const updatedTodos = currentTodos
+          .filter((t: Todo) => t.id !== tempId)
+          .concat({
+            id: todo.id,
+            title: todo.title,
+            completed: todo.completed,
+            priority: todo.priority as 1 | 2 | 3 | 4,
+            dueDate: todo.dueDate ? new Date(todo.dueDate) : null,
+            todoListId: todo.todoListId,
+            sectionId: todo.sectionId,
+          });
+        setTodosForList(todoListId, updatedTodos);
       } else if (flag === "section" && sectionId) {
-        addTodoToSection(newTodo);
+        // Remove the optimistic todo and add the real one
+        const currentTodos = todosBySectionId[sectionId] || [];
+        const updatedTodos = currentTodos
+          .filter((t: Todo) => t.id !== tempId)
+          .concat({
+            id: todo.id,
+            title: todo.title,
+            completed: todo.completed,
+            priority: todo.priority as 1 | 2 | 3 | 4,
+            dueDate: todo.dueDate ? new Date(todo.dueDate) : null,
+            todoListId: todo.todoListId,
+            sectionId: todo.sectionId,
+          });
+        setTodosForSection(sectionId, updatedTodos);
       }
-
-      setIsAddingTodo(false);
     } catch (error) {
       console.error("Error adding todo: ", error);
+      // Remove the optimistic todo on error
+      if (flag === "list") {
+        const currentTodos = todosByListId[todoListId] || [];
+        setTodosForList(
+          todoListId,
+          currentTodos.filter((t: Todo) => !t.id.startsWith("temp-"))
+        );
+      } else if (flag === "section" && sectionId) {
+        const currentTodos = todosBySectionId[sectionId] || [];
+        setTodosForSection(
+          sectionId,
+          currentTodos.filter((t: Todo) => !t.id.startsWith("temp-"))
+        );
+      }
     }
   };
 
@@ -248,10 +314,10 @@ export default function AddTodo({
             type="submit"
             variant="default"
             size="sm"
-            disabled={isAddingTodo || !title.trim()}
+            disabled={!title.trim()}
             className="h-7 text-xs"
           >
-            {isAddingTodo ? <Loader2 className="animate-spin" /> : "Add todo"}
+            Add Todo
           </Button>
         </div>
       </div>

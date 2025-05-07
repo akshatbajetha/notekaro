@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useTodoStore } from "@/store/todoStore";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface AddSectionProps {
   todoListId: string;
@@ -15,11 +16,10 @@ export default function AddSection({ todoListId, onCancel }: AddSectionProps) {
   const [title, setTitle] = useState("");
   const setSectionsForList = useTodoStore((state) => state.setSectionsForList);
   const sectionsByListId = useTodoStore((state) => state.sectionsByListId);
-  const [isAddingSection, setIsAddingSection] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsAddingSection(true);
     if (title.trim()) {
       handleAddSection({ title, todoListId });
       setTitle("");
@@ -40,6 +40,27 @@ export default function AddSection({ todoListId, onCancel }: AddSectionProps) {
     todoListId: string;
   }) => {
     try {
+      // Create a temporary ID for optimistic update
+      const tempId = `temp-${Date.now()}`;
+
+      // Create the optimistic section object
+      const optimisticSection = {
+        id: tempId,
+        title,
+        todoListId,
+        todos: [],
+      };
+
+      // Immediately update the UI with the optimistic section
+      setSectionsForList(todoListId, [
+        ...(sectionsByListId[todoListId] || []),
+        optimisticSection,
+      ]);
+      toast({
+        title: "Section created successfully",
+      });
+
+      // Make the API request
       const response = await fetch(`/api/todolists/${todoListId}/sections`, {
         method: "POST",
         headers: {
@@ -49,15 +70,24 @@ export default function AddSection({ todoListId, onCancel }: AddSectionProps) {
       });
 
       const newSection = await response.json();
-      // Update the store with the new section
-      setSectionsForList(todoListId, [
-        ...(sectionsByListId[todoListId] || []),
-        newSection,
-      ]);
+
+      // Replace the optimistic section with the real one
+      const currentSections = sectionsByListId[todoListId] || [];
+      const updatedSections = currentSections
+        .filter((s) => s.id !== tempId)
+        .concat({
+          ...newSection,
+          todos: [],
+        });
+      setSectionsForList(todoListId, updatedSections);
     } catch (error) {
       console.error("Error adding section:", error);
-    } finally {
-      setIsAddingSection(false);
+      // Remove the optimistic section on error
+      const currentSections = sectionsByListId[todoListId] || [];
+      setSectionsForList(
+        todoListId,
+        currentSections.filter((s) => !s.id.startsWith("temp-"))
+      );
     }
   };
 
@@ -87,14 +117,10 @@ export default function AddSection({ todoListId, onCancel }: AddSectionProps) {
           type="submit"
           variant="default"
           size="sm"
-          disabled={isAddingSection || !title.trim()}
+          disabled={!title.trim()}
           className="h-7 text-xs"
         >
-          {isAddingSection ? (
-            <Loader2 className="animate-spin" />
-          ) : (
-            "Add section"
-          )}
+          Add Section
         </Button>
       </div>
     </form>

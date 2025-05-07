@@ -303,7 +303,7 @@ function Sidebar({ width }: { width: number }) {
                   </div>
                 ))
               ) : (
-                <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
+                <div className="py-2 px-7 ">
                   <p className="text-sm dark:text-gray-300 text-gray-700">
                     No todo lists found
                   </p>
