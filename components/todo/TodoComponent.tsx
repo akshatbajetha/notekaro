@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 // import { useTodoist } from "@/lib/store";
 // import { Task, Priority } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -15,8 +15,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { useDebouncedCallback } from "use-debounce";
 import { useTodoStore } from "@/store/todoStore";
+import { useToast } from "@/hooks/use-toast";
 
 type Todo = {
   id: string;
@@ -48,28 +48,159 @@ export default function TodoComponent({
   const [isCompleted, setIsCompleted] = useState(todo.completed);
   const [priority, setPriority] = useState<1 | 2 | 3 | 4>(todo.priority);
   const [date, setDate] = useState<Date | null | undefined>(todo.dueDate);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { toast, dismiss } = useToast();
+  const toastTimeoutRef = useRef<NodeJS.Timeout>();
+  const debounceTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Initialize audio on component mount
+  useEffect(() => {
+    audioRef.current = new Audio("/todo-completed.mp3");
+    // Preload the audio
+    audioRef.current.load();
+  }, []);
+
   const {
     updateTodoInList,
     updateTodoInSection,
     addCompletedTodo,
     removeCompletedTodo,
+    addTodoToList,
+    addTodoToSection,
+    removeTodoFromList,
+    removeTodoFromSection,
   } = useTodoStore();
+
+  // Replace useDebouncedCallback with a manual implementation
+  const updateCompletionStatus = async (completed: boolean) => {
+    try {
+      await fetch("/api/todolists", {
+        method: "PATCH",
+        body: JSON.stringify({
+          todoId: todo.id,
+          title,
+          priority,
+          completed,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error("Error updating todo completion: ", error);
+      // Revert the optimistic update on error
+      if (todo.todoListId) {
+        updateTodoInList(todo.id, todo.todoListId, {
+          completed: !completed,
+        });
+      }
+      if (todo.sectionId) {
+        updateTodoInSection(todo.id, todo.sectionId, {
+          completed: !completed,
+        });
+      }
+      // Revert completed todos store
+      if (completed) {
+        removeCompletedTodo(todo.id);
+      } else {
+        const completedTodo = {
+          ...todo,
+          completed: true,
+          updatedAt: new Date(),
+          todoList: {
+            id: todo.todoListId || "",
+            title: "Todo List",
+          },
+        };
+        addCompletedTodo(completedTodo);
+      }
+      setIsCompleted(!completed);
+    }
+  };
+
+  const debounceCompletedUpdate = (completed: boolean) => {
+    // Clear any existing timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    // Set a new timeout
+    debounceTimeoutRef.current = setTimeout(() => {
+      updateCompletionStatus(completed);
+    }, 2000);
+  };
 
   const handleToggleCompletion = () => {
     const newCompleted = !todo.completed;
     todo.completed = newCompleted;
     setIsCompleted(newCompleted);
 
-    // Update in store immediately
-    if (todo.todoListId) {
-      updateTodoInList(todo.id, todo.todoListId, { completed: newCompleted });
-    }
-    if (todo.sectionId) {
-      updateTodoInSection(todo.id, todo.sectionId, { completed: newCompleted });
+    // Play sound when checking the todo
+    if (newCompleted && audioRef.current) {
+      // Reset the audio to the beginning
+      audioRef.current.currentTime = 0;
+      // Play the sound
+      audioRef.current.play().catch((error) => {
+        console.error("Error playing sound:", error);
+      });
     }
 
-    // Update completed todos in store
+    // Show toast with undo button
+    const { id } = toast({
+      title: "Task Completed! 🎉",
+      description: "1 task completed",
+      action: (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            // Undo the completion
+            todo.completed = false;
+            setIsCompleted(false);
+
+            // Restore todo to its original location
+            if (todo.sectionId) {
+              addTodoToSection(todo);
+            } else if (todo.todoListId) {
+              addTodoToList(todo);
+            }
+
+            // Remove from completed todos
+            removeCompletedTodo(todo.id);
+
+            // Cancel the debounced update
+            if (debounceTimeoutRef.current) {
+              clearTimeout(debounceTimeoutRef.current);
+            }
+
+            // Dismiss the toast
+            dismiss(id);
+          }}
+        >
+          Undo
+        </Button>
+      ),
+    });
+
+    // Clear any existing timeout
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+
+    // Set timeout to dismiss toast after 3 seconds
+    toastTimeoutRef.current = setTimeout(() => {
+      dismiss(id);
+    }, 2000);
+
+    // Update in store immediately
     if (newCompleted) {
+      // Remove from original location
+      if (todo.sectionId) {
+        removeTodoFromSection(todo.id, todo.sectionId);
+      } else if (todo.todoListId) {
+        removeTodoFromList(todo.id, todo.todoListId);
+      }
+
       // Add to completed todos
       const completedTodo = {
         ...todo,
@@ -82,55 +213,20 @@ export default function TodoComponent({
       };
       addCompletedTodo(completedTodo);
     } else {
+      // Restore to original location
+      if (todo.sectionId) {
+        addTodoToSection(todo);
+      } else if (todo.todoListId) {
+        addTodoToList(todo);
+      }
       // Remove from completed todos
       removeCompletedTodo(todo.id);
     }
+    console.log("Calling debounceCompletedUpdate");
 
-    // Debounce the API call
     debounceCompletedUpdate(newCompleted);
+    console.log("Called");
   };
-
-  const debounceCompletedUpdate = useDebouncedCallback(
-    async (completed: boolean) => {
-      try {
-        await fetch("/api/todolists", {
-          method: "PATCH",
-          body: JSON.stringify({ todoId: todo.id, title, priority, completed }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } catch (error) {
-        console.error("Error updating todo completion: ", error);
-        // Revert the optimistic update on error
-        if (todo.todoListId) {
-          updateTodoInList(todo.id, todo.todoListId, { completed: !completed });
-        }
-        if (todo.sectionId) {
-          updateTodoInSection(todo.id, todo.sectionId, {
-            completed: !completed,
-          });
-        }
-        // Revert completed todos store
-        if (completed) {
-          removeCompletedTodo(todo.id);
-        } else {
-          const completedTodo = {
-            ...todo,
-            completed: true,
-            updatedAt: new Date(),
-            todoList: {
-              id: todo.todoListId || "",
-              title: "Todo List",
-            },
-          };
-          addCompletedTodo(completedTodo);
-        }
-        setIsCompleted(!completed);
-      }
-    },
-    1000
-  );
 
   const handleUpdateTodo = () => {
     if (title.trim()) {

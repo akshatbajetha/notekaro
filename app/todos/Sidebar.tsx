@@ -267,10 +267,10 @@ function Sidebar({ width }: { width: number }) {
             <div className="mt-2 h-[40vh] overflow-y-auto">
               {isLoading ? (
                 <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-[60%]" />
+                  <Skeleton className="h-4 w-[60%]" />
+                  <Skeleton className="h-4 w-[60%]" />
+                  <Skeleton className="h-4 w-[60%]" />
                 </div>
               ) : todoLists.length !== 0 ? (
                 todoLists.map((todoList) => (

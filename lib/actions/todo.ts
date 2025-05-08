@@ -90,6 +90,7 @@ export async function getTodosBySectionId({
     const todos = await prisma.todo.findMany({
       where: {
         sectionId: sectionId,
+        completed: false,
       },
       orderBy: {
         createdAt: "asc",
@@ -114,6 +115,7 @@ export async function getTodosByListId({ listId }: { listId: string }) {
       where: {
         todoListId: listId,
         sectionId: null,
+        completed: false,
       },
       orderBy: {
         createdAt: "asc",
@@ -462,7 +464,7 @@ export async function updateTodo({
   id: string;
   title: string;
   completed: boolean;
-  priority: number;
+  priority: 1 | 2 | 3 | 4;
 }) {
   const user = await getAuthUser();
 
