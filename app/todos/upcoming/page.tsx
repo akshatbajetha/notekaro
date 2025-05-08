@@ -23,11 +23,10 @@ interface Todo {
   };
 }
 
-function page() {
+function Page() {
   const [isLoading, setIsLoading] = useState(true);
   const [upcomingTodos, setUpcomingTodos] = useState<Todo[]>([]);
-  const { removeTodoFromList, removeTodoFromSection, addCompletedTodo } =
-    useTodoStore();
+  const { removeTodoFromList, removeTodoFromSection } = useTodoStore();
 
   const fetchUpcomingTodos = async () => {
     try {
@@ -35,7 +34,7 @@ function page() {
       if (!response.ok) throw new Error("Failed to fetch upcoming todos");
       const data = await response.json();
       // Convert string dates to Date objects
-      const todosWithDates = data.map((todo: any) => ({
+      const todosWithDates = data.map((todo: Todo) => ({
         ...todo,
         dueDate: new Date(todo.dueDate),
       }));
@@ -73,36 +72,6 @@ function page() {
       setUpcomingTodos(upcomingTodos.filter((todo) => todo.id !== todoId));
     } catch (error) {
       console.error("Error deleting todo: ", error);
-    }
-  };
-
-  const handleCompleteTodo = async ({ id: todoId }: { id: string }) => {
-    const todoToComplete = upcomingTodos.find((todo) => todo.id === todoId);
-
-    if (todoToComplete?.todoListId) {
-      removeTodoFromList(todoId, todoToComplete.todoListId);
-    }
-    if (todoToComplete?.sectionId) {
-      removeTodoFromSection(todoId, todoToComplete.sectionId);
-    }
-
-    try {
-      const response = await fetch("/api/todolists", {
-        method: "PATCH",
-        body: JSON.stringify({ todoId, completed: true }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) throw new Error("Failed to complete todo");
-
-      const completedTodo = await response.json();
-      addCompletedTodo(completedTodo);
-      // Remove from local state
-      setUpcomingTodos(upcomingTodos.filter((todo) => todo.id !== todoId));
-    } catch (error) {
-      console.error("Error completing todo: ", error);
     }
   };
 
@@ -188,4 +157,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

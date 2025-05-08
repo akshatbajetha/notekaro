@@ -317,7 +317,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* <section
+        <section
           id="testimonials"
           className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E]"
         >
@@ -356,8 +356,9 @@ export default function Home() {
                         ))}
                       </div>
                       <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        "NoteKaro has completely transformed how I organize my
-                        work. The integration of notes and tasks is seamless."
+                        &quot;NoteKaro has completely transformed how I organize
+                        my work. The integration of notes and tasks is
+                        seamless.&quot;
                       </p>
                       <div>
                         <p className="font-semibold dark:text-white">
@@ -395,9 +396,9 @@ export default function Home() {
                         ))}
                       </div>
                       <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        "The sketching feature is incredible. I can quickly
+                        &quot;The sketching feature is incredible. I can quickly
                         visualize concepts and share them with my team
-                        instantly."
+                        instantly.&quot;
                       </p>
                       <div>
                         <p className="font-semibold dark:text-white">
@@ -435,8 +436,9 @@ export default function Home() {
                         ))}
                       </div>
                       <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        "As a researcher, I need to keep track of many ideas.
-                        NoteKaro helps me organize everything efficiently."
+                        &quot;As a researcher, I need to keep track of many
+                        ideas. NoteKaro helps me organize everything
+                        efficiently.&quot;
                       </p>
                       <div>
                         <p className="font-semibold dark:text-white">
@@ -452,7 +454,7 @@ export default function Home() {
               </Card>
             </div>
           </div>
-        </section> */}
+        </section>
 
         <section className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-white text-black ">
           <div className="container mx-auto px-4 md:px-6 text-center">

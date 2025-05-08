@@ -64,7 +64,7 @@ export async function getNoteById(noteId: string) {
   }
 }
 
-export async function createNote(title: string, content: any) {
+export async function createNote(title: string, content: string) {
   const user = await getAuthUser();
 
   if (!user) {
@@ -84,7 +84,7 @@ export async function createNote(title: string, content: any) {
       },
     });
 
-    const noteForUser = await prisma.user.update({
+    await prisma.user.update({
       where: {
         id: user.id,
       },
@@ -132,14 +132,14 @@ export async function updateNoteById({
 }: {
   noteId: string;
   title?: string;
-  content?: any;
+  content?: string;
 }) {
   const user = await getAuthUser();
 
   if (!user) {
     throw new Error("User not found");
   }
-  const dataToUpdate: Record<string, any> = {};
+  const dataToUpdate: Record<string, string> = {};
   if (title !== undefined) dataToUpdate.title = title;
   if (content !== undefined) dataToUpdate.content = content;
 

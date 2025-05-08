@@ -13,7 +13,7 @@ import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-function page({ params }: { params: { id: string } }) {
+function Page({ params }: { params: { id: string } }) {
   const { id } = params;
   const router = useRouter();
   const [isAddingTodo, setisAddingTodo] = useState(false);
@@ -228,4 +228,4 @@ function page({ params }: { params: { id: string } }) {
     </div>
   );
 }
-export default page;
+export default Page;

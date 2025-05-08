@@ -32,7 +32,6 @@ export default function AddTodo({
   const [title, setTitle] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [priority, setPriority] = useState<1 | 2 | 3 | 4>(4);
-  const [isCompleted, setIsCompleted] = useState(false);
   const { toast } = useToast();
 
   const {
@@ -47,7 +46,7 @@ export default function AddTodo({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim()) {
-      handleAddTodo({ title, priority, completed: isCompleted, flag, date });
+      handleAddTodo({ title, priority, completed: false, flag, date });
       setTitle("");
       setDate(undefined);
       setPriority(4);

@@ -23,16 +23,6 @@ interface Section {
   todoListId: string;
 }
 
-interface Todo {
-  id: string;
-  title: string;
-  completed: boolean;
-  priority: 1 | 2 | 3 | 4;
-  dueDate: Date | null;
-  todoListId?: string;
-  sectionId?: string;
-}
-
 interface SectionComponentProps {
   section: Section;
   todoListId: string;

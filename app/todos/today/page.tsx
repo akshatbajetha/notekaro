@@ -22,11 +22,10 @@ interface Todo {
   };
 }
 
-function page() {
+function Page() {
   const [isLoading, setIsLoading] = useState(true);
   const [todayTodos, setTodayTodos] = useState<Todo[]>([]);
-  const { removeTodoFromList, removeTodoFromSection, addCompletedTodo } =
-    useTodoStore();
+  const { removeTodoFromList, removeTodoFromSection } = useTodoStore();
 
   useEffect(() => {
     const fetchTodayTodos = async () => {
@@ -35,7 +34,7 @@ function page() {
         if (!response.ok) throw new Error("Failed to fetch today's todos");
         const data = await response.json();
         // Convert string dates to Date objects
-        const todosWithDates = data.map((todo: any) => ({
+        const todosWithDates = data.map((todo: Todo) => ({
           ...todo,
           dueDate: new Date(todo.dueDate),
         }));
@@ -92,7 +91,7 @@ function page() {
 
   return (
     <div className="px-4 mt-20 py-6 max-w-3xl">
-      <h1 className="text-2xl font-bold">Today's Tasks</h1>
+      <h1 className="text-2xl font-bold">Today&apos;s Tasks</h1>
       <Separator className="my-4" />
       <div className="space-y-2">
         {todayTodos.length > 0 ? (
@@ -124,4 +123,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

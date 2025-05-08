@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/nextjs";
 import { prisma } from "./db";
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 

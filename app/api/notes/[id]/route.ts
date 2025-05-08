@@ -1,7 +1,10 @@
 import { getNoteById, updateNoteById } from "@/lib/actions/notes";
 
-export async function GET({ params }: { params: { noteId: string } }) {
-  const note = await getNoteById(params.noteId);
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
+  const note = await getNoteById(params.id);
 
   return new Response(JSON.stringify(note));
 }
