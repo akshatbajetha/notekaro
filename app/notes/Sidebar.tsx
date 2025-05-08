@@ -118,7 +118,7 @@ function Sidebar({ width }: { width: number }) {
 
   useEffect(() => {
     fetchNotes();
-  });
+  }, []);
 
   const handleCreateNote = async () => {
     try {
@@ -146,10 +146,10 @@ function Sidebar({ width }: { width: number }) {
 
   return (
     <div
-      className="w-60 flex flex-col"
+      className="w-60 flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg"
       style={{
         width: `${width}px`,
-        minWidth: "200px",
+        minWidth: "240px",
         maxWidth: "500px",
       }}
     >
@@ -229,7 +229,7 @@ function Sidebar({ width }: { width: number }) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto">
+      <nav className="flex-1 flex flex-col">
         {/* Notes section */}
         <div className="px-3 py-2">
           <div className="flex items-center justify-between px-2 py-1 dark:text-gray-100 text-gray-900">
@@ -240,45 +240,47 @@ function Sidebar({ width }: { width: number }) {
               className="w-4 h-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded cursor-pointer"
             />
           </div>
-          {isLoading ? (
-            <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-            </div>
-          ) : notes.length !== 0 ? (
-            notes.map((note) => (
-              <div
-                key={note.id}
-                className={`flex flex-row mb-1 justify-between hover:bg-gray-200 dark:hover:bg-gray-800 items-center rounded-md pr-2 ${
-                  selectedNote?.id === note.id
-                    ? "bg-gray-200 dark:bg-gray-800"
-                    : ""
-                }`}
-              >
-                <Link
-                  key={note.id}
-                  href={`/notes/${note.id}`}
-                  onClick={() => setSelectedNote(note)}
-                  className="flex items-center space-x-2 px-2 py-1 dark:text-gray-100 text-gray-900  cursor-pointer w-full"
-                >
-                  <File className="w-4 h-4 flex-shrink-0" />
-                  <span className="text-sm">{note.title}</span>
-                </Link>
-                <Trash2Icon
-                  onClick={() => handleDeleteNote(note.id)}
-                  className="w-4 h-4 rounded cursor-pointer"
-                />
+          <div className="mt-2 h-[calc(100vh-120px)] overflow-y-auto">
+            {isLoading ? (
+              <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
               </div>
-            ))
-          ) : (
-            <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
-              <p className="text-sm dark:text-gray-300 text-gray-700">
-                No notes found
-              </p>
-            </div>
-          )}
+            ) : notes.length !== 0 ? (
+              notes.map((note) => (
+                <div
+                  key={note.id}
+                  className={`flex flex-row mb-1 justify-between hover:bg-gray-200 dark:hover:bg-gray-800 items-center rounded-md pr-2 ${
+                    selectedNote?.id === note.id
+                      ? "bg-gray-200 dark:bg-gray-800"
+                      : ""
+                  }`}
+                >
+                  <Link
+                    key={note.id}
+                    href={`/notes/${note.id}`}
+                    onClick={() => setSelectedNote(note)}
+                    className="flex items-center space-x-2 px-2 py-1 dark:text-gray-100 text-gray-900  cursor-pointer w-full"
+                  >
+                    <File className="w-4 h-4 flex-shrink-0" />
+                    <span className="text-sm">{note.title}</span>
+                  </Link>
+                  <Trash2Icon
+                    onClick={() => handleDeleteNote(note.id)}
+                    className="w-4 h-4 rounded cursor-pointer"
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
+                <p className="text-sm dark:text-gray-300 text-gray-700">
+                  No notes found
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
     </div>

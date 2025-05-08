@@ -171,22 +171,21 @@ export default function Home() {
 
           <div className="relative rounded-lg overflow-hidden bg-gray-300 aspect-video max-w-4xl mx-auto shadow-lg">
             {/* Video placeholder - replace src with your actual video */}
+
             <video
               className="w-full h-full object-cover"
               poster={videoPoster.src}
               controls
               preload="none"
             >
-              <source type="video/mp4" />
+              <source
+                src="https://notekaro.b-cdn.net/Dummy%20Video%20For%20Website.mp4"
+                type="video/mp4"
+              />
               Your browser does not support the video tag.
             </video>
 
-            {/* Play button overlay */}
-            <div className="absolute inset-0 flex items-center justify-center group cursor-pointer">
-              <div className="bg-blue-500 rounded-full p-4 flex items-center justify-center">
-                <Play className="w-6 h-6 text-white" />
-              </div>
-            </div>
+            {/* Play button overlay - only show when video is not playing */}
           </div>
         </section>
 

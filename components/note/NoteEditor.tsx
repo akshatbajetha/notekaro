@@ -3,7 +3,7 @@ import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 import { useTheme } from "next-themes";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { useNotesStore } from "@/store/noteStore";
 
@@ -17,6 +17,8 @@ export default function NoteEditor({
   const [initialContent, setInitialContent] = useState<
     PartialBlock[] | undefined | "loading"
   >("loading");
+  const editorRef = useRef<BlockNoteEditor | null>(null);
+  const isInitialMount = useRef(true);
 
   const { theme } = useTheme();
 
@@ -27,31 +29,48 @@ export default function NoteEditor({
 
   const debouncedSave = useDebouncedCallback(async (blocks: Block[]) => {
     const contentString = JSON.stringify(blocks);
-    updateNoteContent(noteId, contentString);
-    await fetch(`/api/notes/${noteId}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        title: undefined,
-        content: contentString,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    if (note?.content !== contentString) {
+      updateNoteContent(noteId, contentString);
+      await fetch(`/api/notes/${noteId}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          title: undefined,
+          content: contentString,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
   }, 1000);
 
   useEffect(() => {
     const content = note?.content ?? noteContent;
-    setInitialContent(
-      content ? (JSON.parse(content) as PartialBlock[]) : undefined
-    );
+    if (isInitialMount.current) {
+      setInitialContent(
+        content
+          ? (JSON.parse(content) as PartialBlock[])
+          : [
+              {
+                type: "paragraph",
+                content: "",
+              },
+            ]
+      );
+      isInitialMount.current = false;
+    }
   }, [noteId, note?.content, noteContent]);
 
   const editor = useMemo(() => {
     if (initialContent === "loading") {
       return undefined;
     }
-    return BlockNoteEditor.create({ initialContent });
+    if (!editorRef.current) {
+      editorRef.current = BlockNoteEditor.create({
+        initialContent,
+      });
+    }
+    return editorRef.current;
   }, [initialContent]);
 
   if (editor === undefined) {
@@ -59,14 +78,43 @@ export default function NoteEditor({
   }
 
   return (
-    <BlockNoteView
-      editor={editor}
-      data-theming-css-variables-demo
-      data-color-scheme={theme === "dark" ? "dark" : "light"}
-      onChange={() => {
-        debouncedSave(editor.document);
-      }}
-      className="w-full"
-    />
+    <div className="w-[90%] h-full">
+      <style jsx global>{`
+        .bn-container {
+          border: none !important;
+          margin-left: 40px !important;
+          box-shadow: none !important;
+          background-color: transparent !important;
+        }
+        .bn-editor {
+          padding: 0 !important;
+          background-color: transparent !important;
+        }
+        .bn-content {
+          padding: 0 !important;
+          background-color: transparent !important;
+        }
+        .bn-slash-menu {
+          background-color: var(--mantine-color-body) !important;
+          border: 1px solid var(--mantine-color-gray-3) !important;
+          border-radius: 8px !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+        }
+        .bn-slash-menu-item {
+          padding: 8px 12px !important;
+        }
+        .bn-slash-menu-item:hover {
+          background-color: var(--mantine-color-gray-1) !important;
+        }
+      `}</style>
+      <BlockNoteView
+        editor={editor}
+        theme={theme === "dark" ? "dark" : "light"}
+        className="w-full h-full"
+        onChange={() => {
+          debouncedSave(editor.document);
+        }}
+      />
+    </div>
   );
 }
