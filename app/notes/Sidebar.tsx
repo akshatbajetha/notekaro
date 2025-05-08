@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Search, Plus, File, Loader2, Trash2Icon, X } from "lucide-react";
+import { Search, Plus, File, Trash2Icon, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -118,7 +118,7 @@ function Sidebar({ width }: { width: number }) {
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  });
 
   const handleCreateNote = async () => {
     try {

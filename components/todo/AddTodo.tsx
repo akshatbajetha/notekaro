@@ -9,7 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Flag, Loader2 } from "lucide-react";
+import { CalendarIcon, Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format, isBefore, startOfDay } from "date-fns";
 import { useTodoStore } from "@/store/todoStore";

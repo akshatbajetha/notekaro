@@ -1,7 +1,7 @@
 import { Editor } from "@/components/note/DynamicEditor";
 import NoteTitleEditor from "@/components/note/NoteTitleEditor";
 import { Separator } from "@/components/ui/separator";
-import { getNoteById, updateNoteById } from "@/lib/actions/notes";
+import { getNoteById } from "@/lib/actions/notes";
 import { redirect } from "next/navigation";
 
 async function page({ params }: { params: { id: string } }) {

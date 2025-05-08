@@ -13,15 +13,6 @@ import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-interface Todo {
-  id: string;
-  title: string;
-  completed: boolean;
-  priority: 1 | 2 | 3 | 4;
-  todoListId?: string;
-  sectionId?: string;
-}
-
 function page({ params }: { params: { id: string } }) {
   const { id } = params;
   const router = useRouter();

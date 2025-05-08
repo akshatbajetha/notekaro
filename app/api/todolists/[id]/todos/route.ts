@@ -1,6 +1,3 @@
-// Todos inside list without section operations
-// ListId to be sent
-
 import { createTodoInList, getTodosByListId } from "@/lib/actions/todo";
 
 export async function GET(

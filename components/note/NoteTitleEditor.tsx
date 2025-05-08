@@ -1,6 +1,5 @@
 "use client";
 
-import { updateNoteById } from "@/lib/actions/notes";
 import { useEffect, useRef, useState } from "react";
 
 import { useDebouncedCallback } from "use-debounce";

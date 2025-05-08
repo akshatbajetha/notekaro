@@ -1,6 +1,3 @@
-// Section operations
-// ListId to be sent
-
 import {
   createSectionInList,
   deleteSection,

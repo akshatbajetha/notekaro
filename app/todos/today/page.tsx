@@ -5,7 +5,6 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import TodoComponent from "@/components/todo/TodoComponent";
 import { useTodoStore } from "@/store/todoStore";
-import { startOfDay, endOfDay, addDays } from "date-fns";
 import Link from "next/link";
 import { Hash } from "lucide-react";
 

@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-// import { useTodoist } from "@/lib/store";
-// import { Task, Priority } from "@/types";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CalendarIcon, Pencil, Trash2, Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format, isBefore, set, startOfDay } from "date-fns";
+import { format, isBefore, startOfDay } from "date-fns";
 import { Input } from "@/components/ui/input";
 import {
   Popover,

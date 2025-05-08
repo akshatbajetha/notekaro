@@ -1,5 +1,4 @@
 import { getNoteById, updateNoteById } from "@/lib/actions/notes";
-import { NextRequest } from "next/server";
 
 export async function GET({ params }: { params: { noteId: string } }) {
   const note = await getNoteById(params.noteId);

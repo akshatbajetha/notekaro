@@ -4,7 +4,7 @@ import React, { useCallback, useState } from "react";
 
 import Sidebar from "./Sidebar";
 
-function page({ children }: { children: React.ReactNode }) {
+function Page({ children }: { children: React.ReactNode }) {
   const [isResizing, setIsResizing] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(240);
 
@@ -50,4 +50,4 @@ function page({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default page;
+export default Page;

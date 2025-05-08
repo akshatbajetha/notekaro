@@ -3,9 +3,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Search,
-  Plus,
-  File,
-  Loader2,
   Trash2Icon,
   X,
   Hash,

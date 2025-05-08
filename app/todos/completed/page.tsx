@@ -8,17 +8,6 @@ import { CircleCheckBig, Hash } from "lucide-react";
 import { useTodoStore } from "@/store/todoStore";
 import { Separator } from "@/components/ui/separator";
 
-interface CompletedTodo {
-  id: string;
-  title: string;
-  completed: boolean;
-  updatedAt: string;
-  todoList: {
-    id: string;
-    title: string;
-  };
-}
-
 export default function CompletedTodosPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { completedTodos, setCompletedTodos } = useTodoStore();

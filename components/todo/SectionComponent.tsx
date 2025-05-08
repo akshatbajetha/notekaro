@@ -8,10 +8,8 @@ import {
   Plus,
   Trash2,
   Pencil,
-  Check,
   Loader2,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import TodoComponent from "./TodoComponent";
 import AddTodo from "./AddTodo";

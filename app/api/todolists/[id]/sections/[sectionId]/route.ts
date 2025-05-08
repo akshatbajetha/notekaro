@@ -1,6 +1,3 @@
-// Todos inside section operations
-// SectionId to be sent
-
 import {
   createTodoInSection,
   deleteTodo,

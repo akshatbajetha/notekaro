@@ -1,8 +1,6 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import videoPoster from "@/public/benefits-light.png";
 
 import {
@@ -15,13 +13,11 @@ import {
   Play,
 } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import GetStartedButton from "@/components/GetStartedButton";
-import { useTheme } from "next-themes";
 import { AppsCarousel } from "@/components/AppsCarousel";
 import BenefitsImage from "@/components/BenefitsImage";
-import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
+import { IconBrandGithub } from "@tabler/icons-react";
 
 export default function Home() {
   return (
@@ -321,7 +317,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section
+        {/* <section
           id="testimonials"
           className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E]"
         >
@@ -456,7 +452,7 @@ export default function Home() {
               </Card>
             </div>
           </div>
-        </section>
+        </section> */}
 
         <section className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-white text-black ">
           <div className="container mx-auto px-4 md:px-6 text-center">

@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
 import { NotebookPen, Pencil, ListTodo } from "lucide-react";
 import { NavBar } from "./ui/tubelight-navbar";
 import { ToggleTheme } from "./ToggleTheme";
