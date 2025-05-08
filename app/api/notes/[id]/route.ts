@@ -4,23 +4,56 @@ export async function GET(
   _req: Request,
   { params }: { params: { id: string } }
 ) {
-  const note = await getNoteById(params.id);
+  try {
+    const note = await getNoteById(params.id);
 
-  return new Response(JSON.stringify(note));
+    if (!note) {
+      return new Response(JSON.stringify({ error: "Note not found" }), {
+        status: 404,
+      });
+    }
+
+    return new Response(JSON.stringify(note));
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+    });
+  }
 }
 
 export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  const noteId = params.id;
+  try {
+    const noteId = params.id;
+    const { title, content } = await req.json();
 
-  const { title, content } = await req.json();
+    if (!title && !content) {
+      return new Response(
+        JSON.stringify({ error: "No data provided to update" }),
+        {
+          status: 400,
+        }
+      );
+    }
 
-  const updatedNote = await updateNoteById({
-    noteId,
-    title,
-    content,
-  });
-  return new Response(JSON.stringify(updatedNote));
+    const updatedNote = await updateNoteById({
+      noteId,
+      title,
+      content,
+    });
+
+    if (!updatedNote) {
+      return new Response(JSON.stringify({ error: "Note not found" }), {
+        status: 404,
+      });
+    }
+
+    return new Response(JSON.stringify(updatedNote));
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+    });
+  }
 }
