@@ -3,15 +3,7 @@
 import Link from "next/link";
 import videoPoster from "@/public/benefits-light.png";
 
-import {
-  Pencil,
-  CheckSquare,
-  FileEdit,
-  Clock,
-  Zap,
-  Bell,
-  Play,
-} from "lucide-react";
+import { Pencil, CheckSquare, FileEdit, Clock, Zap, Bell } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
 import { Card, CardContent } from "@/components/ui/card";
 import GetStartedButton from "@/components/GetStartedButton";
