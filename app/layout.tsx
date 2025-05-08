@@ -5,6 +5,7 @@ import "./globals.css";
 import { TopNavbar } from "@/components/TopNavbar";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/toaster";
+import { Analytics } from "@vercel/analytics/react";
 import AuthComponent from "@/components/AuthComponent";
 
 const geistSans = localFont({
@@ -99,6 +100,7 @@ export default function RootLayout({
             <AuthComponent />
             {children}
             <Toaster />
+            <Analytics />
           </ThemeProvider>
         </body>
       </html>
