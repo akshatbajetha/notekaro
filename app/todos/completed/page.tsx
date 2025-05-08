@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { CircleCheckBig, Hash } from "lucide-react";
 import { useTodoStore } from "@/store/todoStore";
+import { Separator } from "@/components/ui/separator";
 
 interface CompletedTodo {
   id: string;
@@ -24,12 +25,6 @@ export default function CompletedTodosPage() {
 
   useEffect(() => {
     const fetchCompletedTodos = async () => {
-      // If we already have completed todos in the store, use them
-      if (completedTodos.length > 0) {
-        setIsLoading(false);
-        return;
-      }
-
       try {
         const response = await fetch("/api/todolists/completed");
         if (!response.ok) throw new Error("Failed to fetch completed todos");
@@ -63,6 +58,7 @@ export default function CompletedTodosPage() {
   return (
     <div className="px-4 mt-20 py-6 max-w-3xl">
       <h1 className="text-2xl font-bold mb-6">Completed Tasks</h1>
+      <Separator className="my-4" />
       <div className="space-y-2">
         {completedTodos.map((todo) => (
           <div

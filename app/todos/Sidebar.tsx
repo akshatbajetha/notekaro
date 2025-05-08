@@ -224,21 +224,30 @@ function Sidebar({ width }: { width: number }) {
         <div className="flex flex-col mt-4 gap-y-2">
           <Link
             href={"/todos/today"}
-            className="flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md"
+            className={cn(
+              "flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md",
+              pathName === "/todos/today" && "bg-gray-200 dark:bg-gray-800"
+            )}
           >
             <CalendarCheck className="w-4 h-4" />
             <span className="text-xs font-medium uppercase">Today</span>
           </Link>
           <Link
             href={"/todos/upcoming"}
-            className="flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md"
+            className={cn(
+              "flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md",
+              pathName === "/todos/upcoming" && "bg-gray-200 dark:bg-gray-800"
+            )}
           >
             <CalendarClock className="w-4 h-4" />
             <span className="text-xs font-medium uppercase">Upcoming</span>
           </Link>
           <Link
             href={"/todos/completed"}
-            className="flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md"
+            className={cn(
+              "flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md",
+              pathName === "/todos/completed" && "bg-gray-200 dark:bg-gray-800"
+            )}
           >
             <CircleCheckBig className="w-4 h-4" />
             <span className="text-xs font-medium uppercase">Completed</span>
@@ -266,11 +275,11 @@ function Sidebar({ width }: { width: number }) {
           {!collapsed && (
             <div className="mt-2 h-[40vh] overflow-y-auto">
               {isLoading ? (
-                <div className="pt-4 flex flex-col gap-y-4 items-start justify-center">
-                  <Skeleton className="h-4 w-[60%]" />
-                  <Skeleton className="h-4 w-[60%]" />
-                  <Skeleton className="h-4 w-[60%]" />
-                  <Skeleton className="h-4 w-[60%]" />
+                <div className="pt-4 flex flex-col gap-y-4 items-start justify-center ml-4">
+                  <Skeleton className="h-4 w-[80%]" />
+                  <Skeleton className="h-4 w-[80%]" />
+                  <Skeleton className="h-4 w-[80%]" />
+                  <Skeleton className="h-4 w-[80%]" />
                 </div>
               ) : todoLists.length !== 0 ? (
                 todoLists.map((todoList) => (

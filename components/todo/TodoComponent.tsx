@@ -38,9 +38,11 @@ const priorityColors = {
 export default function TodoComponent({
   todo,
   deleteTodo,
+  onUpdate,
 }: {
   todo: Todo;
   deleteTodo: (id: string) => void;
+  onUpdate?: () => void;
 }) {
   // const { toggleTaskCompletion, updateTask, deleteTask } = useTodoist();
   const [isEditing, setIsEditing] = useState(false);
@@ -52,6 +54,14 @@ export default function TodoComponent({
   const { toast, dismiss } = useToast();
   const toastTimeoutRef = useRef<NodeJS.Timeout>();
   const debounceTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Update local state when todo changes
+  useEffect(() => {
+    setTitle(todo.title);
+    setIsCompleted(todo.completed);
+    setPriority(todo.priority);
+    setDate(todo.dueDate);
+  }, [todo]);
 
   // Initialize audio on component mount
   useEffect(() => {
@@ -222,29 +232,68 @@ export default function TodoComponent({
       // Remove from completed todos
       removeCompletedTodo(todo.id);
     }
-    console.log("Calling debounceCompletedUpdate");
 
     debounceCompletedUpdate(newCompleted);
-    console.log("Called");
   };
 
   const handleUpdateTodo = () => {
     if (title.trim()) {
       setTitle(title.trim());
-      // Code to update Todo in the database
+
+      // Update in store immediately
+      if (todo.sectionId) {
+        updateTodoInSection(todo.id, todo.sectionId, {
+          ...todo,
+          title: title.trim(),
+          priority,
+          dueDate: date,
+        });
+      } else if (todo.todoListId) {
+        updateTodoInList(todo.id, todo.todoListId, {
+          ...todo,
+          title: title.trim(),
+          priority,
+          dueDate: date,
+        });
+      }
+
+      // Then update in database
       try {
         fetch("/api/todolists", {
           method: "PATCH",
           body: JSON.stringify({
             todoId: todo.id,
-            title,
+            title: title.trim(),
             completed: isCompleted,
             priority,
+            dueDate: date ? date.toISOString() : null,
           }),
           headers: {
             "Content-Type": "application/json",
           },
-        });
+        })
+          .then(() => {
+            // Show success toast after API call succeeds
+            toast({
+              title: "Todo updated successfully",
+            });
+            // Call onUpdate callback if provided
+            onUpdate?.();
+          })
+          .catch((error) => {
+            console.error("Error updating todo: ", error);
+            // Revert the store update on error
+            if (todo.sectionId) {
+              updateTodoInSection(todo.id, todo.sectionId, todo);
+            } else if (todo.todoListId) {
+              updateTodoInList(todo.id, todo.todoListId, todo);
+            }
+            // Show error toast
+            toast({
+              title: "Failed to update todo",
+              variant: "destructive",
+            });
+          });
       } catch (error) {
         console.error("Error updating todo: ", error);
       }
@@ -265,7 +314,7 @@ export default function TodoComponent({
   return (
     <div
       className={cn(
-        "group flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-muted/50 transition-colors",
+        "flex-1 group flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-muted/50 transition-colors",
         todo.completed && "opacity-60"
       )}
     >

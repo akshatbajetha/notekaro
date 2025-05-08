@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useTodoStore } from "@/store/todoStore";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Todo {
   id: string;
@@ -23,6 +24,7 @@ interface Todo {
 
 function page({ params }: { params: { id: string } }) {
   const { id } = params;
+  const router = useRouter();
   const [isAddingTodo, setisAddingTodo] = useState(false);
   const [isAddingSection, setIsAddingSection] = useState(false);
   const [todoListTitle, setTodoListTitle] = useState<string>("");
@@ -93,10 +95,19 @@ function page({ params }: { params: { id: string } }) {
       const fetchTodoList = async () => {
         try {
           const response = await fetch(`/api/todolists/${id}`);
+          if (!response.ok) {
+            router.push("/todos");
+            return;
+          }
           const todoList = await response.json();
+          if (!todoList) {
+            router.push("/todos");
+            return;
+          }
           setTodoListTitle(todoList.title);
         } catch (error) {
           console.error("Error fetching todo list: ", error);
+          router.push("/todos");
         } finally {
           setIsLoadingTitle(false);
         }

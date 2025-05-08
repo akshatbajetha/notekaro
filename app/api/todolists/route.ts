@@ -33,12 +33,14 @@ export async function PATCH(req: Request) {
   const title = body.title;
   const completed = body.completed;
   const priority = body.priority;
+  const dueDate = body.dueDate ? new Date(body.dueDate) : null;
 
   const todo = await updateTodo({
     id: todoId,
     title,
     completed,
     priority,
+    dueDate,
   });
   return new Response(JSON.stringify(todo));
 }

@@ -460,11 +460,13 @@ export async function updateTodo({
   title,
   completed,
   priority,
+  dueDate,
 }: {
   id: string;
   title: string;
   completed: boolean;
   priority: 1 | 2 | 3 | 4;
+  dueDate?: Date | null;
 }) {
   const user = await getAuthUser();
 
@@ -481,12 +483,89 @@ export async function updateTodo({
         title,
         completed,
         priority,
+        dueDate,
       },
     });
 
     return todo;
   } catch (error) {
-    console.log("Error while updating todo in section: ", error);
+    console.log("Error while updating todo: ", error);
     return;
+  }
+}
+
+export async function getTodosDueToday() {
+  const user = await getAuthUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  try {
+    const today = new Date();
+    const startOfToday = new Date(today.setHours(0, 0, 0, 0));
+    const endOfToday = new Date(today.setHours(23, 59, 59, 999));
+
+    const todos = await prisma.todo.findMany({
+      where: {
+        dueDate: {
+          gte: startOfToday,
+          lte: endOfToday,
+        },
+        completed: false,
+      },
+      include: {
+        todoList: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+      orderBy: {
+        priority: "asc",
+      },
+    });
+    return todos;
+  } catch (error) {
+    console.log("Error while fetching today's todos: ", error);
+    return [];
+  }
+}
+
+export async function getUpcomingTodos() {
+  const user = await getAuthUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  try {
+    const today = new Date();
+    const startOfToday = new Date(today.setHours(0, 0, 0, 0));
+
+    const todos = await prisma.todo.findMany({
+      where: {
+        dueDate: {
+          gt: startOfToday,
+        },
+        completed: false,
+      },
+      include: {
+        todoList: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+      orderBy: {
+        dueDate: "asc",
+      },
+    });
+    return todos;
+  } catch (error) {
+    console.log("Error while fetching upcoming todos: ", error);
+    return [];
   }
 }
