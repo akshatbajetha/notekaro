@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/send-todo-reminders",
+      "schedule": "0 18 * * *"
+    }
+  ]
+}

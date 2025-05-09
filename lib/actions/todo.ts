@@ -2,6 +2,10 @@
 
 import { prisma } from "../db";
 import { getOrCreateUser } from "../getOrCreateUser";
+import { Resend } from "resend";
+import { TodoReminderTemplate } from "@/components/email/TodoReminderTemplate";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function getAuthUser() {
   const user = await getOrCreateUser();
@@ -567,5 +571,55 @@ export async function getUpcomingTodos() {
   } catch (error) {
     console.log("Error while fetching upcoming todos: ", error);
     return [];
+  }
+}
+
+export async function sendTodoReminders() {
+  try {
+    // Get all users
+    const users = await prisma.user.findMany();
+
+    for (const user of users) {
+      // Get tomorrow's date
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+
+      const nextDay = new Date(tomorrow);
+      nextDay.setDate(nextDay.getDate() + 1);
+
+      // Find todos due tomorrow
+      const todos = await prisma.todo.findMany({
+        where: {
+          dueDate: {
+            gte: tomorrow,
+            lt: nextDay,
+          },
+          completed: false,
+        },
+        include: {
+          todoList: true,
+          section: true,
+        },
+      });
+
+      if (todos.length > 0) {
+        // Send email
+        await resend.emails.send({
+          from: "Notekaro <reminders@notekaro.com>",
+          to: user.email,
+          subject: "Your Upcoming Todos for Tomorrow",
+          react: TodoReminderTemplate({
+            todos,
+            userName: user.email.split("@")[0],
+          }),
+        });
+      }
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error sending todo reminders:", error);
+    throw new Error("Failed to send todo reminders");
   }
 }
