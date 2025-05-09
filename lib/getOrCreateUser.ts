@@ -1,5 +1,5 @@
 import { prisma } from "./db";
-import { clerkClient, currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function getOrCreateUser() {
   const currUser = await currentUser();
