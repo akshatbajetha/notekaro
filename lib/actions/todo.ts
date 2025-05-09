@@ -223,6 +223,11 @@ export async function createTodoInList({
         completed,
         priority,
         dueDate,
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
         todoList: {
           connect: {
             id: listId,
@@ -297,6 +302,11 @@ export async function createTodoInSection({
         completed,
         priority,
         dueDate,
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
         section: {
           connect: {
             id: sectionId,
