@@ -20,14 +20,14 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "NoteKaro - All-in-One Productivity App",
+  title: "NoteKaro - Notes, Sketches & Tasks in One Place",
   description:
-    "NoteKaro is an open-source all-in-one productivity app with note-taking, sketching, and task management.",
+    "NoteKaro: Your all-in-one workspace for notes, sketches, and todos with reminders. Start creating instantly!",
   metadataBase: new URL("https://notekaro.com"),
   openGraph: {
-    title: "NoteKaro - All-in-One Productivity App",
+    title: "NoteKaro - Notes, Sketches & Tasks in One Place",
     description:
-      "Take notes, sketch ideas, and manage your tasks in one beautiful, open-source app.",
+      "NoteKaro: Your all-in-one workspace for notes, sketches, and todos with reminders. Start creating instantly!",
     url: "https://notekaro.com",
     siteName: "NoteKaro",
     images: [
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
         url: "/og-image.png", // optional, but recommended
         width: 1200,
         height: 630,
-        alt: "NoteKaro - Productivity App",
+        alt: "NoteKaro",
       },
     ],
     locale: "en_US",
@@ -43,9 +43,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "NoteKaro - All-in-One Productivity App",
+    title: "NoteKaro - Notes, Sketches & Tasks in One Place",
     description:
-      "Take notes, sketch ideas, and manage your tasks in one beautiful, open-source app.",
+      "NoteKaro: Your all-in-one workspace for notes, sketches, and todos with reminders. Start creating instantly!",
     images: ["/og-image.png"],
     creator: "@akshatbajetha", // optional
   },
