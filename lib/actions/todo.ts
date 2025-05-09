@@ -95,6 +95,7 @@ export async function getTodosBySectionId({
       where: {
         sectionId: sectionId,
         completed: false,
+        userId: user.id,
       },
       orderBy: {
         createdAt: "asc",
@@ -120,6 +121,7 @@ export async function getTodosByListId({ listId }: { listId: string }) {
         todoListId: listId,
         sectionId: null,
         completed: false,
+        userId: user.id,
       },
       orderBy: {
         createdAt: "asc",
@@ -143,6 +145,7 @@ export async function getCompletedTodos() {
     const completedTodos = await prisma.todo.findMany({
       where: {
         completed: true,
+        userId: user.id,
       },
       select: {
         id: true,
@@ -517,6 +520,7 @@ export async function getTodosDueToday() {
           lte: endOfToday,
         },
         completed: false,
+        userId: user.id,
       },
       include: {
         todoList: {
@@ -554,6 +558,7 @@ export async function getUpcomingTodos() {
           gt: startOfToday,
         },
         completed: false,
+        userId: user.id,
       },
       include: {
         todoList: {
