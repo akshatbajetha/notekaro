@@ -606,6 +606,7 @@ export async function sendTodoReminders() {
       // Find todos due tomorrow
       const todos = await prisma.todo.findMany({
         where: {
+          userId: user.id,
           dueDate: {
             gte: tomorrow,
             lt: nextDay,

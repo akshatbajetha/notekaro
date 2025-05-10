@@ -461,6 +461,22 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <footer className="py-8 bg-[#F5F5F5] dark:bg-[#1E1E1E] border-t border-gray-200 dark:border-gray-800">
+          <div className="container mx-auto px-4 text-center">
+            <p className="text-gray-600 dark:text-gray-400">
+              Have questions or feedback? We'd love to hear from you! Reach out
+              to us at{" "}
+              <a
+                href="mailto:feedback@notekaro.com"
+                target="_blank"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                feedback@notekaro.com
+              </a>
+            </p>
+          </div>
+        </footer>
       </main>
       <footer className="border-t border-gray-200 dark:border-gray-800 bg-[#F5F5F5] dark:bg-[#1E1E1E]">
         <div className="container mx-auto px-4 pt-12 pb-6 md:px-6">
