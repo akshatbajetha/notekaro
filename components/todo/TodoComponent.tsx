@@ -470,17 +470,15 @@ export default function TodoComponent({
                   </span>
                 )}
 
-                {todo.priority > 1 && (
-                  <span className="flex items-center text-xs text-foreground/75">
-                    <span
-                      className={cn(
-                        "w-2 h-2 rounded-full mr-1",
-                        priorityColors[priority as 1 | 2 | 3 | 4]
-                      )}
-                    ></span>
-                    P{priority}
-                  </span>
-                )}
+                <span className="flex items-center text-xs text-foreground/75">
+                  <span
+                    className={cn(
+                      "w-2 h-2 rounded-full mr-1",
+                      priorityColors[priority as 1 | 2 | 3 | 4]
+                    )}
+                  ></span>
+                  P{priority}
+                </span>
               </div>
             </div>
 
