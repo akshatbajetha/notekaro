@@ -595,13 +595,13 @@ export async function sendTodoReminders() {
     const users = await prisma.user.findMany();
 
     for (const user of users) {
-      // Get tomorrow's date
+      // Get tomorrow's date in UTC
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
+      tomorrow.setUTCHours(0, 0, 0, 0);
 
       const nextDay = new Date(tomorrow);
-      nextDay.setDate(nextDay.getDate() + 1);
+      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
 
       // Find todos due tomorrow
       const todos = await prisma.todo.findMany({

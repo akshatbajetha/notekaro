@@ -56,17 +56,19 @@ export default function CompletedTodosPage() {
           >
             <div className="flex-1">
               <p className="text-sm text-muted-foreground flex items-center">
-                <CircleCheckBig className="w-4 h-4 mr-2 text-green-500" />
-                You completed a task: {todo.title}
+                <CircleCheckBig className="w-4 h-4 mr-2 text-green-500 flex-shrink-0" />
+                <span className="max-w-[calc(100%-4rem)] break-words mx-2">
+                  You completed a task: {todo.title}
+                </span>
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <span className="text-xs text-muted-foreground">
+            <div className="flex items-center gap-4 min-w-[200px] justify-between">
+              <span className="text-xs text-muted-foreground whitespace-nowrap">
                 {format(new Date(todo.updatedAt), "MMM d, yyyy")}
               </span>
               <Link
                 href={`/todos/${todo.todoList.id}`}
-                className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors flex items-center"
+                className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors flex items-center whitespace-nowrap"
               >
                 <Hash className="w-3 h-3 mr-[2px]" />
                 <span>{todo.todoList.title}</span>
