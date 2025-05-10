@@ -465,7 +465,7 @@ export default function Home() {
         <footer className="py-8 bg-[#F5F5F5] dark:bg-[#1E1E1E] border-t border-gray-200 dark:border-gray-800">
           <div className="container mx-auto px-4 text-center">
             <p className="text-gray-600 dark:text-gray-400">
-              Have questions or feedback? We'd love to hear from you! Reach out
+              Have questions or feedback? We&apos;d love to hear from you! Reach out
               to us at{" "}
               <a
                 href="mailto:feedback@notekaro.com"
