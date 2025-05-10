@@ -58,7 +58,8 @@ export default function CompletedTodosPage() {
               <p className="text-sm text-muted-foreground flex items-center">
                 <CircleCheckBig className="w-4 h-4 mr-2 text-green-500 flex-shrink-0" />
                 <span className="max-w-[calc(100%-4rem)] break-words mx-2">
-                  You completed a task: {todo.title}
+                  <span className="font-bold ">You completed a task:</span>{" "}
+                  {todo.title}
                 </span>
               </p>
             </div>
