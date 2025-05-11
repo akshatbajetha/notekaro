@@ -1,8 +1,8 @@
 function NoteKaroLogo() {
   return (
-    <h1 className="text-xl font-bold tracking-tight text-blue-600 dark:text-blue-400">
+    <div className="text-xl flex items-center gap-x-2 font-bold tracking-tight text-foreground">
       NoteKaro
-    </h1>
+    </div>
   );
 }
 export default NoteKaroLogo;

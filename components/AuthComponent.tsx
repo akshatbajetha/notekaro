@@ -1,4 +1,8 @@
-import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
+"use client";
+
+import { useSession } from "next-auth/react";
+import { SignInButton } from "./sign-in-button";
+import { signOut } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,10 +11,10 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import UserIcon from "./ProfileIcon";
-import SignoutLink from "./SignOutLink";
+import ProfileIcon from "./ProfileIcon";
 
 function AuthComponent() {
+  const { data: session } = useSession();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -20,28 +24,29 @@ function AuthComponent() {
           aria-label="User Icon"
           title="Profile"
         >
-          <UserIcon />
+          <ProfileIcon />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48" align="start" sideOffset={10}>
-        <SignedIn>
-          <DropdownMenuItem>
-            <SignoutLink />
-          </DropdownMenuItem>
-        </SignedIn>
-        <SignedOut>
-          <DropdownMenuItem>
-            <SignInButton mode="modal">
-              <button className="w-full text-left">Login</button>
-            </SignInButton>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <SignUpButton mode="modal">
-              <button className="w-full text-left">Register</button>
-            </SignUpButton>
-          </DropdownMenuItem>
-        </SignedOut>
+        {session ? (
+          <>
+            <DropdownMenuItem>
+              <span className="text-sm text-muted-foreground">
+                {session.user?.email}
+              </span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Button variant="ghost" onClick={() => signOut()}>
+                Sign out
+              </Button>
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <SignInButton className="w-full" variant="ghost">
+            Sign in
+          </SignInButton>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

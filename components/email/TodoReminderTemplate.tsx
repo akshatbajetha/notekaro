@@ -39,7 +39,7 @@ export const TodoReminderTemplate = ({
             <h3 style={{ margin: "0", color: "#333" }}>{todo.title}</h3>
             {todo.dueDate && (
               <p style={{ margin: "5px 0", color: "#666" }}>
-                Due: {new Date(todo.dueDate).toLocaleString()}
+                Due: {new Date(todo.dueDate).toLocaleDateString()}
               </p>
             )}
           </div>

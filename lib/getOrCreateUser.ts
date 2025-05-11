@@ -1,52 +1,22 @@
-import { prisma } from "./db";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function getOrCreateUser() {
-  const currUser = await currentUser();
-
-  if (!currUser) {
-    throw new Error("User not found");
+  const session = await auth();
+  if (!session?.user?.email) {
+    throw new Error("Not authenticated");
   }
 
-  // First try to find user by ID
-  const existingUser = await prisma.user.findUnique({
+  const user = await prisma.user.upsert({
     where: {
-      id: currUser.id,
+      email: session.user.email,
+    },
+    update: {},
+    create: {
+      email: session.user.email,
+      name: session.user.name || session.user.email,
     },
   });
 
-  if (existingUser) {
-    return existingUser;
-  }
-
-  // If not found by ID, try to find by email
-  const userEmail = currUser.emailAddresses[0].emailAddress;
-  const existingUserByEmail = await prisma.user.findUnique({
-    where: {
-      email: userEmail,
-    },
-  });
-
-  if (existingUserByEmail) {
-    // Update the existing user's ID to match Clerk's ID
-    const updatedUser = await prisma.user.update({
-      where: {
-        email: userEmail,
-      },
-      data: {
-        id: currUser.id,
-      },
-    });
-    return updatedUser;
-  }
-
-  // If no user exists, create a new one
-  const newUser = await prisma.user.create({
-    data: {
-      id: currUser.id,
-      email: userEmail,
-    },
-  });
-
-  return newUser;
+  return user;
 }

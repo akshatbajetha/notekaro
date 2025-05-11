@@ -3,11 +3,11 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { TopNavbar } from "@/components/TopNavbar";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react";
 import AuthComponent from "@/components/AuthComponent";
 import Script from "next/script";
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -87,38 +87,38 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <head>
-          <Script
-            src="https://www.googletagmanager.com/gtag/js?id=G-E6Q5M4X2VH"
-            strategy="afterInteractive"
-          />
-          <Script id="google-analytics" strategy="afterInteractive">
-            {`
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-E6Q5M4X2VH"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', 'G-E6Q5M4X2VH');
             `}
-          </Script>
-        </head>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-[#1E1E1E] bg-[#F5F5F5]`}
+        </Script>
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-[#1E1E1E] bg-[#F5F5F5]`}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          disableTransitionOnChange
         >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            disableTransitionOnChange
-          >
+          <SessionProvider>
             <TopNavbar />
             <AuthComponent />
             {children}
             <Toaster />
             <Analytics />
-          </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+          </SessionProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }

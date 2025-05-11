@@ -84,19 +84,6 @@ export async function createNote(title: string, content: string) {
       },
     });
 
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        notes: {
-          connect: {
-            id: note.id,
-          },
-        },
-      },
-    });
-
     return { note };
   } catch (error) {
     console.log("Error while creating notes: ", error);
@@ -115,10 +102,11 @@ export async function deleteNote(noteId: string) {
     const note = await prisma.note.delete({
       where: {
         id: noteId,
+        userId: user.id,
       },
     });
 
-    return Response.json({ "Note deleted successfully": note });
+    return note;
   } catch (error) {
     console.log("Error while deleting notes: ", error);
     return;
@@ -139,6 +127,7 @@ export async function updateNoteById({
   if (!user) {
     throw new Error("User not found");
   }
+
   const dataToUpdate: Record<string, string> = {};
   if (title !== undefined) dataToUpdate.title = title;
   if (content !== undefined) dataToUpdate.content = content;
@@ -147,13 +136,19 @@ export async function updateNoteById({
     throw new Error("No data provided to update.");
   }
 
-  return await prisma.note.update({
-    where: {
-      id: noteId,
-    },
-    data: {
-      ...dataToUpdate,
-      updatedAt: new Date(),
-    },
-  });
+  try {
+    return await prisma.note.update({
+      where: {
+        id: noteId,
+        userId: user.id,
+      },
+      data: {
+        ...dataToUpdate,
+        updatedAt: new Date(),
+      },
+    });
+  } catch (error) {
+    console.log("Error while updating note: ", error);
+    throw new Error("Failed to update note");
+  }
 }
