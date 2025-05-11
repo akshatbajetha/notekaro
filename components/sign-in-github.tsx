@@ -41,7 +41,7 @@ export function SignInGithub() {
     <Button
       variant="outline"
       type="button"
-      className="w-[50%]"
+      className="w-full"
       onClick={handleSignIn}
     >
       <FaGithub className="mr-2 h-4 w-4" /> Sign in with GitHub

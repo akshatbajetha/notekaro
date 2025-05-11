@@ -6,7 +6,6 @@ import { signOut } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
@@ -30,20 +29,25 @@ function AuthComponent() {
       <DropdownMenuContent className="w-48" align="start" sideOffset={10}>
         {session ? (
           <>
-            <DropdownMenuItem>
-              <span className="text-sm text-muted-foreground">
-                {session.user?.email}
-              </span>
-            </DropdownMenuItem>
+            <span className="text-sm text-muted-foreground px-2">
+              {session.user?.email}
+            </span>
+
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Button variant="ghost" onClick={() => signOut()}>
-                Sign out
-              </Button>
-            </DropdownMenuItem>
+
+            <Button
+              className="text-sm w-full flex justify-start"
+              variant="ghost"
+              onClick={() => signOut()}
+            >
+              Sign out
+            </Button>
           </>
         ) : (
-          <SignInButton className="w-full" variant="ghost">
+          <SignInButton
+            className="text-sm w-full flex justify-start"
+            variant="ghost"
+          >
             Sign in
           </SignInButton>
         )}

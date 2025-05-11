@@ -33,7 +33,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
           </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col space-y-8">
-          <div className="flex items-center justify-center gap-x-8">
+          <div className="flex flex-col items-center justify-center gap-y-6">
             <SignInGoogle />
             <SignInGithub />
           </div>

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import videoPoster from "@/public/benefits-light.png";
-
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
 import { Pencil, CheckSquare, FileEdit, Clock, Zap, Bell } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,13 +11,30 @@ import GetStartedButton from "@/components/GetStartedButton";
 import { AppsCarousel } from "@/components/AppsCarousel";
 import BenefitsImage from "@/components/BenefitsImage";
 import { IconBrandGithub } from "@tabler/icons-react";
+import { SignInModal } from "@/components/sign-in-modal";
 
-export default function Home() {
+// Create a client component that uses useSearchParams
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const [showSignInModal, setShowSignInModal] = useState(false);
+
+  useEffect(() => {
+    const notloggedin = searchParams.get("notloggedin");
+    if (notloggedin === "true") {
+      setShowSignInModal(true);
+    }
+  }, [searchParams]);
+
   return (
     <div className="flex min-h-screen flex-col bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-gray-200  max-w-screen-lg mx-auto">
       <div className="container mx-auto flex h-24 items-center justify-between px-4 md:px-6 top-0 z-40 w-full bg-[#F5F5F5]/95 dark:bg-[#1E1E1E]/95">
         <MobileNav />
       </div>
+
+      <SignInModal
+        isOpen={showSignInModal}
+        onClose={() => setShowSignInModal(false)}
+      />
 
       <main className="flex-1">
         <section className="container px-12 py-12 md:py-24 ">
@@ -465,8 +483,8 @@ export default function Home() {
         <footer className="py-8 bg-[#F5F5F5] dark:bg-[#1E1E1E] border-t border-gray-200 dark:border-gray-800">
           <div className="container mx-auto px-4 text-center">
             <p className="text-gray-600 dark:text-gray-400">
-              Have questions or feedback? We&apos;d love to hear from you! Reach out
-              to us at{" "}
+              Have questions or feedback? We&apos;d love to hear from you! Reach
+              out to us at{" "}
               <a
                 href="mailto:feedback@notekaro.com"
                 target="_blank"
@@ -542,5 +560,14 @@ export default function Home() {
         </div>
       </footer>
     </div>
+  );
+}
+
+// Main page component
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }

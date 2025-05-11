@@ -4,13 +4,21 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import Link from "next/link";
-import { CircleCheckBig, Hash } from "lucide-react";
+import { CircleCheckBig, Hash, Trash } from "lucide-react";
 import { useTodoStore } from "@/store/todoStore";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 export default function CompletedTodosPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const { completedTodos, setCompletedTodos } = useTodoStore();
+  const {
+    completedTodos,
+    setCompletedTodos,
+    removeCompletedTodo,
+    addCompletedTodo,
+  } = useTodoStore();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchCompletedTodos = async () => {
@@ -28,6 +36,44 @@ export default function CompletedTodosPage() {
 
     fetchCompletedTodos();
   }, [completedTodos.length, setCompletedTodos]);
+  const handleDeleteTodo = async (todoId: string) => {
+    const todoToDelete = completedTodos.find((todo) => todo.id === todoId);
+    if (!todoToDelete) return;
+
+    // Store the todo for potential rollback
+    const todoToRestore = { ...todoToDelete };
+
+    // Optimistically remove from UI
+    removeCompletedTodo(todoId);
+    toast({
+      title: "Todo deleted successfully",
+    });
+
+    try {
+      const response = await fetch("/api/todolists", {
+        method: "DELETE",
+        body: JSON.stringify({ todoId }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete todo");
+      }
+    } catch (error) {
+      console.error("Error deleting todo:", error);
+
+      // Rollback the optimistic update
+      addCompletedTodo(todoToRestore);
+
+      toast({
+        title: "Failed to delete todo",
+        description: "The todo has been restored.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -74,6 +120,14 @@ export default function CompletedTodosPage() {
                 <Hash className="w-3 h-3 mr-[2px]" />
                 <span>{todo.todoList.title}</span>
               </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-red-500"
+                onClick={() => handleDeleteTodo(todo.id)}
+              >
+                <Trash className="w-3 h-3" />
+              </Button>
             </div>
           </div>
         ))}
