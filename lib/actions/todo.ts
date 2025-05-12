@@ -495,6 +495,7 @@ export async function updateTodo({
     const todo = await prisma.todo.update({
       where: {
         id,
+        userId: user.id,
       },
       data: {
         title,
@@ -506,8 +507,8 @@ export async function updateTodo({
 
     return todo;
   } catch (error) {
-    console.log("Error while updating todo: ", error);
-    return;
+    console.error("Error while updating todo: ", error);
+    throw new Error("Failed to update todo");
   }
 }
 

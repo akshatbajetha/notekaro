@@ -235,69 +235,79 @@ export default function TodoComponent({
     debounceCompletedUpdate(newCompleted);
   };
 
-  const handleUpdateTodo = () => {
-    if (title.trim()) {
-      setTitle(title.trim());
+  const handleUpdateTodo = async () => {
+    if (!title.trim()) return;
 
-      // Update in store immediately
-      if (todo.sectionId) {
-        updateTodoInSection(todo.id, todo.sectionId, {
-          ...todo,
-          title: title.trim(),
-          priority,
-          dueDate: date,
-        });
-      } else if (todo.todoListId) {
-        updateTodoInList(todo.id, todo.todoListId, {
-          ...todo,
-          title: title.trim(),
-          priority,
-          dueDate: date,
-        });
-      }
+    const updatedTodo = {
+      ...todo,
+      title: title.trim(),
+      priority,
+      dueDate: date,
+    };
 
-      // Then update in database
-      try {
-        fetch("/api/todolists", {
-          method: "PATCH",
-          body: JSON.stringify({
-            todoId: todo.id,
-            title: title.trim(),
-            completed: isCompleted,
-            priority,
-            dueDate: date ? date.toISOString() : null,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then(() => {
-            // Show success toast after API call succeeds
-            toast({
-              title: "Todo updated successfully",
-            });
-            // Call onUpdate callback if provided
-            onUpdate?.();
-          })
-          .catch((error) => {
-            console.error("Error updating todo: ", error);
-            // Revert the store update on error
-            if (todo.sectionId) {
-              updateTodoInSection(todo.id, todo.sectionId, todo);
-            } else if (todo.todoListId) {
-              updateTodoInList(todo.id, todo.todoListId, todo);
-            }
-            // Show error toast
-            toast({
-              title: "Failed to update todo",
-              variant: "destructive",
-            });
-          });
-      } catch (error) {
-        console.error("Error updating todo: ", error);
-      }
-    }
+    // Optimistically update the UI
     setIsEditing(false);
+    setTitle(title.trim());
+
+    try {
+      // Update in store immediately for better UX
+      if (todo.sectionId) {
+        updateTodoInSection(todo.id, todo.sectionId, updatedTodo);
+      } else if (todo.todoListId) {
+        updateTodoInList(todo.id, todo.todoListId, updatedTodo);
+      }
+
+      // Make API call
+      const response = await fetch("/api/todolists", {
+        method: "PATCH",
+        body: JSON.stringify({
+          todoId: todo.id,
+          title: title.trim(),
+          completed: isCompleted,
+          priority,
+          dueDate: date instanceof Date ? date.toISOString() : null,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update todo");
+      }
+
+      // Show success toast after API call succeeds
+      toast({
+        title: "Todo updated successfully",
+      });
+
+      // Call onUpdate callback if provided
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error) {
+      console.error("Error updating todo: ", error);
+
+      // Revert the store update on error
+      if (todo.sectionId) {
+        updateTodoInSection(todo.id, todo.sectionId, todo);
+      } else if (todo.todoListId) {
+        updateTodoInList(todo.id, todo.todoListId, todo);
+      }
+
+      // Revert the UI state
+      setTitle(todo.title);
+      setPriority(todo.priority);
+      setDate(todo.dueDate);
+      setIsEditing(true);
+
+      // Show error toast
+      toast({
+        title: "Failed to update todo",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
