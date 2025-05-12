@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     siteName: "NoteKaro",
     images: [
       {
-        url: "/og-image.png", // optional, but recommended
+        url: "/link-preview.png",
         width: 1200,
         height: 630,
         alt: "NoteKaro",
@@ -47,8 +47,8 @@ export const metadata: Metadata = {
     title: "NoteKaro - Notes, Sketches & Tasks in One Place",
     description:
       "NoteKaro: Your all-in-one workspace for notes, sketches, and todos with reminders. Start creating instantly!",
-    images: ["/og-image.png"],
-    creator: "@akshatbajetha", // optional
+    images: ["/link-preview.png"],
+    creator: "@akshatbajetha",
   },
   icons: {
     icon: [
