@@ -170,7 +170,7 @@ function Sidebar({ width }: { width: number }) {
           </button>
         </div>
         {isCommandPaletteOpen && (
-          <div className="fixed inset-0 dark:text-gray-100 text-gray-900 flex items-start justify-center pt-[20vh] z-50 backdrop-blur-sm">
+          <div className="fixed inset-0 dark:text-gray-100 text-gray-900 flex items-start justify-center pt-[20vh] z-[50] backdrop-blur-sm bg-black/20">
             <div className="dark:bg-[#191919] bg-[#F5F5F5] rounded-lg shadow-lg w-full max-w-xl">
               <div className="p-4 border-b relative">
                 <div className="flex items-center space-x-3">

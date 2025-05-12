@@ -17,6 +17,7 @@ export default function NoteEditor({
   const [initialContent, setInitialContent] = useState<
     PartialBlock[] | undefined | "loading"
   >("loading");
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const editorRef = useRef<BlockNoteEditor | null>(null);
   const isInitialMount = useRef(true);
 
@@ -31,6 +32,7 @@ export default function NoteEditor({
     const contentString = JSON.stringify(blocks);
     if (note?.content !== contentString) {
       updateNoteContent(noteId, contentString);
+      setHasUnsavedChanges(true);
       await fetch(`/api/notes/${noteId}`, {
         method: "PATCH",
         body: JSON.stringify({
@@ -41,8 +43,23 @@ export default function NoteEditor({
           "Content-Type": "application/json",
         },
       });
+      setHasUnsavedChanges(false);
     }
   }, 1000);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        return "Changes might not be saved. Are you sure you want to leave?";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [hasUnsavedChanges]);
 
   useEffect(() => {
     const content = note?.content ?? noteContent;
@@ -85,6 +102,7 @@ export default function NoteEditor({
           margin-left: 40px !important;
           box-shadow: none !important;
           background-color: transparent !important;
+          position: relative !important;
         }
         .bn-editor {
           padding: 0 !important;

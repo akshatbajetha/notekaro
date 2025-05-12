@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import { Pencil, CheckSquare, FileEdit, Clock, Zap, Bell } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
-import { Card, CardContent } from "@/components/ui/card";
+// import { Card, CardContent } from "@/components/ui/card";
 import GetStartedButton from "@/components/GetStartedButton";
 import { AppsCarousel } from "@/components/AppsCarousel";
 import BenefitsImage from "@/components/BenefitsImage";
@@ -326,7 +326,7 @@ function HomeContent() {
           </div>
         </section>
 
-        <section
+        {/* <section
           id="testimonials"
           className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E]"
         >
@@ -463,7 +463,7 @@ function HomeContent() {
               </Card>
             </div>
           </div>
-        </section>
+        </section> */}
 
         <section className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-white text-black ">
           <div className="container mx-auto px-4 md:px-6 text-center">
@@ -528,14 +528,6 @@ function HomeContent() {
                 className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
               >
                 Benefits
-              </Link>
-            </span>
-            <span>
-              <Link
-                href="#testimonials"
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-              >
-                Testimonials
               </Link>
             </span>
           </div>
