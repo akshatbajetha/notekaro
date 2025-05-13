@@ -1,4 +1,4 @@
-# 📝 NoteKaro
+# 📝 NoteKaro - Work in Progress
 
 **NoteKaro** is an **open-source, all-in-one productivity app** that combines Notion-like note-taking, Excalidraw-style sketching, and Todoist-inspired task management — all in one elegant and extendable platform.
 
