@@ -1,3 +1,9 @@
+# 📝 NoteKaro
+
+**NoteKaro** is an **open-source, all-in-one productivity app** that combines Notion-like note-taking, Excalidraw-style sketching, and Todoist-inspired task management — all in one elegant and extendable platform.
+
+[NoteKaro](https://www.notekaro.com/)
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
