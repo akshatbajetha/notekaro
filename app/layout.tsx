@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { TopNavbar } from "@/components/TopNavbar";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,15 +9,8 @@ import AuthComponent from "@/components/AuthComponent";
 import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+const inter = Inter({
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -87,7 +80,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={inter.className} suppressHydrationWarning>
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-E6Q5M4X2VH"
@@ -102,9 +95,7 @@ export default function RootLayout({
             `}
         </Script>
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-[#1E1E1E] bg-[#F5F5F5]`}
-      >
+      <body className=" antialiased dark:bg-[#1E1E1E] bg-[#F5F5F5]">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
