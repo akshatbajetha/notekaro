@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useTodoStore } from "@/store/todoStore";
 import { CreateTodoListModal } from "@/components/todo/CreateTodoListModal";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 function Sidebar({ width }: { width: number }) {
   const pathName = usePathname();
@@ -156,9 +157,12 @@ function Sidebar({ width }: { width: number }) {
             </span>
           </button>
         </div>
-        {isCommandPaletteOpen && (
-          <div className="fixed inset-0 dark:text-gray-100 text-gray-900 flex items-start justify-center pt-[20vh] z-50 backdrop-blur-sm">
-            <div className="dark:bg-[#191919] bg-[#F5F5F5] rounded-lg shadow-lg w-full max-w-xl">
+        <Dialog
+          open={isCommandPaletteOpen}
+          onOpenChange={setIsCommandPaletteOpen}
+        >
+          <DialogContent className="p-0 bg-transparent shadow-none border-none max-w-xl w-full">
+            <div className="dark:bg-[#191919] bg-[#F5F5F5] rounded-lg shadow-lg w-full">
               <div className="p-4 border-b relative">
                 <div className="flex items-center space-x-3">
                   <Search className="h-5 w-5 text-gray-400" />
@@ -211,8 +215,8 @@ function Sidebar({ width }: { width: number }) {
                 Press ESC to close
               </div>
             </div>
-          </div>
-        )}
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Navigation */}

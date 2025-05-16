@@ -102,7 +102,6 @@ export default function NoteEditor({
           margin-left: 40px !important;
           box-shadow: none !important;
           background-color: transparent !important;
-          position: relative !important;
         }
         .bn-editor {
           padding: 0 !important;
@@ -128,7 +127,6 @@ export default function NoteEditor({
       <BlockNoteView
         editor={editor}
         theme={theme === "dark" ? "dark" : "light"}
-        className="w-full h-full"
         onChange={() => {
           debouncedSave(editor.document);
         }}
