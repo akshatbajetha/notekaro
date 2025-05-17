@@ -135,7 +135,7 @@ function Page({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="px-4 mt-20 py-6 max-w-3xl ">
+    <div className="px-4 mt-20 py-6 max-w-3xl ml-24">
       <header className="mt-4">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold flex items-center text-black dark:text-white">

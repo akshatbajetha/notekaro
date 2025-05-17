@@ -134,23 +134,24 @@ function Sidebar({ width }: { width: number }) {
 
   return (
     <div
-      className="w-60 flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg"
+      className="w-60 flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg transition-all duration-300"
       style={{
         width: `${width}px`,
-        minWidth: "240px",
         maxWidth: "500px",
+        opacity: width === 0 ? 0 : 1,
+        visibility: width === 0 ? "hidden" : "visible",
       }}
     >
       {/* Search */}
       <div className="p-2">
-        <div className="flex items-center justify-between space-x-2 px-3 py-1.5 dark:bg-gray-700 bg-gray-300 rounded-md">
+        <div className="flex items-center justify-between space-x-2 pt-1.5 rounded-md">
           <button
             onClick={() => setIsCommandPaletteOpen(true)}
-            className="bg-transparent border-none focus:outline-none w-full flex flex-row items-center justify-between"
+            className="rounded-md bg-transparent hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none w-full p-2 flex flex-row items-center justify-between"
           >
-            <span className=" dark:text-gray-400 text-gray-600 flex flex-row items-center gap-x-2">
+            <span className="text-sm dark:text-gray-400 text-gray-600 flex flex-row items-center gap-x-2">
               <Search className="w-4 h-4 dark:text-gray-400 text-gray-600 " />
-              Search Todo Lists
+              Search
             </span>
             <span className="extra-small-text whitespace-nowrap dark:text-gray-400 text-gray-600">
               CTRL + K
@@ -222,7 +223,7 @@ function Sidebar({ width }: { width: number }) {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto">
         {/* Notes section */}
-        <div className="flex flex-col mt-4 gap-y-2">
+        <div className="flex flex-col mt-2 gap-y-2">
           <Link
             href={"/todos/today"}
             className={cn(

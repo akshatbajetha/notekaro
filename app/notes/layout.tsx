@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-
+import { PanelLeft } from "lucide-react";
 import Sidebar from "./Sidebar";
 
 function Page({ children }: { children: React.ReactNode }) {
@@ -27,6 +27,7 @@ function Page({ children }: { children: React.ReactNode }) {
     },
     [isResizing]
   );
+
   return (
     <div
       className="flex min-h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900"
@@ -36,14 +37,27 @@ function Page({ children }: { children: React.ReactNode }) {
     >
       <Sidebar width={sidebarWidth} />
       <div
-        className="w-[2px] fixed h-screen z-50 bg-gray-500 dark:bg-gray-400 cursor-col-resize transition-colors"
-        style={{ left: sidebarWidth }}
+        className="w-[2px] fixed h-screen z-50 bg-gray-500 dark:bg-gray-400 cursor-col-resize"
+        style={{
+          left: sidebarWidth,
+          opacity: sidebarWidth === 0 ? 0 : 1,
+          visibility: sidebarWidth === 0 ? "hidden" : "visible",
+        }}
         onMouseDown={startResizing}
       />
       <div
         style={{ marginLeft: sidebarWidth }}
         className="flex-1 overflow-y-auto flex flex-col"
       >
+        <button
+          onClick={() => setSidebarWidth(sidebarWidth === 240 ? 0 : 240)}
+          className="fixed top-4 left-4 z-50 p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md transition-all duration-300"
+          style={{
+            left: sidebarWidth === 0 ? "16px" : `${sidebarWidth + 16}px`,
+          }}
+        >
+          <PanelLeft className="w-5 h-5 dark:text-gray-400 text-gray-600 transition-transform duration-300" />
+        </button>
         {children}
       </div>
     </div>
