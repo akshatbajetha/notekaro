@@ -76,14 +76,17 @@ function Page() {
   };
 
   // Group todos by date
-  const groupedTodos = upcomingTodos.reduce((groups, todo) => {
-    const date = todo.dueDate.toISOString().split("T")[0];
-    if (!groups[date]) {
-      groups[date] = [];
-    }
-    groups[date].push(todo);
-    return groups;
-  }, {} as Record<string, Todo[]>);
+  const groupedTodos = upcomingTodos.reduce(
+    (groups, todo) => {
+      const date = todo.dueDate.toISOString().split("T")[0];
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(todo);
+      return groups;
+    },
+    {} as Record<string, Todo[]>
+  );
 
   // Sort dates
   const sortedDates = Object.keys(groupedTodos).sort();
