@@ -1,4 +1,14 @@
 "use client";
+import { RefObject } from "react";
+import { Scale } from "@/types/drawing";
+
+interface TextOverlayProps {
+  textAreaRef: RefObject<HTMLTextAreaElement>;
+  handleBlur: () => void;
+  computedTop: number;
+  computedLeft: number;
+  scale: Scale;
+}
 
 const TextOverlay = ({
   textAreaRef,
@@ -6,12 +16,12 @@ const TextOverlay = ({
   computedTop,
   computedLeft,
   scale,
-}: any) => {
+}: TextOverlayProps) => {
   return (
     <textarea
       ref={textAreaRef}
       onBlur={handleBlur}
-      className="dark:bg-[#1E1E1E] bg-[#F5F5F5] text-white border border-[#555] rounded-md p-1 resize-none outline-none z-50"
+      className="dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-white border border-[#555] rounded-md p-1 resize-none outline-none z-50"
       style={{
         position: "fixed",
         top: computedTop,

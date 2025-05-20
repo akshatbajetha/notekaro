@@ -26,7 +26,7 @@ import { Drawable } from "roughjs/bin/core";
 import { RoughCanvas } from "roughjs/bin/canvas";
 const generator = rough.generator();
 
-export default function App(): any {
+export function App() {
   const canvasRef: CanvasRef = useRef(null);
   const textAreaRef: TextAreaRef = useRef(null);
   const { theme } = useTheme();

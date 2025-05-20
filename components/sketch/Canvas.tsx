@@ -4,6 +4,42 @@ import TopToolbar from "./Toolbar";
 import BottomToolbar from "./Bottombar";
 import TextOverlay from "./TextOverlay";
 import { useEffect } from "react";
+import {
+  Action,
+  Tool,
+  CanvasRef,
+  CanvasSize,
+  TextAreaRef,
+  Scale,
+  ComputedPosition,
+} from "@/types/drawing";
+import { MouseEvent, WheelEvent } from "react";
+
+interface ToolbarProps {
+  undo: () => void;
+  redo: () => void;
+  onZoom: (delta: number) => void;
+  setScale: (scale: Scale) => void;
+  brushSize: number;
+  setBrushSize: (size: number) => void;
+  color: string;
+  setColor: (color: string) => void;
+  setTool: (tool: Tool) => void;
+}
+
+interface CanvasContainerProps extends ToolbarProps {
+  canvasRef: CanvasRef;
+  canvasSize: CanvasSize;
+  handleMouseDown: (e: MouseEvent) => void;
+  handleMouseMove: (e: MouseEvent | WheelEvent) => void;
+  handleMouseUp: (e: MouseEvent) => void;
+  action: Action;
+  computedPosition?: ComputedPosition;
+  scale: Scale;
+  textAreaRef: TextAreaRef;
+  handleBlur: () => void;
+  tool: Tool;
+}
 
 const CanvasContainer = ({
   canvasRef,
@@ -12,14 +48,13 @@ const CanvasContainer = ({
   handleMouseMove,
   handleMouseUp,
   action,
-  computedTop,
-  computedLeft,
+  computedPosition,
   scale,
   textAreaRef,
   handleBlur,
   tool,
   ...toolbarProps
-}: any) => {
+}: CanvasContainerProps) => {
   // Function to determine cursor style
   const getCursorStyle = () => {
     if (tool === "grab") {
@@ -45,12 +80,12 @@ const CanvasContainer = ({
       <TopToolbar {...toolbarProps} tool={tool} />
       <BottomToolbar {...toolbarProps} scale={scale} />
 
-      {action === "writing" && (
+      {action === "writing" && computedPosition && (
         <TextOverlay
           textAreaRef={textAreaRef}
           handleBlur={handleBlur}
-          computedTop={computedTop}
-          computedLeft={computedLeft}
+          computedTop={computedPosition.top}
+          computedLeft={computedPosition.left}
           scale={scale}
         />
       )}
@@ -60,9 +95,9 @@ const CanvasContainer = ({
         className={`absolute inset-0 ${getCursorStyle()}`}
         width={canvasSize.width}
         height={canvasSize.height}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
+        onMouseDown={handleMouseDown as any}
+        onMouseMove={handleMouseMove as any}
+        onMouseUp={handleMouseUp as any}
       >
         Canvas
       </canvas>
