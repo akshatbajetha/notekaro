@@ -1,6 +1,6 @@
 import average from "./average";
 
-function getSvgPathFromStroke(points: any, closed = true) {
+function getSvgPathFromStroke(points: [number, number][], closed = true) {
   const len = points.length;
 
   if (len < 4) {

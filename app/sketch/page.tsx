@@ -5,43 +5,68 @@ import rough from "roughjs";
 import useHistory from "@/hooks/use-history";
 import { getMouseCoordinates, getElementAtPosition } from "@/utility";
 import CanvasContainer from "@/components/sketch/Canvas";
-// import ChatDrawer from "@/components/Chatdrawer";
-// import { useParams } from "next/navigation";
 import getStroke from "perfect-freehand";
 import getSvgPathFromStroke from "@/utility/getSvg";
 import { useTheme } from "next-themes";
-
-const generator: any = rough.generator();
+import {
+  CanvasRef,
+  DrawingElement,
+  DrawingOptions,
+  Point,
+  TextAreaRef,
+  PencilElement,
+  TextElement,
+  ShapeElement,
+  SelectedElement,
+  Scale,
+  CanvasSize,
+  ComputedPosition,
+} from "@/types/drawing";
+import { Drawable } from "roughjs/bin/core";
+import { RoughCanvas } from "roughjs/bin/canvas";
+const generator = rough.generator();
 
 export default function App(): any {
-  // const params = useParams();
-  // const userId = params.userId;
-
-  const canvasRef: any = useRef(null);
-  const textAreaRef: any = useRef(null);
+  const canvasRef: CanvasRef = useRef(null);
+  const textAreaRef: TextAreaRef = useRef(null);
   const { theme } = useTheme();
 
   // Canvas states
-  const [canvasSize, setCanvasSize] = useState<any>({ width: 0, height: 0 });
+  const [canvasSize, setCanvasSize] = useState<CanvasSize>({
+    width: 0,
+    height: 0,
+  });
   const [elements, setElements, undo, redo] = useHistory([]);
-  const [action, setAction] = useState<any>("none");
-  const [tool, setTool] = useState<any>("line");
-  const [selectedElement, setSelectedElement] = useState<any>(null);
-  const [brushSize, setBrushSize] = useState<any>(1);
-  const [color, setColor] = useState<any>(
+  const [action, setAction] = useState<
+    "panning" | "moving" | "writing" | "drawing" | "erasing" | "none"
+  >("none");
+  const [tool, setTool] = useState<
+    | "line"
+    | "rect"
+    | "circle"
+    | "diamond"
+    | "pencil"
+    | "text"
+    | "selection"
+    | "grab"
+    | "eraser"
+  >("selection");
+  const [selectedElement, setSelectedElement] =
+    useState<SelectedElement | null>(null);
+  const [brushSize, setBrushSize] = useState<1 | 2 | 3 | 4 | 5>(1);
+  const [color, setColor] = useState<string>(
     theme === "dark" ? "#ffffff" : "#000000"
   );
-  const [panOffset, setPanOffset] = useState<any>({ x: 0, y: 0 });
-  const [startPanMousePosition, setStartPanMousePosition] = useState<any>({
+  const [panOffset, setPanOffset] = useState<Point>({
     x: 0,
     y: 0,
   });
-  const [scale, setScale] = useState<any>(1);
-  const [scaleOffset, setScaleOffset] = useState<any>({ x: 0, y: 0 });
-  // Flag to avoid emitting/saving until initial load is complete
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-
-  // New: Element counter state to show number of elements
+  const [startPanMousePosition, setStartPanMousePosition] = useState<Point>({
+    x: 0,
+    y: 0,
+  });
+  const [scale, setScale] = useState<Scale>(1);
+  const [scaleOffset, setScaleOffset] = useState<Point>({ x: 0, y: 0 });
 
   // Update canvas size on resize
   useEffect(() => {
@@ -57,77 +82,18 @@ export default function App(): any {
     return () => window.removeEventListener("resize", updateCanvasSize);
   }, []);
 
-  // Load canvas from DB for this user and mark initial load complete
-  // useEffect(() => {
-  //   const loadCanvas = async () => {
-  //     try {
-  //       if (!userId) return;
-  //       const res = await fetch(`/api/get-canvas/${userId}`);
-  //       const data = await res.json();
-  //       if (res.ok && data.elements) {
-  //         setElements(data.elements);
-  //       }
-  //       setInitialLoadComplete(true);
-  //     } catch (err) {
-  //       console.error("🛑 Failed to load canvas from DB:", err);
-  //     }
-  //   };
-
-  //   loadCanvas();
-  // }, [userId]);
-
-  // Save canvas to DB and broadcast sync via WS after every change
-  // useEffect(() => {
-  //   const saveAndSync = async () => {
-  //     if (!initialLoadComplete || !userId) return;
-
-  //     if (!elements) return;
-
-  //     try {
-  //       await fetch(`/api/update-canvas/${userId}`, {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({ elements }),
-  //       });
-  //     } catch (err) {
-  //       console.error("🛑 Error saving canvas to DB:", err);
-  //     }
-  //   };
-
-  //   saveAndSync();
-  // }, [elements, initialLoadComplete, userId]);
-
-  // useEffect(() => {
-  //   // Handle tab visibility change
-  //   const handleVisibilityChange = () => {
-  //     if (document.visibilityState === "visible") {
-  //       location.reload();
-  //     }
-  //   };
-
-  //   // Reload every 10 seconds
-  //   const intervalId = setInterval(() => {
-  //     location.reload();
-  //   }, 10000);
-
-  //   document.addEventListener("visibilitychange", handleVisibilityChange);
-
-  //   return () => {
-  //     clearInterval(intervalId);
-  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
-  //   };
-  // }, []);
-
   // Render canvas using rough.js
   useLayoutEffect(() => {
-    const canvas: any = canvasRef.current;
-    const context: any = canvas.getContext("2d");
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
     context.clearRect(0, 0, canvas.width, canvas.height);
-    const roughCanvas: any = rough.canvas(canvas);
-    const scaledWidth: any = canvas.width * scale;
-    const scaledHeight: any = canvas.height * scale;
-    const scaleOffsetX: any = (canvas.width - scaledWidth) / 2;
-    const scaleOffsetY: any = (canvas.height - scaledHeight) / 2;
+    const roughCanvas = rough.canvas(canvas);
+    const scaledWidth = canvas.width * scale;
+    const scaledHeight = canvas.height * scale;
+    const scaleOffsetX = (canvas.width - scaledWidth) / 2;
+    const scaleOffsetY = (canvas.height - scaledHeight) / 2;
     setScaleOffset({ x: scaleOffsetX, y: scaleOffsetY });
 
     context.save();
@@ -139,7 +105,7 @@ export default function App(): any {
     );
 
     if (elements) {
-      elements.forEach((element: any) => {
+      elements.forEach((element: DrawingElement) => {
         // Skip currently "writing" text element
         if (
           action === "writing" &&
@@ -156,18 +122,19 @@ export default function App(): any {
   // Focus on text area when writing text
   useEffect(() => {
     if (action !== "writing") return;
-    const textArea: any = textAreaRef.current;
-    const timer: any = setTimeout(() => {
+    const textArea = textAreaRef.current;
+    if (!textArea) return;
+    const timer = setTimeout(() => {
       textArea.focus();
-      textArea.value = selectedElement.text;
+      textArea.value = (selectedElement as TextElement).text || "";
     }, 0);
     return () => clearTimeout(timer);
   }, [action, selectedElement]);
 
   // Other event listeners
-  useEffect((): any => {
-    const panFunction = (e: any): any => {
-      setPanOffset((prevOffset: any) => ({
+  useEffect(() => {
+    const panFunction = (e: WheelEvent) => {
+      setPanOffset((prevOffset: Point) => ({
         x: prevOffset.x - e.deltaX,
         y: prevOffset.y - e.deltaY,
       }));
@@ -177,7 +144,7 @@ export default function App(): any {
   }, []);
 
   useEffect(() => {
-    const undoRedoFunction = (e: any): any => {
+    const undoRedoFunction = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") {
         if (e.shiftKey) redo();
         else undo();
@@ -187,51 +154,19 @@ export default function App(): any {
     return () => document.removeEventListener("keydown", undoRedoFunction);
   }, [undo, redo]);
 
-  function updateElement(
-    id: any,
-    x1: any,
-    y1: any,
-    x2: any,
-    y2: any,
-    type: any,
-    options: any
-  ): any {
-    const elementsCopy: any[] = [...elements];
-    switch (type) {
-      case "pencil":
-        elementsCopy[id].points = [...elementsCopy[id].points, [x2, y2]];
-        break;
-      case "text": {
-        const context: any = canvasRef.current.getContext("2d");
-        context.font = "24px sans-serif";
-        const textWidth: any = context.measureText(options.text).width;
-        const textHeight: any = 24;
-        elementsCopy[id] = {
-          ...createElement(id, x1, y1, x1 + textWidth, y1 + textHeight, type),
-          text: options.text,
-        };
-        break;
-      }
-      default:
-        elementsCopy[id] = createElement(id, x1, y1, x2, y2, type);
-        break;
-    }
-    setElements(elementsCopy, true);
-  }
-
   function createElement(
-    id: any,
-    x1: any,
-    y1: any,
-    x2: any,
-    y2: any,
-    type: any,
-    options: { strokeWidth: number; stroke: string } = {
+    id: number,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    type: DrawingElement["type"],
+    options: DrawingOptions = {
       strokeWidth: brushSize,
       stroke: color,
     }
-  ): any {
-    let roughElement: any;
+  ): DrawingElement {
+    let roughElement: Drawable;
     switch (type) {
       case "line":
         roughElement = generator.line(x1, y1, x2, y2, options);
@@ -240,17 +175,17 @@ export default function App(): any {
         roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1, options);
         break;
       case "circle": {
-        const radius: any = Math.hypot(x2 - x1, y2 - y1);
+        const radius = Math.hypot(x2 - x1, y2 - y1);
         roughElement = generator.circle(x1, y1, radius, options);
         break;
       }
       case "diamond": {
-        const minX: any = Math.min(x1, x2);
-        const maxX: any = Math.max(x1, x2);
-        const minY: any = Math.min(y1, y2);
-        const maxY: any = Math.max(y1, y2);
-        const centerX: any = (minX + maxX) / 2;
-        const centerY: any = (minY + maxY) / 2;
+        const minX = Math.min(x1, x2);
+        const maxX = Math.max(x1, x2);
+        const minY = Math.min(y1, y2);
+        const maxY = Math.max(y1, y2);
+        const centerX = (minX + maxX) / 2;
+        const centerY = (minY + maxY) / 2;
         roughElement = generator.polygon(
           [
             [centerX, minY],
@@ -269,13 +204,65 @@ export default function App(): any {
       default:
         throw new Error("Invalid shape type");
     }
-    return { id, x1, y1, x2, y2, type, roughElement };
+    return { id, x1, y1, x2, y2, type, roughElement, options };
   }
 
-  function drawElement(roughCanvas: any, context: any, element: any) {
-    if (!element) return;
+  function updateElement(
+    id: number,
+    x1: number,
+    y1: number,
+    x2: number | null,
+    y2: number | null,
+    type: DrawingElement["type"],
+    options: DrawingOptions
+  ) {
+    const elementsCopy: DrawingElement[] = [...elements];
+    switch (type) {
+      case "pencil":
+        if (x2 !== null && y2 !== null) {
+          (elementsCopy[id] as PencilElement).points = [
+            ...((elementsCopy[id] as PencilElement).points || []),
+            [x2, y2],
+          ];
+        }
+        break;
+      case "text": {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const context = canvas.getContext("2d");
+        if (!context) return;
+        context.font = "24px sans-serif";
+        const textWidth = context.measureText(options.text || "").width;
+        const textHeight = 24;
+        const baseElement = createElement(
+          id,
+          x1,
+          y1,
+          x1 + textWidth,
+          y1 + textHeight,
+          type
+        );
+        elementsCopy[id] = {
+          ...baseElement,
+          options: { ...baseElement.options },
+        };
+        break;
+      }
+      default:
+        if (x2 !== null && y2 !== null) {
+          elementsCopy[id] = createElement(id, x1, y1, x2, y2, type);
+        }
+        break;
+    }
+    setElements(elementsCopy, true);
+  }
 
-    // console.log("Drawing element:", element);
+  function drawElement(
+    roughCanvas: RoughCanvas,
+    context: CanvasRenderingContext2D,
+    element: DrawingElement
+  ) {
+    if (!element) return;
 
     const { options } = element;
     switch (element.type) {
@@ -283,7 +270,9 @@ export default function App(): any {
         const outlinePoints = getStroke(element.points, {
           size: options.strokeWidth,
         });
-        const pathData = getSvgPathFromStroke(outlinePoints);
+        const pathData = getSvgPathFromStroke(
+          outlinePoints as [number, number][]
+        );
         const myPath = new Path2D(pathData);
         context.fillStyle = options.stroke;
         context.fill(myPath);
@@ -303,13 +292,13 @@ export default function App(): any {
           element.type
         );
         // element.roughElement = newElement.roughElement;
-        roughCanvas.draw(element.roughElement);
+        roughCanvas.draw(element.roughElement as Drawable);
         break;
     }
   }
 
   // --- Mouse event handlers --- //
-  const handleMouseDown = (e: any): any => {
+  const handleMouseDown = (e: MouseEvent) => {
     if (action === "writing") return;
     const { clientX, clientY } = getMouseCoordinates(
       e,
@@ -323,25 +312,33 @@ export default function App(): any {
       if (element) {
         // If clicked on an element, select and move it
         if (element.type === "pencil") {
-          const xOffSets = element.points.map(
-            (point: any) => clientX - point[0]
+          const xOffSets = (element as PencilElement).points!.map(
+            (point: [number, number]) => clientX - point[0]
           );
-          const yOffSets = element.points.map(
-            (point: any) => clientY - point[1]
+          const yOffSets = (element as PencilElement).points!.map(
+            (point: [number, number]) => clientY - point[1]
           );
-          setSelectedElement({ ...element, xOffSets, yOffSets });
+          setSelectedElement({
+            ...element,
+            xOffSets,
+            yOffSets,
+          } as PencilElement);
         } else {
           const offsetX = clientX - element.x1;
           const offsetY = clientY - element.y1;
-          setSelectedElement({ ...element, offsetX, offsetY });
+          setSelectedElement({
+            ...element,
+            offsetX,
+            offsetY,
+          });
         }
         setAction("moving");
-        canvasRef.current.style.cursor = "move";
+        canvasRef.current!.style.cursor = "move";
       } else {
         // If clicked on empty canvas, start panning
         setAction("panning");
         setStartPanMousePosition({ x: clientX, y: clientY });
-        canvasRef.current.style.cursor = "grab";
+        canvasRef.current!.style.cursor = "grab";
       }
       return;
     }
@@ -353,27 +350,27 @@ export default function App(): any {
     if (e.button === 1) {
       setAction("panning");
       setStartPanMousePosition({ x: clientX, y: clientY });
-      canvasRef.current.style.cursor = "grab";
+      canvasRef.current!.style.cursor = "grab";
       return;
     }
     if (tool === "selection") {
-      const element: any = getElementAtPosition(clientX, clientY, elements);
+      const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
         if (element.type === "pencil") {
-          const xOffSets: any = element.points.map(
-            (point: any) => clientX - point[0]
+          const xOffSets = (element as PencilElement).points!.map(
+            (point: [number, number]) => clientX - point[0]
           );
-          const yOffSets: any = element.points.map(
-            (point: any) => clientY - point[1]
+          const yOffSets = (element as PencilElement).points!.map(
+            (point: [number, number]) => clientY - point[1]
           );
           setSelectedElement({ ...element, xOffSets, yOffSets });
         } else {
-          const offsetX: any = clientX - element.x1;
-          const offsetY: any = clientY - element.y1;
+          const offsetX = clientX - element.x1;
+          const offsetY = clientY - element.y1;
           setSelectedElement({ ...element, offsetX, offsetY });
         }
         setAction("moving");
-        setElements((prevState: any) => prevState);
+        setElements((prevState: DrawingElement[]) => prevState);
       }
     } else {
       if (!elements) return;
@@ -386,7 +383,10 @@ export default function App(): any {
         clientY,
         tool
       );
-      setElements((prevElements: any) => [...prevElements, element]);
+      setElements((prevElements: DrawingElement[]) => [
+        ...prevElements,
+        element,
+      ]);
       setSelectedElement(element);
       if (tool === "text") {
         setAction("writing");
@@ -396,7 +396,7 @@ export default function App(): any {
     }
   };
 
-  const handleMouseMove = (e: any): any => {
+  const handleMouseMove = (e: MouseEvent | WheelEvent) => {
     const { clientX, clientY } = getMouseCoordinates(
       e,
       canvasRef,
@@ -408,31 +408,40 @@ export default function App(): any {
       if (action === "panning") {
         const deltaX = clientX - startPanMousePosition.x;
         const deltaY = clientY - startPanMousePosition.y;
-        setPanOffset((prevOffset: any) => ({
+        setPanOffset((prevOffset: Point) => ({
           x: prevOffset.x + deltaX,
           y: prevOffset.y + deltaY,
         }));
         setStartPanMousePosition({ x: clientX, y: clientY });
       } else if (action === "moving" && selectedElement) {
         if (selectedElement.type === "pencil") {
-          const newPoints = selectedElement.points.map((_: any, index: any) => [
-            clientX - selectedElement.xOffSets[index],
-            clientY - selectedElement.yOffSets[index],
-          ]);
-          const elementsCopy = [...elements];
-          elementsCopy[selectedElement.id].points = newPoints;
+          const pencilElement = selectedElement as PencilElement & {
+            xOffSets?: number[];
+            yOffSets?: number[];
+          };
+          const newPoints = pencilElement.points.map(
+            (_: [number, number], index: number) => [
+              clientX - pencilElement.xOffSets![index],
+              clientY - pencilElement.yOffSets![index],
+            ]
+          );
+          const elementsCopy: DrawingElement[] = [...elements];
+          elementsCopy[selectedElement.id] = {
+            ...selectedElement,
+            points: newPoints,
+          } as PencilElement;
           setElements(elementsCopy, true);
         } else {
           const { id, x1, y1, x2, y2, type, offsetX, offsetY } =
             selectedElement;
           const width = x2 - x1;
           const height = y2 - y1;
-          const newX1 = clientX - offsetX;
-          const newY1 = clientY - offsetY;
+          const newX1 = clientX - offsetX!;
+          const newY1 = clientY - offsetY!;
           const options =
             selectedElement.type === "text"
-              ? { text: selectedElement.text }
-              : null;
+              ? { ...selectedElement.options, text: selectedElement.text }
+              : { ...selectedElement.options };
           updateElement(
             id,
             newX1,
@@ -448,55 +457,69 @@ export default function App(): any {
     }
 
     if (action === "erasing" && tool === "eraser") {
-      const element: any = getElementAtPosition(clientX, clientY, elements);
+      const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
-        setElements((prevElements: any) =>
-          prevElements.filter((el: any) => el.id !== element.id)
+        setElements((prevElements: DrawingElement[]) =>
+          prevElements.filter((el: DrawingElement) => el.id !== element.id)
         );
       }
       return;
     }
     if (action === "panning") {
-      const deltaX: any = clientX - startPanMousePosition.x;
-      const deltaY: any = clientY - startPanMousePosition.y;
-      setPanOffset((prevOffset: any) => ({
+      const deltaX = clientX - startPanMousePosition.x;
+      const deltaY = clientY - startPanMousePosition.y;
+      setPanOffset((prevOffset: Point) => ({
         x: prevOffset.x + deltaX,
         y: prevOffset.y + deltaY,
       }));
     }
     if (tool === "selection") {
-      const element: any = getElementAtPosition(clientX, clientY, elements);
+      const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
-        canvasRef.current.style.cursor = "move";
+        canvasRef.current!.style.cursor = "move";
       }
     }
     if (action === "drawing") {
       if (!elements) return;
 
-      const index: any = elements.length - 1;
-      const { x1, y1 } = elements[index];
-      updateElement(index, x1, y1, clientX, clientY, tool, {});
+      const index = elements.length - 1;
+      const { x1, y1, type, options } = elements[index] as ShapeElement;
+      updateElement(index, x1, y1, clientX, clientY, type, options);
     } else if (action === "moving") {
-      if (selectedElement.type === "pencil") {
-        const newPoints: any = selectedElement.points.map(
-          (_: any, index: any) => [
-            clientX - selectedElement.xOffSets[index],
-            clientY - selectedElement.yOffSets[index],
+      if (selectedElement?.type === "pencil") {
+        const pencilElement = selectedElement as PencilElement & {
+          xOffSets?: number[];
+          yOffSets?: number[];
+        };
+        const newPoints = pencilElement.points.map(
+          (_: [number, number], index: number) => [
+            clientX - pencilElement.xOffSets![index],
+            clientY - pencilElement.yOffSets![index],
           ]
         );
-        const elementsCopy: any = [...elements];
-        elementsCopy[selectedElement.id].points = newPoints;
+        const elementsCopy: DrawingElement[] = [...elements];
+        elementsCopy[selectedElement.id] = {
+          ...selectedElement,
+          points: newPoints,
+        } as PencilElement;
         setElements(elementsCopy, true);
       } else {
-        const { id, x1, y1, x2, y2, type, offsetX, offsetY } = selectedElement;
-        const width: any = x2 - x1;
-        const height: any = y2 - y1;
-        const newX1: any = clientX - offsetX;
-        const newY1: any = clientY - offsetY;
-        const options: any =
-          selectedElement.type === "text"
-            ? { text: selectedElement.text }
-            : null;
+        const elementWithOffset = selectedElement as (
+          | TextElement
+          | ShapeElement
+        ) & { offsetX?: number; offsetY?: number };
+        const { id, x1, y1, x2, y2, type } = elementWithOffset;
+        const width = x2 - x1;
+        const height = y2 - y1;
+        const newX1 = clientX - (elementWithOffset.offsetX ?? 0);
+        const newY1 = clientY - (elementWithOffset.offsetY ?? 0);
+        const options =
+          elementWithOffset.type === "text"
+            ? {
+                ...elementWithOffset.options,
+                text: (elementWithOffset as TextElement).text,
+              }
+            : elementWithOffset.options;
         updateElement(
           id,
           newX1,
@@ -510,15 +533,15 @@ export default function App(): any {
     }
   };
 
-  const handleMouseUp = (e: any): any => {
+  const handleMouseUp = (e: MouseEvent) => {
     if (tool === "grab") {
       if (action === "panning") {
         setAction("none");
-        canvasRef.current.style.cursor = "grab";
+        canvasRef.current!.style.cursor = "grab";
       } else if (action === "moving") {
         setAction("none");
         setSelectedElement(null);
-        canvasRef.current.style.cursor = "grab";
+        canvasRef.current!.style.cursor = "grab";
       }
       return;
     }
@@ -533,10 +556,14 @@ export default function App(): any {
       return;
     }
     if (selectedElement) {
+      const elementWithOffset = selectedElement as (
+        | TextElement
+        | ShapeElement
+      ) & { offsetX?: number; offsetY?: number };
       if (
         selectedElement.type === "text" &&
-        clientX - selectedElement.offsetX === selectedElement.x1 &&
-        clientY - selectedElement.offsetY === selectedElement.y1
+        clientX - (elementWithOffset.offsetX ?? 0) === elementWithOffset.x1 &&
+        clientY - (elementWithOffset.offsetY ?? 0) === elementWithOffset.y1
       ) {
         setAction("writing");
         return;
@@ -544,32 +571,52 @@ export default function App(): any {
     }
     setAction("none");
     setSelectedElement(null);
-    canvasRef.current.style.cursor = "default";
+    canvasRef.current!.style.cursor = "default";
   };
 
-  const handleBlur = (): any => {
-    const { id, x1, y1, type } = selectedElement;
+  const handleBlur = () => {
+    if (!selectedElement || !textAreaRef.current) return;
+
+    const element = selectedElement as TextElement;
     setAction("none");
     setSelectedElement(null);
-    updateElement(id, x1, y1, null, null, type, {
-      text: textAreaRef.current.value,
+    updateElement(
+      element.id,
+      element.x1,
+      element.y1,
+      null,
+      null,
+      element.type,
+      {
+        ...element.options,
+        text: textAreaRef.current.value,
+      }
+    );
+  };
+
+  const onZoom = (delta: number) => {
+    setScale((prevScale: Scale) => {
+      const newScale = Math.min(Math.max(prevScale + delta, 0.1), 5);
+      return Math.round(newScale) as Scale;
     });
   };
 
-  const onZoom = (delta: any): any => {
-    setScale((prevScale: any) => Math.min(Math.max(prevScale + delta, 0.1), 5));
-  };
-
-  let computedLeft: any, computedTop: any;
-  if (selectedElement && canvasRef.current) {
-    computedLeft =
-      scale * (selectedElement.x1 - canvasRef.current.width / 2 + panOffset.x) +
-      canvasRef.current.width / 2;
-    computedTop =
-      scale *
-        (selectedElement.y1 - canvasRef.current.height / 2 + panOffset.y) +
-      canvasRef.current.height / 2 -
-      20;
+  let computedPosition: ComputedPosition | undefined;
+  if (
+    selectedElement &&
+    canvasRef.current &&
+    selectedElement.type !== "pencil"
+  ) {
+    const element = selectedElement as TextElement | ShapeElement;
+    computedPosition = {
+      left:
+        scale * (element.x1 - canvasRef.current.width / 2 + panOffset.x) +
+        canvasRef.current.width / 2,
+      top:
+        scale * (element.y1 - canvasRef.current.height / 2 + panOffset.y) +
+        canvasRef.current.height / 2 -
+        20,
+    };
   }
 
   return (
@@ -591,8 +638,7 @@ export default function App(): any {
           textAreaRef={textAreaRef}
           action={action}
           handleBlur={handleBlur}
-          computedTop={computedTop}
-          computedLeft={computedLeft}
+          computedPosition={computedPosition}
           canvasSize={canvasSize}
           handleMouseDown={handleMouseDown}
           handleMouseMove={handleMouseMove}

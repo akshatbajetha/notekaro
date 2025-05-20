@@ -1,9 +1,14 @@
 import isWithinElement from "./isWithinElement";
+import { DrawingElement } from "@/types/drawing";
 
-function getElementAtPosition(x: any, y: any, elements: any) {
+function getElementAtPosition(
+  x: number,
+  y: number,
+  elements: DrawingElement[]
+) {
   if (!elements) return null;
 
-  const element = elements.find((element: any) =>
+  const element = elements.find((element: DrawingElement) =>
     isWithinElement(x, y, element)
   );
 

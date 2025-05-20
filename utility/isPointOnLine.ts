@@ -1,6 +1,13 @@
 import distance from "./distance";
 
-function onLine(x1, y1, x2, y2, x, y) {
+function onLine(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  x: number,
+  y: number
+) {
   const a = { x: x1, y: y1 };
   const b = { x: x2, y: y2 };
   const c = { x, y };
