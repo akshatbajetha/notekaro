@@ -147,7 +147,7 @@ function Sidebar({ width }: { width: number }) {
 
   return (
     <div
-      className="w-60 flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg transition-all duration-300"
+      className="w-60 flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg"
       style={{
         width: `${width}px`,
         maxWidth: "500px",
@@ -267,19 +267,16 @@ function Sidebar({ width }: { width: number }) {
                     key={note.id}
                     href={`/notes/${note.id}`}
                     onClick={() => setSelectedNote(note)}
-                    className="flex items-center space-x-2 px-2 py-1 dark:text-gray-100 text-gray-900  cursor-pointer w-full"
+                    className="flex items-center space-x-2 px-2 py-1 dark:text-gray-100 text-gray-900 cursor-pointer flex-1 min-w-0"
                   >
                     <File className="w-4 h-4 flex-shrink-0" />
-                    <span
-                      title={note.title}
-                      className="text-sm truncate max-w-[180px]"
-                    >
+                    <span title={note.title} className="text-sm truncate">
                       {note.title}
                     </span>
                   </Link>
                   <Trash2Icon
                     onClick={() => handleDeleteNote(note.id)}
-                    className="w-4 h-4 rounded cursor-pointer"
+                    className="w-4 h-4 rounded cursor-pointer flex-shrink-0 ml-2"
                   />
                 </div>
               ))

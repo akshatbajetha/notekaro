@@ -134,7 +134,7 @@ function Sidebar({ width }: { width: number }) {
 
   return (
     <div
-      className="w-60 flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg transition-all duration-300"
+      className="w-60 flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg"
       style={{
         width: `${width}px`,
         maxWidth: "500px",
@@ -222,7 +222,7 @@ function Sidebar({ width }: { width: number }) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto">
-        {/* Notes section */}
+        {/* Todos section */}
         <div className="flex flex-col mt-2 gap-y-2">
           <Link
             href={"/todos/today"}
