@@ -12,6 +12,7 @@ import { useTodoStore } from "@/store/todoStore";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 function Page({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -87,17 +88,32 @@ function Page({ params }: { params: { id: string } }) {
         try {
           const response = await fetch(`/api/todolists/${id}`);
           if (!response.ok) {
+            toast({
+              title: "Access Denied",
+              description: "You don't have permission to access this todo list",
+              variant: "destructive",
+            });
             router.push("/todos");
             return;
           }
           const todoList = await response.json();
           if (!todoList) {
+            toast({
+              title: "Not Found",
+              description: "This todo list doesn't exist",
+              variant: "destructive",
+            });
             router.push("/todos");
             return;
           }
           setTodoListTitle(todoList.title);
         } catch (error) {
           console.error("Error fetching todo list: ", error);
+          toast({
+            title: "Error",
+            description: "Failed to load the todo list",
+            variant: "destructive",
+          });
           router.push("/todos");
         } finally {
           setIsLoadingTitle(false);

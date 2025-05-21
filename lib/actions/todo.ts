@@ -46,6 +46,7 @@ export async function getTodoListById({ listId }: { listId: string }) {
     const todoList = await prisma.todoList.findUnique({
       where: {
         id: listId,
+        userId: user.id,
       },
     });
     return todoList;
@@ -66,6 +67,7 @@ export async function getSectionsByListId({ listId }: { listId: string }) {
     const sections = await prisma.section.findMany({
       where: {
         todoListId: listId,
+        userId: user.id,
       },
       orderBy: {
         createdAt: "asc",
@@ -260,6 +262,11 @@ export async function createSectionInList({
     const section = await prisma.section.create({
       data: {
         title,
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
         todoList: {
           connect: {
             id: listId,
@@ -429,6 +436,7 @@ export async function updateTodoList({
     const todoList = await prisma.todoList.update({
       where: {
         id: listId,
+        userId: user.id,
       },
       data: {
         title,
@@ -459,6 +467,7 @@ export async function updateSection({
     const section = await prisma.section.update({
       where: {
         id: sectionId,
+        userId: user.id,
       },
       data: {
         title,

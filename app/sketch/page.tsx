@@ -576,3 +576,5 @@ export default function App() {
 }
 
 // Text not working
+// Save to DB
+// Save Image
