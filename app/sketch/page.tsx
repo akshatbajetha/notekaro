@@ -1,6 +1,12 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, useEffect } from "react";
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import rough from "roughjs";
 import useHistory from "@/hooks/use-history";
 import { getMouseCoordinates, getElementAtPosition } from "@/utility";
@@ -26,7 +32,7 @@ import { Drawable } from "roughjs/bin/core";
 import { RoughCanvas } from "roughjs/bin/canvas";
 const generator = rough.generator();
 
-export function App() {
+export default function App() {
   const canvasRef: CanvasRef = useRef(null);
   const textAreaRef: TextAreaRef = useRef(null);
   const { theme } = useTheme();
@@ -66,11 +72,51 @@ export function App() {
     y: 0,
   });
   const [scale, setScale] = useState<Scale>(1);
-  const [scaleOffset, setScaleOffset] = useState<Point>({ x: 0, y: 0 });
+
+  const onZoom = useCallback((delta: number) => {
+    setScale((prevScale: Scale) => {
+      const newScale = Math.min(Math.max(prevScale + delta, 0.1), 5);
+      return (Math.round(newScale * 10) / 10) as Scale;
+    });
+  }, []);
+
+  const drawElement = useCallback(
+    (
+      roughCanvas: RoughCanvas,
+      context: CanvasRenderingContext2D,
+      element: DrawingElement
+    ) => {
+      if (!element) return;
+
+      const { options } = element;
+      switch (element.type) {
+        case "pencil":
+          const outlinePoints = getStroke(element.points, {
+            size: options.strokeWidth,
+          });
+          const pathData = getSvgPathFromStroke(
+            outlinePoints as [number, number][]
+          );
+          const myPath = new Path2D(pathData);
+          context.fillStyle = options.stroke;
+          context.fill(myPath);
+          break;
+        case "text":
+          context.fillStyle = "#ffffff";
+          context.font = "24px sans-serif";
+          context.fillText(element.text, element.x1, element.y1);
+          break;
+        default:
+          roughCanvas.draw(element.roughElement as Drawable);
+          break;
+      }
+    },
+    []
+  );
 
   // Update canvas size on resize
   useEffect(() => {
-    const updateCanvasSize = (): any => {
+    const updateCanvasSize = () => {
       setCanvasSize({
         width: window.innerWidth,
         height: window.innerHeight - 64,
@@ -90,11 +136,6 @@ export function App() {
     if (!context) return;
     context.clearRect(0, 0, canvas.width, canvas.height);
     const roughCanvas = rough.canvas(canvas);
-    const scaledWidth = canvas.width * scale;
-    const scaledHeight = canvas.height * scale;
-    const scaleOffsetX = (canvas.width - scaledWidth) / 2;
-    const scaleOffsetY = (canvas.height - scaledHeight) / 2;
-    setScaleOffset({ x: scaleOffsetX, y: scaleOffsetY });
 
     context.save();
     context.translate(canvas.width / 2, canvas.height / 2);
@@ -117,7 +158,7 @@ export function App() {
       });
     }
     context.restore();
-  }, [elements, action, selectedElement, panOffset, scale]);
+  }, [elements, action, selectedElement, panOffset, scale, drawElement]);
 
   // Focus on text area when writing text
   useEffect(() => {
@@ -134,14 +175,14 @@ export function App() {
   // Other event listeners
   useEffect(() => {
     const panFunction = (e: WheelEvent) => {
-      setPanOffset((prevOffset: Point) => ({
-        x: prevOffset.x - e.deltaX,
-        y: prevOffset.y - e.deltaY,
-      }));
+      // Handle zoom with wheel
+      e.preventDefault();
+      const delta = -e.deltaY * 0.001;
+      onZoom(delta);
     };
-    document.addEventListener("wheel", panFunction);
+    document.addEventListener("wheel", panFunction, { passive: false });
     return () => document.removeEventListener("wheel", panFunction);
-  }, []);
+  }, [onZoom]);
 
   useEffect(() => {
     const undoRedoFunction = (e: KeyboardEvent) => {
@@ -257,48 +298,8 @@ export function App() {
     setElements(elementsCopy, true);
   }
 
-  function drawElement(
-    roughCanvas: RoughCanvas,
-    context: CanvasRenderingContext2D,
-    element: DrawingElement
-  ) {
-    if (!element) return;
-
-    const { options } = element;
-    switch (element.type) {
-      case "pencil":
-        const outlinePoints = getStroke(element.points, {
-          size: options.strokeWidth,
-        });
-        const pathData = getSvgPathFromStroke(
-          outlinePoints as [number, number][]
-        );
-        const myPath = new Path2D(pathData);
-        context.fillStyle = options.stroke;
-        context.fill(myPath);
-        break;
-      case "text":
-        context.fillStyle = "#ffffff";
-        context.font = "24px sans-serif";
-        context.fillText(element.text, element.x1, element.y1);
-        break;
-      default:
-        const newElement = createElement(
-          element.id,
-          element.x1,
-          element.y1,
-          element.x2,
-          element.y2,
-          element.type
-        );
-        // element.roughElement = newElement.roughElement;
-        roughCanvas.draw(element.roughElement as Drawable);
-        break;
-    }
-  }
-
   // --- Mouse event handlers --- //
-  const handleMouseDown = (e: MouseEvent) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (action === "writing") return;
     const { clientX, clientY } = getMouseCoordinates(
       e,
@@ -308,38 +309,10 @@ export function App() {
     );
 
     if (tool === "grab") {
-      const element = getElementAtPosition(clientX, clientY, elements);
-      if (element) {
-        // If clicked on an element, select and move it
-        if (element.type === "pencil") {
-          const xOffSets = (element as PencilElement).points!.map(
-            (point: [number, number]) => clientX - point[0]
-          );
-          const yOffSets = (element as PencilElement).points!.map(
-            (point: [number, number]) => clientY - point[1]
-          );
-          setSelectedElement({
-            ...element,
-            xOffSets,
-            yOffSets,
-          } as PencilElement);
-        } else {
-          const offsetX = clientX - element.x1;
-          const offsetY = clientY - element.y1;
-          setSelectedElement({
-            ...element,
-            offsetX,
-            offsetY,
-          });
-        }
-        setAction("moving");
-        canvasRef.current!.style.cursor = "move";
-      } else {
-        // If clicked on empty canvas, start panning
-        setAction("panning");
-        setStartPanMousePosition({ x: clientX, y: clientY });
-        canvasRef.current!.style.cursor = "grab";
-      }
+      // Only handle panning for grab tool
+      setAction("panning");
+      setStartPanMousePosition({ x: clientX, y: clientY });
+      canvasRef.current!.style.cursor = "grab";
       return;
     }
 
@@ -374,8 +347,8 @@ export function App() {
       }
     } else {
       if (!elements) return;
-      const id: any = elements.length;
-      const element: any = createElement(
+      const id = elements.length;
+      const element = createElement(
         id,
         clientX,
         clientY,
@@ -396,7 +369,7 @@ export function App() {
     }
   };
 
-  const handleMouseMove = (e: MouseEvent | WheelEvent) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const { clientX, clientY } = getMouseCoordinates(
       e,
       canvasRef,
@@ -412,46 +385,6 @@ export function App() {
           x: prevOffset.x + deltaX,
           y: prevOffset.y + deltaY,
         }));
-        setStartPanMousePosition({ x: clientX, y: clientY });
-      } else if (action === "moving" && selectedElement) {
-        if (selectedElement.type === "pencil") {
-          const pencilElement = selectedElement as PencilElement & {
-            xOffSets?: number[];
-            yOffSets?: number[];
-          };
-          const newPoints = pencilElement.points.map(
-            (_: [number, number], index: number) => [
-              clientX - pencilElement.xOffSets![index],
-              clientY - pencilElement.yOffSets![index],
-            ]
-          );
-          const elementsCopy: DrawingElement[] = [...elements];
-          elementsCopy[selectedElement.id] = {
-            ...selectedElement,
-            points: newPoints,
-          } as PencilElement;
-          setElements(elementsCopy, true);
-        } else {
-          const { id, x1, y1, x2, y2, type, offsetX, offsetY } =
-            selectedElement;
-          const width = x2 - x1;
-          const height = y2 - y1;
-          const newX1 = clientX - offsetX!;
-          const newY1 = clientY - offsetY!;
-          const options =
-            selectedElement.type === "text"
-              ? { ...selectedElement.options, text: selectedElement.text }
-              : { ...selectedElement.options };
-          updateElement(
-            id,
-            newX1,
-            newY1,
-            newX1 + width,
-            newY1 + height,
-            type,
-            options
-          );
-        }
       }
       return;
     }
@@ -533,7 +466,7 @@ export function App() {
     }
   };
 
-  const handleMouseUp = (e: MouseEvent) => {
+  const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (tool === "grab") {
       if (action === "panning") {
         setAction("none");
@@ -594,13 +527,6 @@ export function App() {
     );
   };
 
-  const onZoom = (delta: number) => {
-    setScale((prevScale: Scale) => {
-      const newScale = Math.min(Math.max(prevScale + delta, 0.1), 5);
-      return Math.round(newScale) as Scale;
-    });
-  };
-
   let computedPosition: ComputedPosition | undefined;
   if (
     selectedElement &&
@@ -648,3 +574,5 @@ export function App() {
     </div>
   );
 }
+
+// Text not working

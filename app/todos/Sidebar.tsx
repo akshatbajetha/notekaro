@@ -122,7 +122,7 @@ function Sidebar({ width }: { width: number }) {
 
   useEffect(() => {
     fetchTodoLists();
-  }, []);
+  }, [fetchTodoLists]);
 
   useEffect(() => {
     if (id) {

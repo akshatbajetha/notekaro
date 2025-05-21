@@ -14,7 +14,7 @@ import { Tool } from "@/types/drawing";
 interface TopToolbarProps {
   setTool: (tool: Tool) => void;
   brushSize: number;
-  setBrushSize: (size: number) => void;
+  setBrushSize: (size: 1 | 2 | 3 | 4 | 5) => void;
   color: string;
   setColor: (color: string) => void;
   tool: Tool;
@@ -127,7 +127,9 @@ const TopToolbar = ({
         min={1}
         max={5}
         value={brushSize}
-        onChange={(e) => setBrushSize(Number(e.target.value))}
+        onChange={(e) =>
+          setBrushSize(Number(e.target.value) as 1 | 2 | 3 | 4 | 5)
+        }
         className="accent-purple-500"
         title="Brush Size"
       />

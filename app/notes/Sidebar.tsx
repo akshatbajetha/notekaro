@@ -270,7 +270,12 @@ function Sidebar({ width }: { width: number }) {
                     className="flex items-center space-x-2 px-2 py-1 dark:text-gray-100 text-gray-900  cursor-pointer w-full"
                   >
                     <File className="w-4 h-4 flex-shrink-0" />
-                    <span className="text-sm">{note.title}</span>
+                    <span
+                      title={note.title}
+                      className="text-sm truncate max-w-[180px]"
+                    >
+                      {note.title}
+                    </span>
                   </Link>
                   <Trash2Icon
                     onClick={() => handleDeleteNote(note.id)}

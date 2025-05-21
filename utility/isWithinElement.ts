@@ -33,10 +33,21 @@ function isWithinElement(x: number, y: number, element: DrawingElement) {
       const distanceFromCenter = distance(center, clickedPoint);
       return distanceFromCenter < Math.abs(x2 - x1);
     } else if (type === "diamond") {
-      const center = { x: (x1 + x2) / 2, y: (y1 + y2) / 2 };
-      const clickedPoint = { x, y };
-      const distanceFromCenter = distance(center, clickedPoint);
-      return distanceFromCenter < Math.abs(x2 - x1);
+      const minX = Math.min(x1, x2);
+      const maxX = Math.max(x1, x2);
+      const minY = Math.min(y1, y2);
+      const maxY = Math.max(y1, y2);
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+
+      // Calculate the distance from the point to each edge of the diamond
+      const dx = Math.abs(x - centerX);
+      const dy = Math.abs(y - centerY);
+      const halfWidth = (maxX - minX) / 2;
+      const halfHeight = (maxY - minY) / 2;
+
+      // Check if the point is inside the diamond using the diamond equation
+      return dx / halfWidth + dy / halfHeight <= 1;
     }
   } else if (type === "pencil") {
     const pencilElement = element as PencilElement;

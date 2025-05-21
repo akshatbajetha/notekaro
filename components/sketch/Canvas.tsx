@@ -13,7 +13,6 @@ import {
   Scale,
   ComputedPosition,
 } from "@/types/drawing";
-import { MouseEvent, WheelEvent } from "react";
 
 interface ToolbarProps {
   undo: () => void;
@@ -21,7 +20,7 @@ interface ToolbarProps {
   onZoom: (delta: number) => void;
   setScale: (scale: Scale) => void;
   brushSize: number;
-  setBrushSize: (size: number) => void;
+  setBrushSize: (size: 1 | 2 | 3 | 4 | 5) => void;
   color: string;
   setColor: (color: string) => void;
   setTool: (tool: Tool) => void;
@@ -30,9 +29,9 @@ interface ToolbarProps {
 interface CanvasContainerProps extends ToolbarProps {
   canvasRef: CanvasRef;
   canvasSize: CanvasSize;
-  handleMouseDown: (e: MouseEvent) => void;
-  handleMouseMove: (e: MouseEvent | WheelEvent) => void;
-  handleMouseUp: (e: MouseEvent) => void;
+  handleMouseDown: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void;
+  handleMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  handleMouseUp: (e: React.MouseEvent<HTMLCanvasElement>) => void;
   action: Action;
   computedPosition?: ComputedPosition;
   scale: Scale;
@@ -95,9 +94,9 @@ const CanvasContainer = ({
         className={`absolute inset-0 ${getCursorStyle()}`}
         width={canvasSize.width}
         height={canvasSize.height}
-        onMouseDown={handleMouseDown as any}
-        onMouseMove={handleMouseMove as any}
-        onMouseUp={handleMouseUp as any}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
       >
         Canvas
       </canvas>

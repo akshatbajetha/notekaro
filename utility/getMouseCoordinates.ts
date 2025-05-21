@@ -1,7 +1,7 @@
 import { CanvasRef, Point } from "@/types/drawing";
 
 function getMouseCoordinates(
-  e: MouseEvent | WheelEvent,
+  e: React.MouseEvent<HTMLCanvasElement>,
   canvasRef: CanvasRef,
   scale: number,
   panOffset: Point
