@@ -101,8 +101,9 @@ export default function App() {
           context.fillStyle = options.stroke;
           context.fill(myPath);
           break;
+        // *************************************************
         case "text":
-          context.fillStyle = "#ffffff";
+          context.fillStyle = options.stroke;
           context.font = "24px sans-serif";
           context.fillText(element.text, element.x1, element.y1);
           break;
@@ -175,10 +176,20 @@ export default function App() {
   // Other event listeners
   useEffect(() => {
     const panFunction = (e: WheelEvent) => {
-      // Handle zoom with wheel
       e.preventDefault();
-      const delta = -e.deltaY * 0.001;
-      onZoom(delta);
+
+      // Check if it's a touchpad scroll (deltaMode === 0)
+      if (e.deltaMode === 0) {
+        // Touchpad scroll - use deltaX and deltaY directly for panning
+        setPanOffset((prevOffset: Point) => ({
+          x: prevOffset.x - e.deltaX,
+          y: prevOffset.y - e.deltaY,
+        }));
+      } else {
+        // Mouse wheel - handle zoom as before
+        const delta = -e.deltaY * 0.001;
+        onZoom(delta);
+      }
     };
     document.addEventListener("wheel", panFunction, { passive: false });
     return () => document.removeEventListener("wheel", panFunction);
@@ -240,8 +251,45 @@ export default function App() {
       }
       case "pencil":
         return { id, type, points: [[x1, y1]], options };
-      case "text":
-        return { id, type, x1, y1, x2, y2, text: "", options };
+      case "text": {
+        const canvas = canvasRef.current;
+        if (!canvas)
+          return {
+            id,
+            type,
+            x1,
+            y1,
+            x2: x1 + 100,
+            y2: y1 + 24,
+            text: "",
+            options,
+          };
+        const context = canvas.getContext("2d");
+        if (!context)
+          return {
+            id,
+            type,
+            x1,
+            y1,
+            x2: x1 + 100,
+            y2: y1 + 24,
+            text: "",
+            options,
+          };
+        context.font = "24px sans-serif";
+        const textWidth = context.measureText("").width;
+        const textHeight = 24;
+        return {
+          id,
+          type,
+          x1,
+          y1,
+          x2: x1 + Math.max(textWidth, 100),
+          y2: y1 + textHeight,
+          text: "",
+          options,
+        };
+      }
       default:
         throw new Error("Invalid shape type");
     }
@@ -281,7 +329,8 @@ export default function App() {
           y1,
           x1 + textWidth,
           y1 + textHeight,
-          type
+          type,
+          options
         );
         elementsCopy[id] = {
           ...baseElement,
@@ -291,7 +340,7 @@ export default function App() {
       }
       default:
         if (x2 !== null && y2 !== null) {
-          elementsCopy[id] = createElement(id, x1, y1, x2, y2, type);
+          elementsCopy[id] = createElement(id, x1, y1, x2, y2, type, options);
         }
         break;
     }
@@ -309,7 +358,6 @@ export default function App() {
     );
 
     if (tool === "grab") {
-      // Only handle panning for grab tool
       setAction("panning");
       setStartPanMousePosition({ x: clientX, y: clientY });
       canvasRef.current!.style.cursor = "grab";
@@ -317,18 +365,28 @@ export default function App() {
     }
 
     if (tool === "eraser") {
+      const element = getElementAtPosition(clientX, clientY, elements);
+      if (element) {
+        setElements((prevElements: DrawingElement[]) =>
+          prevElements.filter((el: DrawingElement) => el.id !== element.id)
+        );
+      }
       setAction("erasing");
       return;
     }
+
     if (e.button === 1) {
       setAction("panning");
       setStartPanMousePosition({ x: clientX, y: clientY });
       canvasRef.current!.style.cursor = "grab";
       return;
     }
-    if (tool === "selection") {
-      const element = getElementAtPosition(clientX, clientY, elements);
-      if (element) {
+
+    // Check if we clicked on an element
+    const element = getElementAtPosition(clientX, clientY, elements);
+    if (element) {
+      // If we're in selection mode or the element is already selected
+      if (tool === "selection" || selectedElement?.id === element.id) {
         if (element.type === "pencil") {
           const xOffSets = (element as PencilElement).points!.map(
             (point: [number, number]) => clientX - point[0]
@@ -341,11 +399,18 @@ export default function App() {
           const offsetX = clientX - element.x1;
           const offsetY = clientY - element.y1;
           setSelectedElement({ ...element, offsetX, offsetY });
+          if (element.type === "text") {
+            setAction("writing");
+            return;
+          }
         }
         setAction("moving");
-        setElements((prevState: DrawingElement[]) => prevState);
+        return;
       }
-    } else {
+    }
+
+    // If no element was clicked or we're not in selection mode, create a new element
+    if (tool !== "selection") {
       if (!elements) return;
       const id = elements.length;
       const element = createElement(
@@ -366,6 +431,10 @@ export default function App() {
       } else {
         setAction("drawing");
       }
+    } else {
+      // If we're in selection mode and clicked on empty space, clear selection
+      setSelectedElement(null);
+      setAction("none");
     }
   };
 
@@ -398,6 +467,7 @@ export default function App() {
       }
       return;
     }
+
     if (action === "panning") {
       const deltaX = clientX - startPanMousePosition.x;
       const deltaY = clientY - startPanMousePosition.y;
@@ -406,12 +476,17 @@ export default function App() {
         y: prevOffset.y + deltaY,
       }));
     }
-    if (tool === "selection") {
+
+    // Only update cursor if we're not over a resize handle
+    if (tool === "selection" && !action) {
       const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
         canvasRef.current!.style.cursor = "move";
+      } else {
+        canvasRef.current!.style.cursor = "default";
       }
     }
+
     if (action === "drawing") {
       if (!elements) return;
 
@@ -441,18 +516,30 @@ export default function App() {
           | TextElement
           | ShapeElement
         ) & { offsetX?: number; offsetY?: number };
-        const { id, x1, y1, x2, y2, type } = elementWithOffset;
+        const { id, x1, y1, x2, y2, type, options } = elementWithOffset;
         const width = x2 - x1;
         const height = y2 - y1;
         const newX1 = clientX - (elementWithOffset.offsetX ?? 0);
         const newY1 = clientY - (elementWithOffset.offsetY ?? 0);
-        const options =
+
+        // Preserve the original options
+        const elementOptions =
           elementWithOffset.type === "text"
             ? {
-                ...elementWithOffset.options,
+                ...options,
                 text: (elementWithOffset as TextElement).text,
               }
-            : elementWithOffset.options;
+            : options;
+
+        // Update the element and keep it selected
+        const updatedElement = {
+          ...elementWithOffset,
+          x1: newX1,
+          y1: newY1,
+          x2: newX1 + width,
+          y2: newY1 + height,
+        };
+        setSelectedElement(updatedElement);
         updateElement(
           id,
           newX1,
@@ -460,7 +547,7 @@ export default function App() {
           newX1 + width,
           newY1 + height,
           type,
-          options
+          elementOptions
         );
       }
     }
@@ -471,30 +558,29 @@ export default function App() {
       if (action === "panning") {
         setAction("none");
         canvasRef.current!.style.cursor = "grab";
-      } else if (action === "moving") {
-        setAction("none");
-        setSelectedElement(null);
-        canvasRef.current!.style.cursor = "grab";
       }
       return;
     }
+
     const { clientX, clientY } = getMouseCoordinates(
       e,
       canvasRef,
       scale,
       panOffset
     );
+
     if (action === "erasing") {
       setAction("none");
       return;
     }
-    if (selectedElement) {
-      const elementWithOffset = selectedElement as (
-        | TextElement
-        | ShapeElement
-      ) & { offsetX?: number; offsetY?: number };
+
+    // Handle text element click for writing
+    if (selectedElement?.type === "text") {
+      const elementWithOffset = selectedElement as TextElement & {
+        offsetX?: number;
+        offsetY?: number;
+      };
       if (
-        selectedElement.type === "text" &&
         clientX - (elementWithOffset.offsetX ?? 0) === elementWithOffset.x1 &&
         clientY - (elementWithOffset.offsetY ?? 0) === elementWithOffset.y1
       ) {
@@ -502,29 +588,54 @@ export default function App() {
         return;
       }
     }
-    setAction("none");
-    setSelectedElement(null);
-    canvasRef.current!.style.cursor = "default";
+
+    // Don't clear selection if we're in selection mode or if we're writing text
+    if (tool !== "selection" && action !== "writing") {
+      setAction("none");
+      setSelectedElement(null);
+      canvasRef.current!.style.cursor = "default";
+    } else {
+      // Just reset the action but keep the selection
+      setAction("none");
+      // Update cursor based on whether we're hovering over an element
+      const element = getElementAtPosition(clientX, clientY, elements);
+      if (element) {
+        canvasRef.current!.style.cursor = "move";
+      } else {
+        canvasRef.current!.style.cursor = "default";
+      }
+    }
   };
 
   const handleBlur = () => {
     if (!selectedElement || !textAreaRef.current) return;
 
-    const element = selectedElement as TextElement;
+    const textElement = selectedElement as TextElement;
+    const text = textAreaRef.current.value;
+
+    // Only update if there's actual text
+    if (text.trim()) {
+      // Create a copy of the text element with the new text
+      const updatedElement = {
+        ...textElement,
+        text: text,
+      };
+      // Update the elements array
+      setElements((prevElements) =>
+        prevElements.map((el) =>
+          el.id === textElement.id ? updatedElement : el
+        )
+      );
+      // Keep the element selected
+      setSelectedElement(updatedElement);
+    } else {
+      // Remove empty text elements
+      setElements((prevElements) =>
+        prevElements.filter((el) => el.id !== textElement.id)
+      );
+      setSelectedElement(null);
+    }
     setAction("none");
-    setSelectedElement(null);
-    updateElement(
-      element.id,
-      element.x1,
-      element.y1,
-      null,
-      null,
-      element.type,
-      {
-        ...element.options,
-        text: textAreaRef.current.value,
-      }
-    );
   };
 
   let computedPosition: ComputedPosition | undefined;
@@ -540,13 +651,12 @@ export default function App() {
         canvasRef.current.width / 2,
       top:
         scale * (element.y1 - canvasRef.current.height / 2 + panOffset.y) +
-        canvasRef.current.height / 2 -
-        20,
+        canvasRef.current.height / 2,
     };
   }
 
   return (
-    <div className="min-h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] pt-16">
+    <div className="min-h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] pt-16 overflow-hidden">
       <div className="relative w-full h-[calc(100vh-4rem)]">
         <CanvasContainer
           tool={tool}
@@ -569,6 +679,8 @@ export default function App() {
           handleMouseDown={handleMouseDown}
           handleMouseMove={handleMouseMove}
           handleMouseUp={handleMouseUp}
+          selectedElement={selectedElement}
+          panOffset={panOffset}
         />
       </div>
     </div>

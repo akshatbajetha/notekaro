@@ -51,7 +51,7 @@ function isWithinElement(x: number, y: number, element: DrawingElement) {
     }
   } else if (type === "pencil") {
     const pencilElement = element as PencilElement;
-    const threshold = 10;
+    const threshold = 20;
 
     // Handle case with no points
     if (pencilElement.points.length === 0) return false;
@@ -90,7 +90,13 @@ function isWithinElement(x: number, y: number, element: DrawingElement) {
   } else if (type === "text") {
     const textElement = element as TextElement;
     const { x1, y1, x2, y2 } = textElement;
-    return x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
+    const threshold = 20;
+    return (
+      x >= x1 - threshold &&
+      x <= x2 + threshold &&
+      y >= y1 - threshold &&
+      y <= y2 + threshold
+    );
   }
 
   return false;

@@ -5,39 +5,39 @@ import BottomToolbar from "./Bottombar";
 import TextOverlay from "./TextOverlay";
 import { useEffect } from "react";
 import {
-  Action,
-  Tool,
   CanvasRef,
   CanvasSize,
   TextAreaRef,
   Scale,
   ComputedPosition,
+  DrawingElement,
 } from "@/types/drawing";
 
-interface ToolbarProps {
-  undo: () => void;
-  redo: () => void;
-  onZoom: (delta: number) => void;
-  setScale: (scale: Scale) => void;
-  brushSize: number;
+interface CanvasContainerProps {
+  tool: DrawingElement["type"] | "selection" | "grab" | "eraser";
+  setTool: (
+    tool: DrawingElement["type"] | "selection" | "grab" | "eraser"
+  ) => void;
+  brushSize: 1 | 2 | 3 | 4 | 5;
   setBrushSize: (size: 1 | 2 | 3 | 4 | 5) => void;
   color: string;
   setColor: (color: string) => void;
-  setTool: (tool: Tool) => void;
-}
-
-interface CanvasContainerProps extends ToolbarProps {
+  scale: Scale;
+  setScale: (scale: Scale) => void;
+  onZoom: (delta: number) => void;
+  undo: () => void;
+  redo: () => void;
   canvasRef: CanvasRef;
+  textAreaRef: TextAreaRef;
+  action: "panning" | "moving" | "writing" | "drawing" | "erasing" | "none";
+  handleBlur: () => void;
+  computedPosition: ComputedPosition | undefined;
   canvasSize: CanvasSize;
-  handleMouseDown: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void;
+  handleMouseDown: (e: React.MouseEvent<HTMLCanvasElement>) => void;
   handleMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
   handleMouseUp: (e: React.MouseEvent<HTMLCanvasElement>) => void;
-  action: Action;
-  computedPosition?: ComputedPosition;
-  scale: Scale;
-  textAreaRef: TextAreaRef;
-  handleBlur: () => void;
-  tool: Tool;
+  selectedElement: DrawingElement | null;
+  panOffset: { x: number; y: number };
 }
 
 const CanvasContainer = ({
@@ -57,21 +57,65 @@ const CanvasContainer = ({
   // Function to determine cursor style
   const getCursorStyle = () => {
     if (tool === "grab") {
-      if (action === "panning") return "cursor-grabbing";
-      if (action === "moving") return "cursor-move";
+      if (action === "panning") {
+        return "cursor-grabbing";
+      }
       return "cursor-grab";
     }
     if (tool === "selection") {
-      if (action === "moving") return "cursor-move";
-      return "cursor-pointer";
+      if (action === "moving") {
+        return "cursor-move";
+      }
+      return "cursor-default";
     }
-    if (tool === "eraser") return "cursor-cell";
-    if (tool === "text") return "cursor-text";
+    if (tool === "text") {
+      return "cursor-text";
+    }
+    if (tool === "eraser") {
+      return "cursor-none";
+    }
     return "cursor-crosshair";
   };
 
   useEffect(() => {
-    getCursorStyle();
+    if (canvasRef.current) {
+      if (tool === "eraser") {
+        canvasRef.current.style.cursor = "none";
+        // Create or update the eraser cursor
+        let cursor = document.getElementById("eraser-cursor");
+        if (!cursor) {
+          cursor = document.createElement("div");
+          cursor.id = "eraser-cursor";
+          cursor.style.position = "fixed";
+          cursor.style.width = "8px";
+          cursor.style.height = "8px";
+          cursor.style.backgroundColor = "black";
+          cursor.style.borderRadius = "50%";
+          cursor.style.pointerEvents = "none";
+          cursor.style.transform = "translate(-50%, -50%)";
+          cursor.style.zIndex = "9999";
+          document.body.appendChild(cursor);
+        }
+        // Update cursor position on mouse move
+        const updateCursor = (e: MouseEvent) => {
+          cursor!.style.left = e.clientX + "px";
+          cursor!.style.top = e.clientY + "px";
+        };
+        document.addEventListener("mousemove", updateCursor);
+        return () => {
+          document.removeEventListener("mousemove", updateCursor);
+          cursor?.remove();
+        };
+      } else {
+        canvasRef.current.style.cursor = getCursorStyle().replace(
+          "cursor-",
+          ""
+        );
+        // Remove eraser cursor if it exists
+        const cursor = document.getElementById("eraser-cursor");
+        cursor?.remove();
+      }
+    }
   }, [tool, action]);
 
   return (

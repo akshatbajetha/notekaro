@@ -27,7 +27,7 @@ function drawElement(
 
     case "text":
       if (!element.text) return;
-      context.fillStyle = "#ffffff";
+      context.fillStyle = options.stroke;
       context.font = "24px sans-serif";
       context.fillText(element.text, element.x1, element.y1);
       break;

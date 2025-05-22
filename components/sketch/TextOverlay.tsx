@@ -1,9 +1,9 @@
 "use client";
-import { RefObject } from "react";
-import { Scale } from "@/types/drawing";
+
+import { Scale, TextAreaRef } from "@/types/drawing";
 
 interface TextOverlayProps {
-  textAreaRef: RefObject<HTMLTextAreaElement>;
+  textAreaRef: TextAreaRef;
   handleBlur: () => void;
   computedTop: number;
   computedLeft: number;
