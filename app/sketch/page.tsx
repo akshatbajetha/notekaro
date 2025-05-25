@@ -320,8 +320,9 @@ export default function App() {
         if (!canvas) return;
         const context = canvas.getContext("2d");
         if (!context) return;
+        const textElement = elementsCopy[id] as TextElement;
         context.font = "24px sans-serif";
-        const textWidth = context.measureText(options.text || "").width;
+        const textWidth = context.measureText(textElement.text || "").width;
         const textHeight = 24;
         const baseElement = createElement(
           id,
@@ -334,8 +335,9 @@ export default function App() {
         );
         elementsCopy[id] = {
           ...baseElement,
+          text: textElement.text,
           options: { ...baseElement.options },
-        };
+        } as TextElement;
         break;
       }
       default:
@@ -399,10 +401,6 @@ export default function App() {
           const offsetX = clientX - element.x1;
           const offsetY = clientY - element.y1;
           setSelectedElement({ ...element, offsetX, offsetY });
-          if (element.type === "text") {
-            setAction("writing");
-            return;
-          }
         }
         setAction("moving");
         return;
@@ -687,6 +685,5 @@ export default function App() {
   );
 }
 
-// Text not working
 // Save to DB
 // Save Image
