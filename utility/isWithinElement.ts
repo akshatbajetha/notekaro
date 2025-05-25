@@ -14,12 +14,13 @@ function isWithinElement(x: number, y: number, element: DrawingElement) {
     type === "line" ||
     type === "rect" ||
     type === "circle" ||
-    type === "diamond"
+    type === "diamond" ||
+    type === "arrow"
   ) {
     const shapeElement = element as ShapeElement;
     const { x1, y1, x2, y2 } = shapeElement;
 
-    if (type === "line") {
+    if (type === "line" || type === "arrow") {
       return onLine(x1, y1, x2, y2, x, y);
     } else if (type === "rect") {
       const xMin = Math.min(x1, x2);

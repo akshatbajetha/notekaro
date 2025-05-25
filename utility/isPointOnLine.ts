@@ -14,7 +14,7 @@ function onLine(
 
   const offset = distance(a, b) - (distance(a, c) + distance(b, c));
 
-  return Math.abs(offset) < 5;
+  return Math.abs(offset) < 10;
 }
 
 export default onLine;

@@ -8,6 +8,7 @@ import {
   Eraser,
   TextIcon,
   Hand,
+  ArrowRight,
 } from "lucide-react";
 import { Tool } from "@/types/drawing";
 
@@ -58,6 +59,17 @@ const TopToolbar = ({
         }`}
       >
         <Minus className="w-5 h-5 dark:text-white rotate-[-45deg]" />
+      </button>
+      <button
+        onClick={() => setTool("arrow")}
+        title="Arrow"
+        className={`p-1 rounded-md transition-colors ${
+          tool === "arrow"
+            ? "bg-purple-500 text-white"
+            : "hover:text-purple-400"
+        }`}
+      >
+        <ArrowRight className="w-5 h-5 dark:text-white" />
       </button>
       <button
         onClick={() => setTool("rect")}

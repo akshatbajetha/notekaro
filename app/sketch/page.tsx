@@ -56,6 +56,7 @@ export default function App() {
     | "selection"
     | "grab"
     | "eraser"
+    | "arrow"
   >("selection");
   const [selectedElement, setSelectedElement] =
     useState<SelectedElement | null>(null);
@@ -223,6 +224,24 @@ export default function App() {
       case "line":
         roughElement = generator.line(x1, y1, x2, y2, options);
         break;
+      case "arrow": {
+        // Calculate arrow head points
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const arrowLength = 20;
+        const arrowAngle = Math.PI / 6; // 30 degrees
+
+        const arrowX1 = x2 - arrowLength * Math.cos(angle - arrowAngle);
+        const arrowY1 = y2 - arrowLength * Math.sin(angle - arrowAngle);
+        const arrowX2 = x2 - arrowLength * Math.cos(angle + arrowAngle);
+        const arrowY2 = y2 - arrowLength * Math.sin(angle + arrowAngle);
+
+        // Create a path that includes both the line and arrow head
+        roughElement = generator.path(
+          `M ${x1} ${y1} L ${x2} ${y2} M ${x2} ${y2} L ${arrowX1} ${arrowY1} M ${x2} ${y2} L ${arrowX2} ${arrowY2}`,
+          options
+        );
+        break;
+      }
       case "rect":
         roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1, options);
         break;

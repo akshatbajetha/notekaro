@@ -52,6 +52,9 @@ const CanvasContainer = ({
   textAreaRef,
   handleBlur,
   tool,
+  onZoom,
+  undo,
+  redo,
   ...toolbarProps
 }: CanvasContainerProps) => {
   // Function to determine cursor style
@@ -75,6 +78,15 @@ const CanvasContainer = ({
       return "cursor-none";
     }
     return "cursor-crosshair";
+  };
+
+  // Handle wheel event for zooming
+  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
+    if (e.ctrlKey) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      onZoom(delta);
+    }
   };
 
   useEffect(() => {
@@ -121,7 +133,13 @@ const CanvasContainer = ({
   return (
     <div className="relative w-full h-full">
       <TopToolbar {...toolbarProps} tool={tool} />
-      <BottomToolbar {...toolbarProps} scale={scale} />
+      <BottomToolbar
+        {...toolbarProps}
+        scale={scale}
+        onZoom={onZoom}
+        undo={undo}
+        redo={redo}
+      />
 
       {action === "writing" && computedPosition && (
         <TextOverlay
@@ -141,6 +159,7 @@ const CanvasContainer = ({
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
+        onWheel={handleWheel}
       >
         Canvas
       </canvas>

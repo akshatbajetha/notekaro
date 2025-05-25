@@ -17,7 +17,8 @@ export type Tool =
   | "text"
   | "selection"
   | "grab"
-  | "eraser";
+  | "eraser"
+  | "arrow";
 
 export interface DrawingOptions {
   strokeWidth: number;
@@ -45,7 +46,7 @@ export interface TextElement extends BaseElement {
 }
 
 export interface ShapeElement extends BaseElement {
-  type: "line" | "rect" | "circle" | "diamond";
+  type: "line" | "rect" | "circle" | "diamond" | "arrow";
   x1: number;
   y1: number;
   x2: number;
