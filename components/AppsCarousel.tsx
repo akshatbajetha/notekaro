@@ -3,33 +3,52 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import DarkNoteScreenshot from "../public/note-dark-screenshot.png";
-import LightNoteScreenshot from "../public/note-light-screenshot.png";
+import DarkNoteScreenshot from "../public/NotesLandingDark.png";
+import LightNoteScreenshot from "../public/NotesLandingLight.png";
+import DarkSketchScreenshot from "../public/SketchLandingDark.png";
+import LightSketchScreenshot from "../public/SketchLandingLight.png";
+import DarkTodoScreenshot from "../public/TodoLandingDark.png";
+import LightTodoScreenshot from "../public/TodoLandingLight.png";
 import { useEffect, useState } from "react";
 import ImageSkeleton from "./ImageSkeleton";
 
 export function AppsCarousel() {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [api, setApi] = useState<CarouselApi>();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!api) return;
+
+    const interval = setInterval(() => {
+      if (api.canScrollNext()) {
+        api.scrollNext();
+      } else {
+        api.scrollTo(0);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [api]);
+
   const darkImages = [
     DarkNoteScreenshot,
-    DarkNoteScreenshot,
-    DarkNoteScreenshot,
+    DarkSketchScreenshot,
+    DarkTodoScreenshot,
   ];
 
   const lightImages = [
     LightNoteScreenshot,
-    LightNoteScreenshot,
-    LightNoteScreenshot,
+    LightSketchScreenshot,
+    LightTodoScreenshot,
   ];
 
   if (!mounted) {
@@ -37,26 +56,24 @@ export function AppsCarousel() {
   }
 
   return (
-    <Carousel className=" rounded-2xl shadow-lg shadow-black/30 dark:shadow-white/10">
+    <Carousel className="rounded-2xl" setApi={setApi}>
       <CarouselContent>
         {(theme === "dark" ? darkImages : lightImages).map((image, index) => (
           <CarouselItem key={index}>
             {/* Image container with frame */}
-            <div className="rounded-2xl border-[10px] border-[#3c3e41] bg-[#a1a4a6] dark:border-[#a1a4a6] dark:bg-[#1e1f21]">
-              {/* Image */}
+
+            <div className="[perspective:1000px]">
               <Image
                 src={image}
                 alt="App screenshot"
-                width={800}
-                height={500}
-                className="object-cover rounded-xl"
+                width={1440}
+                height={1080}
+                className="[transform:rotateY(-12deg)] scale-100 object-cover rounded-xl  transition-transform duration-500"
               />
             </div>
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselNext />
-      <CarouselPrevious />
     </Carousel>
   );
 }

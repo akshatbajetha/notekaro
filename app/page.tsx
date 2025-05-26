@@ -55,23 +55,8 @@ function HomeContent() {
                 <GetStartedButton />
               </div>
             </div>
-            <div className="relative">
-              <AppsCarousel />
-              <div className="relative rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
-                <div className="absolute bottom-4 right-4">
-                  <div className="flex items-center gap-2  bg-white dark:bg-gray-800 px-3 py-1 rounded-full shadow-sm">
-                    <span className="text-sm font-medium dark:text-gray-200 z-40">
-                      Real-time Sync
-                    </span>
-                  </div>
-                </div>
-                <div className="absolute bottom-4 right-36">
-                  <div className="bg-blue-600 dark:bg-blue-500 text-white px-3 py-1 rounded-full shadow-sm">
-                    <span className="text-sm font-medium">3-in-1 Solution</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+
+            <AppsCarousel />
           </div>
         </section>
 

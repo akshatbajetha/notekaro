@@ -74,6 +74,59 @@ export default function App() {
   });
   const [scale, setScale] = useState<Scale>(1);
 
+  // Effect to invert black and white colors when theme changes
+  useEffect(() => {
+    if (!elements || elements.length === 0) {
+      setColor(theme === "dark" ? "#ffffff" : "#000000");
+      return;
+    }
+
+    const newColor = theme === "dark" ? "#ffffff" : "#000000";
+    const elementsCopy = [...elements];
+
+    elements.forEach((element, index) => {
+      const shouldUpdate =
+        (theme === "dark" && element.options.stroke === "#000000") ||
+        (theme === "light" && element.options.stroke === "#ffffff");
+
+      if (shouldUpdate) {
+        if (element.type === "pencil") {
+          elementsCopy[index] = {
+            ...element,
+            options: {
+              ...element.options,
+              stroke: newColor,
+            },
+          };
+        } else if (element.type === "text") {
+          const textElement = element as TextElement;
+          elementsCopy[index] = {
+            ...textElement,
+            options: {
+              ...textElement.options,
+              stroke: newColor,
+            },
+          };
+        } else {
+          const shapeElement = element as ShapeElement;
+          const updatedElement = createElement(
+            index,
+            shapeElement.x1,
+            shapeElement.y1,
+            shapeElement.x2,
+            shapeElement.y2,
+            shapeElement.type,
+            { ...shapeElement.options, stroke: newColor }
+          );
+          elementsCopy[index] = updatedElement;
+        }
+      }
+    });
+
+    setElements(elementsCopy);
+    setColor(newColor);
+  }, [theme]);
+
   const onZoom = useCallback((delta: number) => {
     setScale((prevScale: Scale) => {
       const newScale = Math.min(Math.max(prevScale + delta, 0.1), 5);
