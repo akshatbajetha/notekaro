@@ -23,7 +23,6 @@ export type Tool =
 export interface DrawingOptions {
   strokeWidth: number;
   stroke: string;
-  text?: string;
 }
 
 export interface BaseElement {
@@ -98,7 +97,7 @@ export interface KeyboardEvent {
   shiftKey: boolean;
 }
 
-export type Scale = 1 | 2 | 3 | 4 | 5;
+export type Scale = number;
 
 export interface CanvasSize {
   width: number;

@@ -128,7 +128,7 @@ model Sketch {
   title      String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
-  scale      Float     @default(1)
+  scale      Int       @default(1)
   panOffsetX Float     @default(0)
   panOffsetY Float     @default(0)
   elements   Element[]

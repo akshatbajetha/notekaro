@@ -261,7 +261,7 @@ export default function App() {
   }, [undo, redo]);
 
   function createElement(
-    id: number,
+    id: string,
     x1: number,
     y1: number,
     x2: number,
