@@ -26,7 +26,7 @@ export interface DrawingOptions {
 }
 
 export interface BaseElement {
-  id: number;
+  id: string;
   options: DrawingOptions;
 }
 
