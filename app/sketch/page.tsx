@@ -84,14 +84,19 @@ export default function App() {
     const newColor = theme === "dark" ? "#ffffff" : "#000000";
     const elementsCopy = [...elements];
 
-    elements.forEach((element, index) => {
+    elements.forEach((element) => {
       const shouldUpdate =
         (theme === "dark" && element.options.stroke === "#000000") ||
         (theme === "light" && element.options.stroke === "#ffffff");
 
       if (shouldUpdate) {
+        const elementIndex = elementsCopy.findIndex(
+          (el) => el.id === element.id
+        );
+        if (elementIndex === -1) return;
+
         if (element.type === "pencil") {
-          elementsCopy[index] = {
+          elementsCopy[elementIndex] = {
             ...element,
             options: {
               ...element.options,
@@ -100,7 +105,7 @@ export default function App() {
           };
         } else if (element.type === "text") {
           const textElement = element as TextElement;
-          elementsCopy[index] = {
+          elementsCopy[elementIndex] = {
             ...textElement,
             options: {
               ...textElement.options,
@@ -110,7 +115,7 @@ export default function App() {
         } else {
           const shapeElement = element as ShapeElement;
           const updatedElement = createElement(
-            index,
+            element.id,
             shapeElement.x1,
             shapeElement.y1,
             shapeElement.x2,
@@ -118,7 +123,7 @@ export default function App() {
             shapeElement.type,
             { ...shapeElement.options, stroke: newColor }
           );
-          elementsCopy[index] = updatedElement;
+          elementsCopy[elementIndex] = updatedElement;
         }
       }
     });
@@ -369,7 +374,7 @@ export default function App() {
   }
 
   function updateElement(
-    id: number,
+    id: string,
     x1: number,
     y1: number,
     x2: number | null,
@@ -378,11 +383,14 @@ export default function App() {
     options: DrawingOptions
   ) {
     const elementsCopy: DrawingElement[] = [...elements];
+    const elementIndex = elementsCopy.findIndex((el) => el.id === id);
+    if (elementIndex === -1) return;
+
     switch (type) {
       case "pencil":
         if (x2 !== null && y2 !== null) {
-          (elementsCopy[id] as PencilElement).points = [
-            ...((elementsCopy[id] as PencilElement).points || []),
+          (elementsCopy[elementIndex] as PencilElement).points = [
+            ...((elementsCopy[elementIndex] as PencilElement).points || []),
             [x2, y2],
           ];
         }
@@ -392,7 +400,7 @@ export default function App() {
         if (!canvas) return;
         const context = canvas.getContext("2d");
         if (!context) return;
-        const textElement = elementsCopy[id] as TextElement;
+        const textElement = elementsCopy[elementIndex] as TextElement;
         context.font = "24px sans-serif";
         const textWidth = context.measureText(textElement.text || "").width;
         const textHeight = 24;
@@ -405,7 +413,7 @@ export default function App() {
           type,
           options
         );
-        elementsCopy[id] = {
+        elementsCopy[elementIndex] = {
           ...baseElement,
           text: textElement.text,
           options: { ...baseElement.options },
@@ -414,7 +422,15 @@ export default function App() {
       }
       default:
         if (x2 !== null && y2 !== null) {
-          elementsCopy[id] = createElement(id, x1, y1, x2, y2, type, options);
+          elementsCopy[elementIndex] = createElement(
+            id,
+            x1,
+            y1,
+            x2,
+            y2,
+            type,
+            options
+          );
         }
         break;
     }
@@ -482,14 +498,15 @@ export default function App() {
     // If no element was clicked or we're not in selection mode, create a new element
     if (tool !== "selection") {
       if (!elements) return;
-      const id = elements.length;
+      const id = crypto.randomUUID();
       const element = createElement(
         id,
         clientX,
         clientY,
         clientX,
         clientY,
-        tool
+        tool,
+        { stroke: color, strokeWidth: brushSize }
       );
       setElements((prevElements: DrawingElement[]) => [
         ...prevElements,
@@ -560,9 +577,10 @@ export default function App() {
     if (action === "drawing") {
       if (!elements) return;
 
-      const index = elements.length - 1;
-      const { x1, y1, type, options } = elements[index] as ShapeElement;
-      updateElement(index, x1, y1, clientX, clientY, type, options);
+      const lastElement = elements[elements.length - 1];
+      if (!lastElement) return;
+      const { x1, y1, type, options } = lastElement as ShapeElement;
+      updateElement(lastElement.id, x1, y1, clientX, clientY, type, options);
     } else if (action === "moving") {
       if (selectedElement?.type === "pencil") {
         const pencilElement = selectedElement as PencilElement & {
@@ -576,11 +594,16 @@ export default function App() {
           ]
         );
         const elementsCopy: DrawingElement[] = [...elements];
-        elementsCopy[selectedElement.id] = {
-          ...selectedElement,
-          points: newPoints,
-        } as PencilElement;
-        setElements(elementsCopy, true);
+        const elementIndex = elementsCopy.findIndex(
+          (el) => el.id === selectedElement.id
+        );
+        if (elementIndex !== -1) {
+          elementsCopy[elementIndex] = {
+            ...selectedElement,
+            points: newPoints,
+          } as PencilElement;
+          setElements(elementsCopy, true);
+        }
       } else {
         const elementWithOffset = selectedElement as (
           | TextElement
