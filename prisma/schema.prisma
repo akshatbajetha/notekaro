@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,21 +9,20 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
+  id            String     @id @default(cuid())
+  email         String     @unique
+  createdAt     DateTime   @default(now())
   emailVerified DateTime?
   image         String?
+  name          String?
+  updatedAt     DateTime   @default(now()) @updatedAt
   accounts      Account[]
+  Canvas        Canvas?
+  Notes         Note[]
+  Sections      Section[]
   sessions      Session[]
-
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now()) @updatedAt
-  Notes     Note[]
-  TodoLists TodoList[]
-  Sections  Section[]
-  Todos     Todo[]
-  Sketch    Sketch[]
+  Todos         Todo[]
+  TodoLists     TodoList[]
 }
 
 model Account {
@@ -37,18 +30,16 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?
+  scope             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
   access_token      String?
   expires_at        Int?
-  token_type        String?
-  scope             String?
   id_token          String?
+  refresh_token     String?
   session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token_type        String?
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
 }
@@ -57,10 +48,9 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -75,11 +65,10 @@ model Note {
   id        String   @id @default(uuid())
   userId    String
   title     String   @default("Untitled")
-  content   String // BlockNote.js content as JSON
+  content   String
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model TodoList {
@@ -88,66 +77,73 @@ model TodoList {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   userId    String
-  todos     Todo[]
   sections  Section[]
-
-  user User @relation(fields: [userId], references: [id])
+  todos     Todo[]
+  user      User      @relation(fields: [userId], references: [id])
 }
 
 model Section {
-  id        String   @id @default(cuid())
-  title     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  todos     Todo[]
-
-  todoList   TodoList @relation(fields: [todoListId], references: [id])
+  id         String   @id @default(cuid())
+  title      String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   todoListId String
-  user       User     @relation(fields: [userId], references: [id])
   userId     String
+  todoList   TodoList @relation(fields: [todoListId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+  todos      Todo[]
 }
 
 model Todo {
   id         String    @id @default(cuid())
   title      String
   completed  Boolean   @default(false)
-  priority   Int       @default(4) // 1 = High, 4 = None
-  todoList   TodoList? @relation(fields: [todoListId], references: [id])
+  priority   Int       @default(4)
   todoListId String?
-  section    Section?  @relation(fields: [sectionId], references: [id])
   sectionId  String?
   dueDate    DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
-  user       User      @relation(fields: [userId], references: [id])
   userId     String
+  section    Section?  @relation(fields: [sectionId], references: [id])
+  todoList   TodoList? @relation(fields: [todoListId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
 }
 
-model Sketch {
+model Canvas {
   id         String    @id @default(cuid())
-  title      String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   scale      Int       @default(1)
   panOffsetX Float     @default(0)
   panOffsetY Float     @default(0)
-  elements   Element[]
+  userId     String    @unique
   user       User      @relation(fields: [userId], references: [id])
-  userId     String
+  elements   Element[]
 }
 
 model Element {
-  id       String  @id @default(cuid())
-  type     String
-  x        Float
-  y        Float
-  width    Float?
-  height   Float?
-  text     String?
-  points   Json?
-  color    String?
-  stroke   String?
-  fill     String?
-  sketch   Sketch  @relation(fields: [sketchId], references: [id], onDelete: Cascade)
-  sketchId String
+  id          String      @id @default(cuid())
+  text        String?
+  points      Json?
+  stroke      String
+  fill        String?
+  canvasId    String
+  strokeWidth Float
+  x1          Float
+  x2          Float?
+  y1          Float
+  y2          Float?
+  type        ElementType
+  canvas      Canvas      @relation(fields: [canvasId], references: [id], onDelete: Cascade)
+}
+
+enum ElementType {
+  PENCIL
+  TEXT
+  LINE
+  RECT
+  CIRCLE
+  DIAMOND
+  ARROW
 }

@@ -34,7 +34,7 @@ export function AppsCarousel() {
       } else {
         api.scrollTo(0);
       }
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [api]);
@@ -56,7 +56,10 @@ export function AppsCarousel() {
   }
 
   return (
-    <Carousel className="rounded-2xl" setApi={setApi}>
+    <Carousel
+      className="rounded-2xl min-h-[500px] min-w-[500px] flex flex-col items-center justify-center"
+      setApi={setApi}
+    >
       <CarouselContent>
         {(theme === "dark" ? darkImages : lightImages).map((image, index) => (
           <CarouselItem key={index}>

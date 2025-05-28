@@ -2,24 +2,6 @@
 
 import { useState } from "react";
 import { HistoryState, SetStateAction } from "@/types/drawing";
-import { Drawable } from "roughjs/bin/core";
-
-// Define the shape of a drawing element
-interface DrawingElement {
-  id: number;
-  type: "line" | "rect" | "circle" | "diamond" | "pencil" | "text";
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  points?: [number, number][];
-  text?: string;
-  options?: {
-    strokeWidth: number;
-    stroke: string;
-  };
-  roughElement?: Drawable; // Keeping this as any since it's from rough.js
-}
 
 const useHistory = (initialState: HistoryState) => {
   const [index, setIndex] = useState<number>(0);

@@ -26,7 +26,7 @@ function HomeContent() {
   }, [searchParams]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-gray-200  max-w-screen-lg mx-auto">
+    <div className="flex min-h-screen flex-col bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-gray-200  max-w-screen-xl mx-auto">
       <div className="container mx-auto flex h-24 items-center justify-between px-4 md:px-6 top-0 z-40 w-full bg-[#F5F5F5]/95 dark:bg-[#1E1E1E]/95">
         <MobileNav />
       </div>
