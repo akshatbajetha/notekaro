@@ -2,6 +2,7 @@
 
 import { prisma } from "../db";
 import { getOrCreateUser } from "../getOrCreateUser";
+import { ElementType } from "@prisma/client";
 
 export async function getAuthUser() {
   const user = await getOrCreateUser();
@@ -142,7 +143,7 @@ export async function updateSketch({
             where: { id: element.id },
             data: {
               ...element,
-              type: element.type.toUpperCase() as any,
+              type: element.type.toUpperCase() as ElementType,
             },
           });
         }
@@ -152,7 +153,7 @@ export async function updateSketch({
           await tx.element.createMany({
             data: elementsToCreate.map((element) => ({
               ...element,
-              type: element.type.toUpperCase() as any,
+              type: element.type.toUpperCase() as ElementType,
               canvasId: canvas.id,
             })),
           });
