@@ -66,7 +66,7 @@ function Page({ children }: { children: React.ReactNode }) {
       onMouseLeave={stopResizing}
     >
       {/* Backdrop for mobile */}
-      {isMobile && sidebarWidth > 0 && (
+      {isMobile && sidebarWidth <= 0 && (
         <div
           className="fixed inset-0 bg-black/50 z-40 sm:hidden"
           onClick={() => setSidebarWidth(0)}
