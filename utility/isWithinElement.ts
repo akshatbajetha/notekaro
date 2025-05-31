@@ -32,7 +32,8 @@ function isWithinElement(x: number, y: number, element: DrawingElement) {
       const center = { x: x1, y: y1 };
       const clickedPoint = { x, y };
       const distanceFromCenter = distance(center, clickedPoint);
-      return distanceFromCenter < Math.abs(x2 - x1);
+      const radius = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2) / 2;
+      return distanceFromCenter < radius;
     } else if (type === "diamond") {
       const minX = Math.min(x1, x2);
       const maxX = Math.max(x1, x2);
