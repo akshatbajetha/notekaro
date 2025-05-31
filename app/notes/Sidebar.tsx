@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNotesStore } from "@/store/noteStore";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { MobileNav } from "@/components/mobile-nav";
 
 interface Note {
   id: string;
@@ -16,7 +17,13 @@ interface Note {
   content?: string;
 }
 
-function Sidebar({ width }: { width: number }) {
+interface SidebarProps {
+  width: number;
+  isMobile: boolean;
+  onClose: () => void;
+}
+
+function Sidebar({ width, isMobile, onClose }: SidebarProps) {
   const pathName = usePathname();
   const id = pathName.split("/")[2];
   const router = useRouter();
@@ -147,20 +154,34 @@ function Sidebar({ width }: { width: number }) {
 
   return (
     <div
-      className="w-60 flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg"
+      className={cn(
+        "flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg ",
+        isMobile && "w-full max-w-[300px] z-50"
+      )}
       style={{
-        width: `${width}px`,
-        maxWidth: "500px",
+        width: isMobile ? "100%" : `${width}px`,
+        maxWidth: isMobile ? "300px" : "500px",
         opacity: width === 0 ? 0 : 1,
         visibility: width === 0 ? "hidden" : "visible",
+        transform: isMobile
+          ? `translateX(${width === 0 ? "-100%" : "0"})`
+          : "none",
       }}
     >
       {/* Search */}
       <div className="p-2">
+        {isMobile && (
+          <div className="flex justify-between items-center rounded-md">
+            <MobileNav />
+            <button onClick={onClose} className="p-2 z-50 rounded-md">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        )}
         <div className="flex items-center justify-between space-x-2 py-1.5 rounded-md">
           <button
             onClick={() => setIsCommandPaletteOpen(true)}
-            className="rounded-md bg-transparent hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none w-full p-2 flex flex-row items-center justify-between"
+            className="rounded-md bg-transparent hover:bg-foreground/20 dark:hover:bg-foreground/10 focus:outline-none w-full p-2 flex flex-row items-center justify-between"
           >
             <span className="text-sm dark:text-gray-400 text-gray-600 flex flex-row items-center gap-x-2">
               <Search className="w-4 h-4 dark:text-gray-400 text-gray-600 " />
@@ -257,9 +278,9 @@ function Sidebar({ width }: { width: number }) {
               notes.map((note) => (
                 <div
                   key={note.id}
-                  className={`flex flex-row mb-1 justify-between hover:bg-gray-200 dark:hover:bg-gray-800 items-center rounded-md pr-2 ${
+                  className={`flex flex-row mb-1 justify-between hover:bg-foreground/20 dark:hover:bg-foreground/10 items-center rounded-md pr-2 ${
                     selectedNote?.id === note.id
-                      ? "bg-gray-200 dark:bg-gray-800"
+                      ? "bg-foreground/20 dark:bg-foreground/10"
                       : ""
                   }`}
                 >

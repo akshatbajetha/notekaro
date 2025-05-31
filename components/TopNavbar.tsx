@@ -39,5 +39,5 @@ export function TopNavbar() {
       icon: <ToggleTheme />,
     },
   ];
-  return <NavBar items={links} />;
+  return <NavBar className="hidden md:flex" items={links} />;
 }

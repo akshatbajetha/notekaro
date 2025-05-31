@@ -26,8 +26,8 @@ function HomeContent() {
   }, [searchParams]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-gray-200  max-w-screen-xl mx-auto">
-      <div className="container mx-auto flex h-24 items-center justify-between px-4 md:px-6 top-0 z-40 w-full bg-[#F5F5F5]/95 dark:bg-[#1E1E1E]/95">
+    <div className="flex min-h-screen items-center justify-center flex-col bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-gray-200 md:max-w-screen-xl mx-auto">
+      <div className="container mx-auto flex h-24 items-center justify-between px-4 md:px-6 top-0 z-40 w-full">
         <MobileNav />
       </div>
 
@@ -37,10 +37,10 @@ function HomeContent() {
       />
 
       <main className="flex-1">
-        <section className="container px-12 py-12 md:py-24 ">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-            <div className="space-y-6">
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-gray-900 dark:text-white">
+        <section className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24">
+          <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
+            <div className="md:space-y-6 flex flex-col gap-y-6">
+              <h1 className="text-4xl font-bold tracking-tighter md:text-6xl text-gray-900 dark:text-white">
                 One App for All Your{" "}
                 <span className="text-blue-600 dark:text-blue-400">
                   Productivity
@@ -51,7 +51,7 @@ function HomeContent() {
                 Combine note-taking, sketching, and task management in one
                 powerful app with real-time sync across all your devices.
               </p>
-              <div className="flex flex-col gap-2 min-[400px]:flex-row">
+              <div className="flex flex-col gap-2 md:min-[400px]:flex-row">
                 <GetStartedButton />
               </div>
             </div>
@@ -60,7 +60,10 @@ function HomeContent() {
           </div>
         </section>
 
-        <section id="features" className="container mx-auto py-12 px-8">
+        <section
+          id="features"
+          className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24"
+        >
           <div className="grid gap-8 md:grid-cols-3">
             <div className="rounded-lg border-2 border-gray-200 dark:border-gray-800 bg-[#F5F5F5] dark:bg-[#1E1E1E] p-6">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/50">
@@ -101,7 +104,7 @@ function HomeContent() {
 
         <section
           id="features-detail"
-          className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E]"
+          className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24"
         >
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center mb-12">
@@ -155,7 +158,10 @@ function HomeContent() {
           </div>
         </section>
 
-        <section id="how-it-works" className="py-16 px-4 max-w-6xl mx-auto">
+        <section
+          id="how-it-works"
+          className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24"
+        >
           <div className="text-center mb-10">
             <h2 className="text-4xl font-bold mb-4">How It Works</h2>
             <p className="text-lg text-gray-700 max-w-2xl mx-auto">
@@ -184,7 +190,10 @@ function HomeContent() {
           </div>
         </section>
 
-        <section id="benefits" className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E]">
+        <section
+          id="benefits"
+          className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24"
+        >
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl dark:text-white">
@@ -311,146 +320,7 @@ function HomeContent() {
           </div>
         </section>
 
-        {/* <section
-          id="testimonials"
-          className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E]"
-        >
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl dark:text-white">
-                What Our Users Say
-              </h2>
-              <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                Trusted by professionals across industries
-              </p>
-            </div>
-
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="border-gray-200 dark:border-gray-800 dark:bg-[#1E1E1E] bg-[#F5F5F5]">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50">
-                        <span className="text-blue-600 dark:text-blue-400 font-medium">
-                          JD
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex items-center mb-2">
-                        {[...Array(5)].map((_, i) => (
-                          <svg
-                            key={i}
-                            className="h-5 w-5 text-yellow-400"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        &quot;NoteKaro has completely transformed how I organize
-                        my work. The integration of notes and tasks is
-                        seamless.&quot;
-                      </p>
-                      <div>
-                        <p className="font-semibold dark:text-white">
-                          John Doe
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-500">
-                          Product Manager
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="border-gray-200 dark:border-gray-800 dark:bg-[#1E1E1E] bg-[#F5F5F5]">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50">
-                        <span className="text-green-600 dark:text-green-400 font-medium">
-                          AK
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex items-center mb-2">
-                        {[...Array(5)].map((_, i) => (
-                          <svg
-                            key={i}
-                            className="h-5 w-5 text-yellow-400"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        &quot;The sketching feature is incredible. I can quickly
-                        visualize concepts and share them with my team
-                        instantly.&quot;
-                      </p>
-                      <div>
-                        <p className="font-semibold dark:text-white">
-                          Alice Kim
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-500">
-                          UX Designer
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="border-gray-200 dark:border-gray-800 dark:bg-[#1E1E1E] bg-[#F5F5F5]">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/50">
-                        <span className="text-purple-600 dark:text-purple-400 font-medium">
-                          MR
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex items-center mb-2">
-                        {[...Array(5)].map((_, i) => (
-                          <svg
-                            key={i}
-                            className="h-5 w-5 text-yellow-400"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        &quot;As a researcher, I need to keep track of many
-                        ideas. NoteKaro helps me organize everything
-                        efficiently.&quot;
-                      </p>
-                      <div>
-                        <p className="font-semibold dark:text-white">
-                          Michael Rodriguez
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-500">
-                          Academic Researcher
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section> */}
-
-        <section className="py-16 bg-[#F5F5F5] dark:bg-[#1E1E1E] dark:text-white text-black ">
+        <section className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24 ">
           <div className="container mx-auto px-4 md:px-6 text-center">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-6">
               Ready to Transform Your Productivity?
@@ -465,7 +335,7 @@ function HomeContent() {
           </div>
         </section>
 
-        <footer className="py-8 bg-[#F5F5F5] dark:bg-[#1E1E1E] border-t border-gray-200 dark:border-gray-800">
+        <footer className="py-8 border-t border-gray-200 dark:border-gray-800">
           <div className="container mx-auto px-4 text-center">
             <p className="text-gray-600 dark:text-gray-400">
               Have questions or feedback? We&apos;d love to hear from you! Reach

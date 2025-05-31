@@ -57,7 +57,7 @@ export function AppsCarousel() {
 
   return (
     <Carousel
-      className="rounded-2xl min-h-[500px] min-w-[500px] flex flex-col items-center justify-center"
+      className="rounded-2xl md:min-h-[500px] md:min-w-[500px] min-h-[300px] min-w-[300px] flex flex-col items-center justify-center"
       setApi={setApi}
     >
       <CarouselContent>
