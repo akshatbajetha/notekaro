@@ -17,7 +17,7 @@ model User {
   name          String?
   updatedAt     DateTime   @default(now()) @updatedAt
   accounts      Account[]
-  Canvas        Canvas?
+  elements      Element[]
   Notes         Note[]
   Sections      Section[]
   sessions      Session[]
@@ -110,32 +110,23 @@ model Todo {
   user       User      @relation(fields: [userId], references: [id])
 }
 
-model Canvas {
-  id         String    @id @default(cuid())
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  scale      Int       @default(1)
-  panOffsetX Float     @default(0)
-  panOffsetY Float     @default(0)
-  userId     String    @unique
-  user       User      @relation(fields: [userId], references: [id])
-  elements   Element[]
-}
-
 model Element {
-  id          String      @id @default(cuid())
+  id          String      @id
+  type        ElementType
+  x1          Float
+  y1          Float
+  x2          Float?
+  y2          Float?
   text        String?
   points      Json?
+  strokeWidth Int
   stroke      String
-  fill        String?
-  canvasId    String
-  strokeWidth Float
-  x1          Float
-  x2          Float?
-  y1          Float
-  y2          Float?
-  type        ElementType
-  canvas      Canvas      @relation(fields: [canvasId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([userId])
 }
 
 enum ElementType {

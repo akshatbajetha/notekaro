@@ -30,12 +30,28 @@ import {
 } from "@/types/drawing";
 import { Drawable } from "roughjs/bin/core";
 import { RoughCanvas } from "roughjs/bin/canvas";
+import { useDebouncedCallback } from "use-debounce";
+import { Loader2 } from "lucide-react";
 const generator = rough.generator();
+
+// // Add debounce utility
+// function debounce<T extends (...args: any[]) => any>(
+//   func: T,
+//   wait: number
+// ): (...args: Parameters<T>) => void {
+//   let timeout: NodeJS.Timeout;
+//   return (...args: Parameters<T>) => {
+//     clearTimeout(timeout);
+//     timeout = setTimeout(() => func(...args), wait);
+//   };
+// }
 
 export default function App() {
   const canvasRef: CanvasRef = useRef(null);
   const textAreaRef: TextAreaRef = useRef(null);
   const { theme } = useTheme();
+  const isMounted = useRef(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Canvas states
   const [canvasSize, setCanvasSize] = useState<CanvasSize>({
@@ -73,6 +89,80 @@ export default function App() {
     y: 0,
   });
   const [scale, setScale] = useState<Scale>(1);
+
+  // Initialize canvas size first
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      setCanvasSize({
+        width: window.innerWidth,
+        height: window.innerHeight - 64,
+      });
+    };
+
+    updateCanvasSize();
+    window.addEventListener("resize", updateCanvasSize);
+    return () => window.removeEventListener("resize", updateCanvasSize);
+  }, []);
+
+  // Then load elements after canvas is initialized
+  useEffect(() => {
+    if (!canvasSize.width || !canvasSize.height) return;
+    if (isMounted.current) return; // Skip if already mounted
+    isMounted.current = true;
+
+    const fetchElements = async () => {
+      try {
+        const res = await fetch("/api/sketch");
+        const data = await res.json();
+
+        if (!data.elements || !Array.isArray(data.elements)) {
+          console.error("Invalid elements data received");
+          return;
+        }
+
+        // Process elements to ensure they have proper rough.js representations
+        const processedElements = data.elements.map(
+          (element: {
+            id: string;
+            type: string;
+            x1: number;
+            y1: number;
+            x2?: number;
+            y2?: number;
+            text?: string;
+            points?: [number, number][];
+            options: {
+              stroke: string;
+              strokeWidth: number;
+            };
+          }) => {
+            // For shape elements, create proper rough.js representation
+            if (element.type !== "pencil" && element.type !== "text") {
+              return createElement(
+                element.id,
+                element.x1,
+                element.y1,
+                element.x2 || element.x1,
+                element.y2 || element.y1,
+                element.type as DrawingElement["type"],
+                element.options
+              );
+            }
+
+            // For pencil and text elements, just return as is
+            return element;
+          }
+        );
+
+        setElements(processedElements);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching elements:", error);
+        setIsLoading(false);
+      }
+    };
+    fetchElements();
+  }, [canvasSize]);
 
   // Effect to invert black and white colors when theme changes
   useEffect(() => {
@@ -173,20 +263,6 @@ export default function App() {
     },
     []
   );
-
-  // Update canvas size on resize
-  useEffect(() => {
-    const updateCanvasSize = () => {
-      setCanvasSize({
-        width: window.innerWidth,
-        height: window.innerHeight - 64,
-      });
-    };
-
-    updateCanvasSize();
-    window.addEventListener("resize", updateCanvasSize);
-    return () => window.removeEventListener("resize", updateCanvasSize);
-  }, []);
 
   // Render canvas using rough.js
   useLayoutEffect(() => {
@@ -435,6 +511,7 @@ export default function App() {
         break;
     }
     setElements(elementsCopy, true);
+    saveElements();
   }
 
   // --- Mouse event handlers --- //
@@ -460,6 +537,7 @@ export default function App() {
         setElements((prevElements: DrawingElement[]) =>
           prevElements.filter((el: DrawingElement) => el.id !== element.id)
         );
+        saveElements();
       }
       setAction("erasing");
       return;
@@ -512,6 +590,7 @@ export default function App() {
         ...prevElements,
         element,
       ]);
+      saveElements();
       setSelectedElement(element);
       if (tool === "text") {
         setAction("writing");
@@ -719,6 +798,7 @@ export default function App() {
           el.id === textElement.id ? updatedElement : el
         )
       );
+      saveElements();
       // Keep the element selected
       setSelectedElement(updatedElement);
     } else {
@@ -726,6 +806,7 @@ export default function App() {
       setElements((prevElements) =>
         prevElements.filter((el) => el.id !== textElement.id)
       );
+      saveElements();
       setSelectedElement(null);
     }
     setAction("none");
@@ -748,34 +829,63 @@ export default function App() {
     };
   }
 
+  // Add saveSketch function
+  const saveElements = useDebouncedCallback(async () => {
+    try {
+      const response = await fetch("/api/sketch", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          elements,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save sketch");
+      }
+    } catch (error) {
+      console.error("Error saving sketch:", error);
+    }
+  }, 1000);
+
   return (
     <div className="min-h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] pt-16 overflow-hidden">
-      <div className="relative w-full h-[calc(100vh-4rem)]">
-        <CanvasContainer
-          tool={tool}
-          setTool={setTool}
-          brushSize={brushSize}
-          setBrushSize={setBrushSize}
-          color={color}
-          setColor={setColor}
-          scale={scale}
-          setScale={setScale}
-          onZoom={onZoom}
-          undo={undo}
-          redo={redo}
-          canvasRef={canvasRef}
-          textAreaRef={textAreaRef}
-          action={action}
-          handleBlur={handleBlur}
-          computedPosition={computedPosition}
-          canvasSize={canvasSize}
-          handleMouseDown={handleMouseDown}
-          handleMouseMove={handleMouseMove}
-          handleMouseUp={handleMouseUp}
-          selectedElement={selectedElement}
-          panOffset={panOffset}
-        />
-      </div>
+      {isLoading ? (
+        <div className="w-full h-[calc(100vh-4rem)] flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="w-12 h-12 animate-spin" />
+          </div>
+        </div>
+      ) : (
+        <div className="relative w-full h-[calc(100vh-4rem)]">
+          <CanvasContainer
+            tool={tool}
+            setTool={setTool}
+            brushSize={brushSize}
+            setBrushSize={setBrushSize}
+            color={color}
+            setColor={setColor}
+            scale={scale}
+            setScale={setScale}
+            onZoom={onZoom}
+            undo={undo}
+            redo={redo}
+            canvasRef={canvasRef}
+            textAreaRef={textAreaRef}
+            action={action}
+            handleBlur={handleBlur}
+            computedPosition={computedPosition}
+            canvasSize={canvasSize}
+            handleMouseDown={handleMouseDown}
+            handleMouseMove={handleMouseMove}
+            handleMouseUp={handleMouseUp}
+            selectedElement={selectedElement}
+            panOffset={panOffset}
+          />
+        </div>
+      )}
     </div>
   );
 }

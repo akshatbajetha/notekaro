@@ -24,6 +24,8 @@ interface CanvasContainerProps {
   setColor: (color: string) => void;
   scale: Scale;
   setScale: (scale: Scale) => void;
+  // onChange: (e: React.ChangeEvent<HTMLCanvasElement>) => void;
+  // onTextChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onZoom: (delta: number) => void;
   undo: () => void;
   redo: () => void;
@@ -46,6 +48,8 @@ const CanvasContainer = ({
   handleMouseDown,
   handleMouseMove,
   handleMouseUp,
+  // onChange,
+  // onTextChange,
   action,
   computedPosition,
   scale,
@@ -145,6 +149,7 @@ const CanvasContainer = ({
         <TextOverlay
           textAreaRef={textAreaRef}
           handleBlur={handleBlur}
+          // onChange={onTextChange}
           computedTop={computedPosition.top}
           computedLeft={computedPosition.left}
           scale={scale}
@@ -154,6 +159,7 @@ const CanvasContainer = ({
       <canvas
         ref={canvasRef}
         className={`absolute inset-0 ${getCursorStyle()}`}
+        // onChange={onChange}
         width={canvasSize.width}
         height={canvasSize.height}
         onMouseDown={handleMouseDown}
