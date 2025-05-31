@@ -106,7 +106,9 @@ function Page({ children }: { children: React.ReactNode }) {
             left: isMobile ? "16px" : `${sidebarWidth + 16}px`,
           }}
         >
+          {isMobile && sidebarWidth > 0 && (
           <PanelLeft className="w-5 h-5 dark:text-gray-400 text-gray-600" />
+          )}
         </button>
 
         {isMobile && (
