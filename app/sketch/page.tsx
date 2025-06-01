@@ -854,9 +854,11 @@ export default function App() {
     <div className="min-h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] pt-16 overflow-hidden">
       {isLoading ? (
         <div className="w-full h-[calc(100vh-4rem)] flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="w-12 h-12 animate-spin" />
-          </div>
+          <img
+            src="/loading.gif"
+            alt="loading"
+            className="w-16 h-16 md:w-24 md:h-24 invert dark:invert-0"
+          />
         </div>
       ) : (
         <div className="relative w-full h-[calc(100vh-4rem)]">
