@@ -121,6 +121,7 @@ model Element {
   points      Json?
   strokeWidth Int
   stroke      String
+  deleted     Boolean     @default(false)
   userId      String
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime    @default(now())
