@@ -66,7 +66,7 @@ function Page({ children }: { children: React.ReactNode }) {
       onMouseLeave={stopResizing}
     >
       {/* Backdrop for mobile */}
-      {isMobile && sidebarWidth <= 0 && (
+      {isMobile && sidebarWidth > 0 && (
         <div
           className="fixed inset-0 bg-black/50 z-40 sm:hidden"
           onClick={() => setSidebarWidth(0)}
@@ -101,14 +101,21 @@ function Page({ children }: { children: React.ReactNode }) {
       >
         <button
           onClick={toggleSidebar}
-          className="fixed top-7  z-50 p-2 hover:bg-foreground/20 dark:hover:bg-foreground/10 rounded-md transition-all duration-300"
+          className={cn(
+            "fixed z-50 p-2 hover:bg-foreground/20 dark:hover:bg-foreground/10 rounded-md transition-all duration-300",
+            isMobile &&
+              "transform transition-transform duration-300 ease-in-out"
+          )}
           style={{
-            left: isMobile ? "16px" : `${sidebarWidth + 16}px`,
+            left: isMobile ? "16px" : `${sidebarWidth + 20}px`,
+            top: isMobile ? "28px" : "16px",
+            display: isMobile && sidebarWidth > 0 ? "none" : "block",
+            transform: isMobile
+              ? `translateX(${sidebarWidth > 0 ? "-100%" : "0"})`
+              : "none",
           }}
         >
-          {isMobile && sidebarWidth > 0 && (
           <PanelLeft className="w-5 h-5 dark:text-gray-400 text-gray-600" />
-          )}
         </button>
 
         {isMobile && (

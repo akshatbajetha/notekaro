@@ -196,25 +196,25 @@ function Sidebar({ width, isMobile, onClose }: SidebarProps) {
           open={isCommandPaletteOpen}
           onOpenChange={setIsCommandPaletteOpen}
         >
-          <DialogContent className="p-0 bg-transparent shadow-none border-none max-w-xl w-full">
+          <DialogContent className="md:p-0 px-4 bg-transparent shadow-none border-none md:max-w-xl w-full">
             <div className="dark:bg-[#191919] bg-[#F5F5F5] rounded-lg shadow-lg w-full">
               <div className="p-4 border-b relative">
                 <div className="flex items-center space-x-3">
-                  <Search className="h-5 w-5 text-gray-400" />
+                  <Search className="md:h-5 md:w-5 h-4 w-4 text-gray-400" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleCommandPaletteKeyDown}
                     placeholder="Search Notes..."
-                    className="flex-1 bg-transparent border-none focus:outline-none text-lg"
+                    className="flex-1 bg-transparent border-none focus:outline-none md:text-lg text-sm"
                     autoFocus
                   />
                   <button
                     onClick={() => setIsCommandPaletteOpen(false)}
                     className="text-gray-500 hover:text-gray-700"
                   >
-                    <X className="h-5 w-5" />
+                    <X className="md:h-5 md:w-5 h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -225,7 +225,7 @@ function Sidebar({ width, isMobile, onClose }: SidebarProps) {
                       <div
                         key={note.id}
                         className={cn(
-                          "px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-800 dark:bg-[#191919] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 cursor-pointer flex items-center space-x-3",
+                          "px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-800 dark:bg-[#191919] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 cursor-pointer flex items-center space-x-3 md:text-lg text-sm",
                           index === selectedIndex
                             ? "bg-gray-200 dark:bg-gray-800"
                             : ""
