@@ -77,7 +77,7 @@ export default function CompletedTodosPage() {
 
   if (isLoading) {
     return (
-      <div className="px-4 mt-20 py-6 max-w-3xl">
+      <div className="px-4 mt-20 py-6 max-w-3xl md:ml-24 ml-4">
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex items-center justify-between">
@@ -91,16 +91,16 @@ export default function CompletedTodosPage() {
   }
 
   return (
-    <div className="px-4 mt-20 py-6 max-w-3xl">
+    <div className="px-4 mt-20 py-6 max-w-3xl md:ml-24 ml-4">
       <h1 className="text-2xl font-bold mb-6">Completed Tasks</h1>
       <Separator className="my-4" />
       <div className="space-y-2">
         {completedTodos.map((todo) => (
           <div
             key={todo.id}
-            className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
+            className="flex md:flex-row flex-col md:items-center items-start md:justify-between p-4 bg-muted/50 rounded-lg"
           >
-            <div className="flex-1">
+            <div className="flex-1 w-full">
               <p className="text-sm text-muted-foreground flex items-center">
                 <CircleCheckBig className="w-4 h-4 mr-2 text-green-500 flex-shrink-0" />
                 <span className="max-w-[calc(100%-4rem)] break-words mx-2">
@@ -109,13 +109,13 @@ export default function CompletedTodosPage() {
                 </span>
               </p>
             </div>
-            <div className="flex items-center gap-4 min-w-[200px] justify-between">
+            <div className="flex items-center gap-4 md:min-w-[200px] min-w-full pl-8 md:pl-0 justify-between md:mt-0 mt-2">
               <span className="text-xs text-muted-foreground whitespace-nowrap">
                 {format(new Date(todo.updatedAt), "MMM d, yyyy")}
               </span>
               <Link
                 href={`/todos/${todo.todoList.id}`}
-                className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors flex items-center whitespace-nowrap"
+                className="text-xs text-muted-foreground hover:text-foreground md:hover:underline transition-colors flex items-center whitespace-nowrap "
               >
                 <Hash className="w-3 h-3 mr-[2px]" />
                 <span>{todo.todoList.title}</span>

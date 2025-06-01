@@ -107,7 +107,7 @@ function Page() {
   }
 
   return (
-    <div className="px-4 mt-20 py-6 max-w-3xl">
+    <div className="px-4 mt-20 py-6 max-w-3xl md:ml-24 ml-4">
       <h1 className="text-2xl font-bold">Upcoming Tasks</h1>
       <Separator className="my-4" />
       <div className="space-y-6">
@@ -132,7 +132,7 @@ function Page() {
                   {todos.map((todo) => (
                     <div
                       key={todo.id}
-                      className="flex items-center justify-start w-full"
+                      className="flex md:flex-row flex-col md:items-center md:justify-between items-start w-full my-4"
                     >
                       <TodoComponent
                         todo={todo}
@@ -141,11 +141,12 @@ function Page() {
                       />
                       <Link
                         href={`/todos/${todo.todoList.id}`}
-                        className="bottom-2 right-2 text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors flex items-center"
+                        className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors items-center flex md:my-4 my-2"
                       >
                         <Hash className="w-3 h-3 mr-[2px]" />
                         <span>{todo.todoList.title}</span>
                       </Link>
+                      <Separator className="w-full my-2 md:hidden block bg-foreground/20" />
                     </div>
                   ))}
                 </div>

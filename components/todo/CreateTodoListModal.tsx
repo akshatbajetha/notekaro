@@ -60,7 +60,7 @@ export function CreateTodoListModal() {
         <DialogTrigger className="flex justify-center group/modal-btn dark:bg-[#1E1E1E] bg-[#F5F5F5]">
           <Plus className="w-4 h-4 hover:bg-gray-300 dark:hover:bg-gray-800 rounded cursor-pointer" />
         </DialogTrigger>
-        <DialogContent className=" overflow-y-auto">
+        <DialogContent className=" overflow-y-auto md:max-h-[80vh] max-h-[60vh] md:w-[500px] w-[300px]">
           <DialogHeader>
             <DialogTitle>
               <h4 className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-100 font-bold text-center md:mb-4 mb-2">
@@ -71,6 +71,9 @@ export function CreateTodoListModal() {
           </DialogHeader>
 
           <form className="md:m-10 m-4" onSubmit={handleSubmit}>
+            <label htmlFor="title" className="sr-only">
+              Title
+            </label>
             <Input
               name="title"
               required={true}
@@ -80,7 +83,7 @@ export function CreateTodoListModal() {
             <DialogFooter>
               <Button
                 type="submit"
-                className="md:mt-10 mt-4 ml-2 h-max w-max bg-foreground md:text-lg text-xs font-bold"
+                className="md:mt-10 mt-8 ml-2 h-max w-max bg-foreground md:text-lg text-xs font-bold"
                 disabled={isLoading}
               >
                 {isLoading ? (

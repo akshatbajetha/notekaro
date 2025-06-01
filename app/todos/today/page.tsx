@@ -76,7 +76,7 @@ function Page() {
 
   if (isLoading) {
     return (
-      <div className="px-4 mt-20 py-6 max-w-3xl">
+      <div className="px-4 mt-20 py-6 max-w-3xl md:ml-24 ml-4">
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex items-center justify-between">
@@ -90,7 +90,7 @@ function Page() {
   }
 
   return (
-    <div className="px-4 mt-20 py-6 max-w-3xl">
+    <div className="px-4 mt-20 py-6 max-w-3xl md:ml-24 ml-4 md:mr-0 mr-4">
       <h1 className="text-2xl font-bold">Today&apos;s Tasks</h1>
       <Separator className="my-4" />
       <div className="space-y-2">

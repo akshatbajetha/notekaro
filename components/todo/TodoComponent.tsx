@@ -323,7 +323,7 @@ export default function TodoComponent({
   return (
     <div
       className={cn(
-        "flex-1 group flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-muted/50 transition-colors",
+        "flex-1 group flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-muted/50 transition-colors w-full",
         todo.completed && "opacity-60"
       )}
     >
@@ -492,7 +492,7 @@ export default function TodoComponent({
               </div>
             </div>
 
-            <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex md:opacity-0 md:group-hover:opacity-100 md:transition-opacity opacity-100">
               <Button
                 variant="ghost"
                 size="sm"

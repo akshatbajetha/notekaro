@@ -20,8 +20,15 @@ import { cn } from "@/lib/utils";
 import { useTodoStore } from "@/store/todoStore";
 import { CreateTodoListModal } from "@/components/todo/CreateTodoListModal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { MobileNav } from "@/components/mobile-nav";
 
-function Sidebar({ width }: { width: number }) {
+interface SidebarProps {
+  width: number;
+  isMobile: boolean;
+  onClose: () => void;
+}
+
+function Sidebar({ width, isMobile, onClose }: SidebarProps) {
   const pathName = usePathname();
   const id = pathName.split("/")[2];
   const router = useRouter();
@@ -122,7 +129,7 @@ function Sidebar({ width }: { width: number }) {
 
   useEffect(() => {
     fetchTodoLists();
-  }, [fetchTodoLists]);
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -134,17 +141,31 @@ function Sidebar({ width }: { width: number }) {
 
   return (
     <div
-      className="w-60 flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg"
+      className={cn(
+        "flex flex-col fixed top-0 left-0 h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 shadow-lg ",
+        isMobile && "w-full max-w-[300px] z-50"
+      )}
       style={{
-        width: `${width}px`,
-        maxWidth: "500px",
+        width: isMobile ? "100%" : `${width}px`,
+        maxWidth: isMobile ? "300px" : "500px",
         opacity: width === 0 ? 0 : 1,
         visibility: width === 0 ? "hidden" : "visible",
+        transform: isMobile
+          ? `translateX(${width === 0 ? "-100%" : "0"})`
+          : "none",
       }}
     >
       {/* Search */}
       <div className="p-2">
-        <div className="flex items-center justify-between space-x-2 pt-1.5 rounded-md">
+        {isMobile && (
+          <div className="flex justify-between items-center rounded-md">
+            <MobileNav />
+            <button onClick={onClose} className="p-2 z-50 rounded-md">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+        <div className="flex items-center justify-between space-x-2 py-1.5 rounded-md">
           <button
             onClick={() => setIsCommandPaletteOpen(true)}
             className="rounded-md bg-transparent hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none w-full p-2 flex flex-row items-center justify-between"
@@ -162,25 +183,25 @@ function Sidebar({ width }: { width: number }) {
           open={isCommandPaletteOpen}
           onOpenChange={setIsCommandPaletteOpen}
         >
-          <DialogContent className="p-0 bg-transparent shadow-none border-none max-w-xl w-full">
+          <DialogContent className="md:p-0 px-4 bg-transparent shadow-none border-none md:max-w-xl w-full">
             <div className="dark:bg-[#191919] bg-[#F5F5F5] rounded-lg shadow-lg w-full">
               <div className="p-4 border-b relative">
                 <div className="flex items-center space-x-3">
-                  <Search className="h-5 w-5 text-gray-400" />
+                  <Search className="md:h-5 md:w-5 h-4 w-4 text-gray-400" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleCommandPaletteKeyDown}
                     placeholder="Search Todo Lists..."
-                    className="flex-1 bg-transparent border-none focus:outline-none text-lg"
+                    className="flex-1 bg-transparent border-none focus:outline-none md:text-lg text-sm"
                     autoFocus
                   />
                   <button
                     onClick={() => setIsCommandPaletteOpen(false)}
                     className="text-gray-500 hover:text-gray-700"
                   >
-                    <X className="h-5 w-5" />
+                    <X className="md:h-5 md:w-5 h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -191,7 +212,7 @@ function Sidebar({ width }: { width: number }) {
                       <div
                         key={todoList.id}
                         className={cn(
-                          "px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-800 dark:bg-[#191919] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 cursor-pointer flex items-center space-x-3",
+                          "px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-800 dark:bg-[#191919] bg-[#F5F5F5] dark:text-gray-100 text-gray-900 cursor-pointer flex items-center space-x-3 md:text-lg text-sm",
                           index === selectedIndex
                             ? "bg-gray-200 dark:bg-gray-800"
                             : ""
