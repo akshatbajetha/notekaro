@@ -31,20 +31,7 @@ import {
 import { Drawable } from "roughjs/bin/core";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { useDebouncedCallback } from "use-debounce";
-import { Loader2 } from "lucide-react";
 const generator = rough.generator();
-
-// // Add debounce utility
-// function debounce<T extends (...args: any[]) => any>(
-//   func: T,
-//   wait: number
-// ): (...args: Parameters<T>) => void {
-//   let timeout: NodeJS.Timeout;
-//   return (...args: Parameters<T>) => {
-//     clearTimeout(timeout);
-//     timeout = setTimeout(() => func(...args), wait);
-//   };
-// }
 
 export default function App() {
   const canvasRef: CanvasRef = useRef(null);
@@ -838,7 +825,28 @@ export default function App() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          elements,
+          elements: elements.map((element: DrawingElement) => ({
+            id: element.id,
+            type: element.type,
+            options: element.options,
+            ...(element.type === "pencil" && {
+              points: (element as PencilElement).points,
+            }),
+            ...(element.type === "text" && {
+              text: (element as TextElement).text,
+              x1: (element as TextElement).x1,
+              y1: (element as TextElement).y1,
+              x2: (element as TextElement).x2,
+              y2: (element as TextElement).y2,
+            }),
+            ...(element.type !== "pencil" &&
+              element.type !== "text" && {
+                x1: (element as ShapeElement).x1,
+                y1: (element as ShapeElement).y1,
+                x2: (element as ShapeElement).x2,
+                y2: (element as ShapeElement).y2,
+              }),
+          })),
         }),
       });
 

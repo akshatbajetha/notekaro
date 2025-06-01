@@ -207,13 +207,17 @@ const CanvasContainer = ({
             // If text tool is selected, prevent default touch behavior
             if (tool === "text") {
               e.stopPropagation();
-              handleMouseDown(mouseEvent as any);
+              handleMouseDown(
+                mouseEvent as unknown as React.MouseEvent<HTMLCanvasElement>
+              );
             } else {
               // If we're not in text mode and there's an active textarea, blur it
               if (action === "writing") {
                 handleBlur();
               }
-              handleMouseDown(mouseEvent as any);
+              handleMouseDown(
+                mouseEvent as unknown as React.MouseEvent<HTMLCanvasElement>
+              );
             }
           }
         }}
@@ -235,7 +239,9 @@ const CanvasContainer = ({
               if (action === "writing") {
                 handleBlur();
               }
-              handleMouseMove(mouseEvent as any);
+              handleMouseMove(
+                mouseEvent as unknown as React.MouseEvent<HTMLCanvasElement>
+              );
             }
           }
         }}
@@ -256,7 +262,9 @@ const CanvasContainer = ({
               if (action === "writing") {
                 handleBlur();
               }
-              handleMouseUp(mouseEvent as any);
+              handleMouseUp(
+                mouseEvent as unknown as React.MouseEvent<HTMLCanvasElement>
+              );
             }
           }
         }}
