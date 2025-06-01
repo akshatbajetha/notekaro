@@ -1,6 +1,6 @@
 "use client";
 
-import TopToolbar from "./Toolbar";
+import SideToolBar from "./Toolbar";
 import BottomToolbar from "./Bottombar";
 import TextOverlay from "./TextOverlay";
 import { useEffect } from "react";
@@ -136,7 +136,7 @@ const CanvasContainer = ({
 
   return (
     <div className="relative w-full h-full">
-      <TopToolbar {...toolbarProps} tool={tool} />
+      <SideToolBar {...toolbarProps} tool={tool} />
       <BottomToolbar
         {...toolbarProps}
         scale={scale}
@@ -159,13 +159,107 @@ const CanvasContainer = ({
       <canvas
         ref={canvasRef}
         className={`absolute inset-0 ${getCursorStyle()}`}
-        // onChange={onChange}
         width={canvasSize.width}
         height={canvasSize.height}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onWheel={handleWheel}
+        onTouchStart={(e) => {
+          e.preventDefault();
+          if (e.touches.length === 2) {
+            // Handle pinch-to-zoom
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            const initialDistance = Math.hypot(
+              touch2.clientX - touch1.clientX,
+              touch2.clientY - touch1.clientY
+            );
+            const handlePinch = (e: TouchEvent) => {
+              if (e.touches.length === 2) {
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                const currentDistance = Math.hypot(
+                  touch2.clientX - touch1.clientX,
+                  touch2.clientY - touch1.clientY
+                );
+                const delta = (currentDistance - initialDistance) * 0.01;
+                onZoom(delta);
+              }
+            };
+            const handlePinchEnd = () => {
+              document.removeEventListener("touchmove", handlePinch);
+              document.removeEventListener("touchend", handlePinchEnd);
+            };
+            document.addEventListener("touchmove", handlePinch, {
+              passive: false,
+            });
+            document.addEventListener("touchend", handlePinchEnd);
+          } else {
+            // Handle single touch for drawing/moving/panning/text
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent("mousedown", {
+              clientX: touch.clientX,
+              clientY: touch.clientY,
+              buttons: 1, // Simulate left mouse button
+            });
+
+            // If text tool is selected, prevent default touch behavior
+            if (tool === "text") {
+              e.stopPropagation();
+              handleMouseDown(mouseEvent as any);
+            } else {
+              // If we're not in text mode and there's an active textarea, blur it
+              if (action === "writing") {
+                handleBlur();
+              }
+              handleMouseDown(mouseEvent as any);
+            }
+          }
+        }}
+        onTouchMove={(e) => {
+          e.preventDefault();
+          if (e.touches.length === 1) {
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent("mousemove", {
+              clientX: touch.clientX,
+              clientY: touch.clientY,
+              buttons: action === "panning" || action === "moving" ? 1 : 0,
+            });
+
+            // If text tool is selected, prevent default touch behavior
+            if (tool === "text") {
+              e.stopPropagation();
+            } else {
+              // If we're not in text mode and there's an active textarea, blur it
+              if (action === "writing") {
+                handleBlur();
+              }
+              handleMouseMove(mouseEvent as any);
+            }
+          }
+        }}
+        onTouchEnd={(e) => {
+          e.preventDefault();
+          if (e.touches.length === 0) {
+            const touch = e.changedTouches[0];
+            const mouseEvent = new MouseEvent("mouseup", {
+              clientX: touch.clientX,
+              clientY: touch.clientY,
+            });
+
+            // If text tool is selected, prevent default touch behavior
+            if (tool === "text") {
+              e.stopPropagation();
+            } else {
+              // If we're not in text mode and there's an active textarea, blur it
+              if (action === "writing") {
+                handleBlur();
+              }
+              handleMouseUp(mouseEvent as any);
+            }
+          }
+        }}
       >
         Canvas
       </canvas>

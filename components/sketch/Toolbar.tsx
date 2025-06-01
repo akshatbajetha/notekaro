@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Tool } from "@/types/drawing";
 
-interface TopToolbarProps {
+interface SideToolBarProps {
   setTool: (tool: Tool) => void;
   brushSize: number;
   setBrushSize: (size: 1 | 2 | 3 | 4 | 5) => void;
@@ -21,16 +21,16 @@ interface TopToolbarProps {
   tool: Tool;
 }
 
-const TopToolbar = ({
+const SideToolBar = ({
   setTool,
   brushSize,
   setBrushSize,
   color,
   setColor,
   tool,
-}: TopToolbarProps) => {
+}: SideToolBarProps) => {
   return (
-    <div className="absolute top-4 right-0 -translate-x-1/2 z-20 dark:bg-[#1E1E1E] bg-[#F5F5F5] border border-[#333] rounded-xl shadow-lg px-5 py-2 flex flex-col items-center gap-3">
+    <div className="absolute md:top-4 md:right-8 top-6 z-20 dark:bg-[#1E1E1E] bg-[#F5F5F5] border border-[#333] rounded-xl shadow-lg px-5 py-2 flex md:flex-col md:items-center md:justify-center gap-3 md:flex-nowrap flex-wrap">
       <button
         onClick={() => setTool("grab")}
         title="Grab"
@@ -38,7 +38,7 @@ const TopToolbar = ({
           tool === "grab" ? "bg-purple-500 text-white" : "hover:text-purple-400"
         }`}
       >
-        <Hand className="w-5 h-5 dark:text-white" />
+        <Hand className="md:w-5 md:h-5 w-4 h-4 dark:text-white" />
       </button>
       <button
         onClick={() => setTool("selection")}
@@ -49,7 +49,7 @@ const TopToolbar = ({
             : "hover:text-purple-400"
         }`}
       >
-        <MousePointerClick className="w-5 h-5 dark:text-white" />
+        <MousePointerClick className="md:w-5 md:h-5 w-4 h-4 dark:text-white" />
       </button>
       <button
         onClick={() => setTool("line")}
@@ -58,7 +58,7 @@ const TopToolbar = ({
           tool === "line" ? "bg-purple-500 text-white" : "hover:text-purple-400"
         }`}
       >
-        <Minus className="w-5 h-5 dark:text-white rotate-[-45deg]" />
+        <Minus className="md:w-5 md:h-5 w-4 h-4 dark:text-white rotate-[-45deg]" />
       </button>
       <button
         onClick={() => setTool("arrow")}
@@ -69,7 +69,7 @@ const TopToolbar = ({
             : "hover:text-purple-400"
         }`}
       >
-        <ArrowRight className="w-5 h-5 dark:text-white" />
+        <ArrowRight className="md:w-5 md:h-5 w-4 h-4 dark:text-white" />
       </button>
       <button
         onClick={() => setTool("rect")}
@@ -78,7 +78,7 @@ const TopToolbar = ({
           tool === "rect" ? "bg-purple-500 text-white" : "hover:text-purple-400"
         }`}
       >
-        <Square className="w-5 h-5 dark:text-white" />
+        <Square className="md:w-5 md:h-5 w-4 h-4 dark:text-white" />
       </button>
       <button
         onClick={() => setTool("circle")}
@@ -89,7 +89,7 @@ const TopToolbar = ({
             : "hover:text-purple-400"
         }`}
       >
-        <Circle className="w-5 h-5 dark:text-white" />
+        <Circle className="md:w-5 md:h-5 w-4 h-4 dark:text-white" />
       </button>
       <button
         onClick={() => setTool("diamond")}
@@ -100,7 +100,7 @@ const TopToolbar = ({
             : "hover:text-purple-400"
         }`}
       >
-        <Square className="w-4 h-4 dark:text-white rotate-45" />
+        <Square className="md:w-5 md:h-5 w-4 h-4 dark:text-white rotate-45" />
       </button>
 
       <button
@@ -112,7 +112,7 @@ const TopToolbar = ({
             : "hover:text-purple-400"
         }`}
       >
-        <Pencil className="w-5 h-5 dark:text-white" />
+        <Pencil className="md:w-5 md:h-5 w-4 h-4 dark:text-white" />
       </button>
       <button
         onClick={() => setTool("text")}
@@ -121,7 +121,7 @@ const TopToolbar = ({
           tool === "text" ? "bg-purple-500 text-white" : "hover:text-purple-400"
         }`}
       >
-        <TextIcon className="w-5 h-5 dark:text-white" />
+        <TextIcon className="md:w-5 md:h-5 w-4 h-4 dark:text-white" />
       </button>
       <button
         onClick={() => setTool("eraser")}
@@ -132,7 +132,7 @@ const TopToolbar = ({
             : "hover:text-purple-400"
         }`}
       >
-        <Eraser className="w-5 h-5 dark:text-white" />
+        <Eraser className="md:w-5 md:h-5 w-4 h-4 dark:text-white" />
       </button>
       <input
         type="range"
@@ -156,4 +156,4 @@ const TopToolbar = ({
   );
 };
 
-export default TopToolbar;
+export default SideToolBar;
