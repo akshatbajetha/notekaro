@@ -20,6 +20,7 @@ export async function getSketch() {
     const elements = await prisma.element.findMany({
       where: {
         userId: user.id,
+        deleted: false,
       },
       orderBy: {
         createdAt: "asc",
@@ -35,6 +36,7 @@ export async function getSketch() {
         points: true,
         strokeWidth: true,
         stroke: true,
+        deleted: true,
       },
     });
 
@@ -48,6 +50,7 @@ export async function getSketch() {
       y2: element.y2,
       text: element.text,
       points: element.points as [number, number][] | null,
+      deleted: element.deleted,
       options: {
         stroke: element.stroke,
         strokeWidth: element.strokeWidth,
@@ -58,6 +61,103 @@ export async function getSketch() {
   } catch (error) {
     console.log("Error while fetching elements: ", error);
     throw new Error("Failed to fetch elements");
+  }
+}
+
+export async function createElement(element: {
+  id: string;
+  type: string;
+  x1: number;
+  y1: number;
+  x2?: number;
+  y2?: number;
+  text?: string;
+  points?: [number, number][];
+  options: {
+    strokeWidth: number;
+    stroke: string;
+  };
+}) {
+  const user = await getAuthUser();
+  if (!user) throw new Error("User not found");
+
+  try {
+    const elementData = {
+      id: element.id,
+      type: element.type.toUpperCase() as ElementType,
+      x1: element.x1,
+      y1: element.y1,
+      x2: element.x2,
+      y2: element.y2,
+      text: element.type.toLowerCase() === "text" ? element.text : null,
+      points: element.points,
+      strokeWidth: element.options.strokeWidth,
+      stroke: element.options.stroke,
+      deleted: false,
+      userId: user.id,
+    };
+
+    return await prisma.element.create({
+      data: elementData,
+    });
+  } catch (error) {
+    console.error("Error creating element:", error);
+    throw new Error("Failed to create element");
+  }
+}
+
+export async function updateElement(element: {
+  id: string;
+  type: string;
+  x1: number;
+  y1: number;
+  x2?: number;
+  y2?: number;
+  text?: string;
+  points?: [number, number][];
+  options: {
+    strokeWidth: number;
+    stroke: string;
+  };
+}) {
+  const user = await getAuthUser();
+  if (!user) throw new Error("User not found");
+
+  try {
+    const elementData = {
+      type: element.type.toUpperCase() as ElementType,
+      x1: element.x1,
+      y1: element.y1,
+      x2: element.x2,
+      y2: element.y2,
+      text: element.type.toLowerCase() === "text" ? element.text : null,
+      points: element.points,
+      strokeWidth: element.options.strokeWidth,
+      stroke: element.options.stroke,
+    };
+
+    return await prisma.element.update({
+      where: { id: element.id },
+      data: elementData,
+    });
+  } catch (error) {
+    console.error("Error updating element:", error);
+    throw new Error("Failed to update element");
+  }
+}
+
+export async function deleteElement(elementId: string) {
+  const user = await getAuthUser();
+  if (!user) throw new Error("User not found");
+
+  try {
+    return await prisma.element.update({
+      where: { id: elementId },
+      data: { deleted: true },
+    });
+  } catch (error) {
+    console.error("Error deleting element:", error);
+    throw new Error("Failed to delete element");
   }
 }
 
@@ -77,60 +177,36 @@ export async function updateSketch({
       strokeWidth: number;
       stroke: string;
     };
+    deleted: boolean;
   }[];
 }) {
   const user = await getAuthUser();
-
-  if (!user) {
-    throw new Error("User not found");
-  }
+  if (!user) throw new Error("User not found");
 
   try {
     if (!elements) return [];
 
-    // Process each element
-    for (const element of elements) {
-      const existingElement = await prisma.element.findUnique({
-        where: { id: element.id },
-      });
-
-      // Only include fields that exist in the Prisma schema
-      const elementData = {
-        id: element.id,
-        type: element.type.toUpperCase() as ElementType,
-        x1: element.x1,
-        y1: element.y1,
-        x2: element.x2,
-        y2: element.y2,
-        text: element.type.toLowerCase() === "text" ? element.text : null,
-        points: element.points,
-        strokeWidth: element.options.strokeWidth,
-        stroke: element.options.stroke,
-        userId: user.id,
-      };
-
-      if (existingElement) {
-        // Update existing element
-        await prisma.element.update({
+    const results = await Promise.all(
+      elements.map(async (element) => {
+        const existingElement = await prisma.element.findUnique({
           where: { id: element.id },
-          data: elementData,
         });
-      } else {
-        // Create new element
-        await prisma.element.create({
-          data: elementData,
-        });
-      }
-    }
 
-    // Return all elements for the user
-    return await prisma.element.findMany({
-      where: {
-        userId: user.id,
-      },
-    });
+        if (element.deleted) {
+          return deleteElement(element.id);
+        }
+
+        if (existingElement) {
+          return updateElement(element);
+        }
+
+        return createElement(element);
+      })
+    );
+
+    return results;
   } catch (error) {
-    console.log("Error while updating elements: ", error);
-    throw new Error("Failed to update elements");
+    console.error("Error in batch update:", error);
+    throw new Error("Failed to update sketch");
   }
 }

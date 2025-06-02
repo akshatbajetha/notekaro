@@ -28,6 +28,7 @@ export interface DrawingOptions {
 export interface BaseElement {
   id: string;
   options: DrawingOptions;
+  deleted: boolean;
 }
 
 export interface PencilElement extends BaseElement {

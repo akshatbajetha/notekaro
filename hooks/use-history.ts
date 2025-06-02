@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useLocalStorage } from "./use-local-storage";
 import { HistoryState, SetStateAction } from "@/types/drawing";
 
 const useHistory = (initialState: HistoryState) => {
-  const [index, setIndex] = useState<number>(0);
-  const [history, setHistory] = useState<HistoryState[]>([initialState]);
+  const [index, setIndex] = useLocalStorage<number>("history-index", 0);
+  const [history, setHistory] = useLocalStorage<HistoryState[]>(
+    "drawing-history",
+    [initialState]
+  );
 
   const setState = (
     action: SetStateAction<HistoryState>,

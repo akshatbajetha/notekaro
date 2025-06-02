@@ -30,7 +30,9 @@ import {
 } from "@/types/drawing";
 import { Drawable } from "roughjs/bin/core";
 import { RoughCanvas } from "roughjs/bin/canvas";
-import { useDebouncedCallback } from "use-debounce";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { STORAGE_KEYS } from "@/hooks/use-drawing-elements";
+
 const generator = rough.generator();
 
 export default function App() {
@@ -40,16 +42,21 @@ export default function App() {
   const isMounted = useRef(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Canvas states
-  const [canvasSize, setCanvasSize] = useState<CanvasSize>({
-    width: 0,
-    height: 0,
-  });
+  // Use history for undo/redo
   const [elements, setElements, undo, redo] = useHistory([]);
-  const [action, setAction] = useState<
+
+  // Canvas states with localStorage using consistent keys
+  const [canvasSize, setCanvasSize] = useLocalStorage<CanvasSize>(
+    STORAGE_KEYS.CANVAS_SIZE,
+    {
+      width: 0,
+      height: 0,
+    }
+  );
+  const [action, setAction] = useLocalStorage<
     "panning" | "moving" | "writing" | "drawing" | "erasing" | "none"
-  >("none");
-  const [tool, setTool] = useState<
+  >(STORAGE_KEYS.ACTION, "none");
+  const [tool, setTool] = useLocalStorage<
     | "line"
     | "rect"
     | "circle"
@@ -60,24 +67,29 @@ export default function App() {
     | "grab"
     | "eraser"
     | "arrow"
-  >("selection");
+  >(STORAGE_KEYS.TOOL, "selection");
   const [selectedElement, setSelectedElement] =
-    useState<SelectedElement | null>(null);
-  const [brushSize, setBrushSize] = useState<1 | 2 | 3 | 4 | 5>(1);
-  const [color, setColor] = useState<string>(
+    useLocalStorage<SelectedElement | null>(
+      STORAGE_KEYS.SELECTED_ELEMENT,
+      null
+    );
+  const [brushSize, setBrushSize] = useLocalStorage<1 | 2 | 3 | 4 | 5>(
+    STORAGE_KEYS.BRUSH_SIZE,
+    1
+  );
+  const [color, setColor] = useLocalStorage<string>(
+    STORAGE_KEYS.COLOR,
     theme === "dark" ? "#ffffff" : "#000000"
   );
-  const [panOffset, setPanOffset] = useState<Point>({
-    x: 0,
-    y: 0,
-  });
-  const [startPanMousePosition, setStartPanMousePosition] = useState<Point>({
-    x: 0,
-    y: 0,
-  });
-  const [scale, setScale] = useState<Scale>(1);
+  const [panOffset, setPanOffset] = useLocalStorage<Point>(
+    STORAGE_KEYS.PAN_OFFSET,
+    { x: 0, y: 0 }
+  );
+  const [startPanMousePosition, setStartPanMousePosition] =
+    useLocalStorage<Point>(STORAGE_KEYS.START_PAN_POSITION, { x: 0, y: 0 });
+  const [scale, setScale] = useLocalStorage<Scale>(STORAGE_KEYS.SCALE, 1);
 
-  // Initialize canvas size first
+  // Initialize canvas size
   useEffect(() => {
     const updateCanvasSize = () => {
       setCanvasSize({
@@ -91,10 +103,10 @@ export default function App() {
     return () => window.removeEventListener("resize", updateCanvasSize);
   }, []);
 
-  // Then load elements after canvas is initialized
+  // Load elements after canvas is initialized
   useEffect(() => {
     if (!canvasSize.width || !canvasSize.height) return;
-    if (isMounted.current) return; // Skip if already mounted
+    if (isMounted.current) return;
     isMounted.current = true;
 
     const fetchElements = async () => {
@@ -107,23 +119,8 @@ export default function App() {
           return;
         }
 
-        // Process elements to ensure they have proper rough.js representations
         const processedElements = data.elements.map(
-          (element: {
-            id: string;
-            type: string;
-            x1: number;
-            y1: number;
-            x2?: number;
-            y2?: number;
-            text?: string;
-            points?: [number, number][];
-            options: {
-              stroke: string;
-              strokeWidth: number;
-            };
-          }) => {
-            // For shape elements, create proper rough.js representation
+          (element: DrawingElement) => {
             if (element.type !== "pencil" && element.type !== "text") {
               return createElement(
                 element.id,
@@ -135,8 +132,6 @@ export default function App() {
                 element.options
               );
             }
-
-            // For pencil and text elements, just return as is
             return element;
           }
         );
@@ -390,7 +385,7 @@ export default function App() {
         break;
       }
       case "pencil":
-        return { id, type, points: [[x1, y1]], options };
+        return { id, type, points: [[x1, y1]], options, deleted: false };
       case "text": {
         const canvas = canvasRef.current;
         if (!canvas)
@@ -403,6 +398,7 @@ export default function App() {
             y2: y1 + 24,
             text: "",
             options,
+            deleted: false,
           };
         const context = canvas.getContext("2d");
         if (!context)
@@ -415,6 +411,7 @@ export default function App() {
             y2: y1 + 24,
             text: "",
             options,
+            deleted: false,
           };
         context.font = "24px sans-serif";
         const textWidth = context.measureText("").width;
@@ -428,12 +425,13 @@ export default function App() {
           y2: y1 + textHeight,
           text: "",
           options,
+          deleted: false,
         };
       }
       default:
         throw new Error("Invalid shape type");
     }
-    return { id, x1, y1, x2, y2, type, roughElement, options };
+    return { id, x1, y1, x2, y2, type, roughElement, options, deleted: false };
   }
 
   function updateElement(
@@ -497,8 +495,7 @@ export default function App() {
         }
         break;
     }
-    setElements(elementsCopy, true);
-    saveElements();
+    setElements(elementsCopy);
   }
 
   // --- Mouse event handlers --- //
@@ -521,10 +518,16 @@ export default function App() {
     if (tool === "eraser") {
       const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
-        setElements((prevElements: DrawingElement[]) =>
-          prevElements.filter((el: DrawingElement) => el.id !== element.id)
-        );
-        saveElements();
+        // Save deletion immediately
+        saveElementsNow([{ ...element, deleted: true }]);
+        setElements((prevElements: DrawingElement[]) => {
+          const updatedElements = prevElements.map((el: DrawingElement) =>
+            el.id === element.id ? { ...el, deleted: true } : el
+          );
+          return updatedElements.filter(
+            (el: DrawingElement) => el.id !== element.id
+          );
+        });
       }
       setAction("erasing");
       return;
@@ -577,7 +580,6 @@ export default function App() {
         ...prevElements,
         element,
       ]);
-      saveElements();
       setSelectedElement(element);
       if (tool === "text") {
         setAction("writing");
@@ -614,9 +616,16 @@ export default function App() {
     if (action === "erasing" && tool === "eraser") {
       const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
-        setElements((prevElements: DrawingElement[]) =>
-          prevElements.filter((el: DrawingElement) => el.id !== element.id)
-        );
+        setElements((prevElements: DrawingElement[]) => {
+          const updatedElements = prevElements.map((el: DrawingElement) =>
+            el.id === element.id ? { ...el, deleted: true } : el
+          );
+          // Send the element with deleted: true before filtering
+          saveElementsNow([{ ...element, deleted: true }]);
+          return updatedElements.filter(
+            (el: DrawingElement) => el.id !== element.id
+          );
+        });
       }
       return;
     }
@@ -668,7 +677,7 @@ export default function App() {
             ...selectedElement,
             points: newPoints,
           } as PencilElement;
-          setElements(elementsCopy, true);
+          setElements(elementsCopy);
         }
       } else {
         const elementWithOffset = selectedElement as (
@@ -748,6 +757,20 @@ export default function App() {
       }
     }
 
+    // Save final state for drawing actions
+    if (action === "drawing") {
+      const lastElement = elements[elements.length - 1];
+      if (lastElement) {
+        // Save the final state of the element
+        saveElementsNow([lastElement]);
+      }
+    }
+
+    // Save final state for moving actions
+    if (action === "moving" && selectedElement) {
+      saveElementsNow([selectedElement]);
+    }
+
     // Don't clear selection if we're in selection mode or if we're writing text
     if (tool !== "selection" && action !== "writing") {
       setAction("none");
@@ -772,28 +795,25 @@ export default function App() {
     const textElement = selectedElement as TextElement;
     const text = textAreaRef.current.value;
 
-    // Only update if there's actual text
     if (text.trim()) {
-      // Create a copy of the text element with the new text
       const updatedElement = {
         ...textElement,
         text: text,
       };
-      // Update the elements array
       setElements((prevElements) =>
         prevElements.map((el) =>
           el.id === textElement.id ? updatedElement : el
         )
       );
-      saveElements();
-      // Keep the element selected
+      // Save only the final text element
+      saveElementsNow([updatedElement]);
       setSelectedElement(updatedElement);
     } else {
-      // Remove empty text elements
       setElements((prevElements) =>
         prevElements.filter((el) => el.id !== textElement.id)
       );
-      saveElements();
+      // Save deletion immediately
+      saveElementsNow([{ ...textElement, deleted: true }]);
       setSelectedElement(null);
     }
     setAction("none");
@@ -816,47 +836,77 @@ export default function App() {
     };
   }
 
-  // Add saveSketch function
-  const saveElements = useDebouncedCallback(async () => {
+  // Save to DB functions
+  const formatElementForAPI = (element: DrawingElement) => {
+    const baseElement = {
+      id: element.id,
+      type: element.type,
+      options: element.options,
+      deleted: element.deleted || false,
+    };
+
+    switch (element.type) {
+      case "pencil": {
+        const pencilElement = element as PencilElement;
+        const firstPoint = pencilElement.points[0];
+        const lastPoint = pencilElement.points[pencilElement.points.length - 1];
+        return {
+          ...baseElement,
+          points: pencilElement.points,
+          x1: firstPoint[0],
+          y1: firstPoint[1],
+          x2: lastPoint[0],
+          y2: lastPoint[1],
+          text: null,
+        };
+      }
+      case "text": {
+        const textElement = element as TextElement;
+        return {
+          ...baseElement,
+          text: textElement.text,
+          x1: textElement.x1,
+          y1: textElement.y1,
+          x2: textElement.x2,
+          y2: textElement.y2,
+          points: null,
+        };
+      }
+      default: {
+        const shapeElement = element as ShapeElement;
+        return {
+          ...baseElement,
+          x1: shapeElement.x1,
+          y1: shapeElement.y1,
+          x2: shapeElement.x2,
+          y2: shapeElement.y2,
+          text: null,
+          points: null,
+        };
+      }
+    }
+  };
+
+  const saveToDB = async (elements: DrawingElement[]) => {
     try {
+      const formattedElements = elements.map(formatElementForAPI);
       const response = await fetch("/api/sketch", {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          elements: elements.map((element: DrawingElement) => ({
-            id: element.id,
-            type: element.type,
-            options: element.options,
-            ...(element.type === "pencil" && {
-              points: (element as PencilElement).points,
-            }),
-            ...(element.type === "text" && {
-              text: (element as TextElement).text,
-              x1: (element as TextElement).x1,
-              y1: (element as TextElement).y1,
-              x2: (element as TextElement).x2,
-              y2: (element as TextElement).y2,
-            }),
-            ...(element.type !== "pencil" &&
-              element.type !== "text" && {
-                x1: (element as ShapeElement).x1,
-                y1: (element as ShapeElement).y1,
-                x2: (element as ShapeElement).x2,
-                y2: (element as ShapeElement).y2,
-              }),
-          })),
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ elements: formattedElements }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to save sketch");
+        throw new Error("Failed to save elements");
       }
     } catch (error) {
-      console.error("Error saving sketch:", error);
+      console.error("Error saving elements:", error);
     }
-  }, 1000);
+  };
+
+  const saveElementsNow = async (elements: DrawingElement[]) => {
+    await saveToDB(elements);
+  };
 
   return (
     <div className="min-h-screen dark:bg-[#1E1E1E] bg-[#F5F5F5] pt-16 overflow-hidden">
