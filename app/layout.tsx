@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Assistant } from "next/font/google";
 import "./globals.css";
 import { TopNavbar } from "@/components/TopNavbar";
 import { Toaster } from "@/components/ui/toaster";
@@ -11,6 +11,11 @@ import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({
   subsets: ["latin"],
+});
+
+const assistant = Assistant({
+  subsets: ["latin"],
+  variable: "--font-assistant",
 });
 
 export const metadata: Metadata = {
@@ -80,7 +85,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.className} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.className} ${assistant.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-E6Q5M4X2VH"

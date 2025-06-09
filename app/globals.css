@@ -7,7 +7,37 @@ html {
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  @apply font-assistant;
+  @apply bg-background text-foreground;
+  font-feature-settings:
+    "rlig" 1,
+    "calt" 1;
+}
+
+a,
+p,
+span,
+li {
+  @apply font-assistant;
+}
+
+/* Apply Geist Sans to all heading elements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-sans;
+}
+
+@font-face {
+  font-family: "NoteKaroSketchFont";
+  src:
+    url("/fonts/NoteKaroSketch-Regular.woff2") format("woff2"),
+    url("/fonts/NoteKaroSketch-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 .bn-container[data-theming-css-variables-demo][data-color-scheme="light"] {
@@ -61,6 +91,132 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    /* Chart colors */
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    /* Sidebar colors */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Island and UI colors */
+    --island-bg-color: #232329;
+    --w-text: #e3e3e8;
+    --w-button-hover-bg: #31303b;
+    --RadioGroup-choice-color-on: hsl(0, 0%, 7%);
+    --RadioGroup-choice-background-on: #a8a5ff;
+    --RadioGroup-background: #232329;
+    --RadioGroup-border: #31303b;
+    --RadioGroup-choice-color-off: #a8a5ff;
+    --RadioGroup-choice-color-off-hover: #bbb8ff;
+    --RadioGroup-choice-background-off: #232329;
+    --RadioGroup-choice-background-off-active: #31303b;
+    --RadioGroup-choice-background-on-hover: #bbb8ff;
+    --surface-box-shadow: #ffffff;
+    --d-btn-hover-bg: #31303b;
+    --l-btn-hover-bg: #f1f0ff;
+    --icon-fill-color: #1b1b1f;
+    --icon-fill-color-d: #e0dfff;
+    --color-on-primary-container: #030064;
+    --selected-tool-bg-dark: #403e6a;
+    --scrollbar-thumb: #ced4da;
+    --scrollbar-thumb-hover: #adb5bd;
+    --color-slider-track: #ccccff;
+    --color-slider-thumb: #3d3d3d;
+    --light-button-bg2: #f2f2f7;
+    --default-border-color: #f1f0ff;
+    --default-border-color-dark: #31303b;
+
+    /* Primary colors */
+    --color-selection: var(--color-primary);
+    --color-icon-white: #ffffff;
+    --color-primary: #6965db;
+    --color-primary-darker: #5b57d1;
+    --color-primary-darkest: #4a47b1;
+    --color-primary-light: #e3e2fe;
+    --color-primary-light-darker: #d7d5ff;
+    --color-primary-hover: #5753d0;
+    --tool-btn-bg-hover-dark: #363541;
+    --background-color-light: #f0fcf0;
+    --yellow-lighter: #fffbf0;
+    --yellow-light: #fff0c9;
+    --yellow-darker: #705400;
+    --red-lighter: #fff0f0;
+    --red-light: #ffdad6;
+    --blue-lighter: #f0fbff;
+    --blue-light: #d1ecff;
+    --surface-loww: #f5f5f9;
+
+    /* Form and input colors */
+    --form-input: #fff;
+    --form-input-hover: #f1f3f5;
+    --color-border-input: #aaa;
+    --form-color-text: #343a40;
+    --color-outline-focus: var(--color-primary);
+    --brand-active: #4440bf;
+    --brand-hover: #5753d0;
+
+    /* Gray scale */
+    --color-gray-10: #f5f5f5;
+    --color-gray-20: #ebebeb;
+    --color-gray-30: #d6d6d6;
+    --color-gray-40: #b8b8b8;
+    --color-gray-50: #999999;
+    --color-gray-60: #7a7a7a;
+    --color-gray-70: #5c5c5c;
+    --color-gray-80: #3d3d3d;
+    --color-gray-85: #242424;
+    --color-gray-90: #1e1e1e;
+    --color-gray-100: #121212;
+
+    /* Logo and surface colors */
+    --color-logo-icon: var(--color-primary);
+    --color-logo-text: #190064;
+    --default-icon-size: 1rem;
+    --color-surface-high: #f1f0ff;
+    --color-surface-mid: #f2f2f7;
+    --color-surface-low: #ececf4;
+    --color-surface-lowest: #ffffff;
+    --color-on-surface: #1b1b1f;
+    --color-surface-primary-container: #e0dfff;
+    --dialog-border-color: var(--color-gray-20);
+    --text-primary-color: var(--color-on-surface);
+    --loading-text-color: var(--brand-active);
+
+    /* Border and text field colors */
+    --color-border-outline: #767680;
+    --color-border-outline-variant: #c5c5d0;
+    --CollabyTextField--color: var(--color-on-surface);
+    --CollabyTextField--label-color: var(--color-on-surface);
+    --CollabyTextField--background: var(--color-surface-low);
+    --CollabyTextField--readonly--background: var(--color-surface-high);
+    --CollabyTextField--readonly--color: var(--color-on-surface);
+    --CollabyTextField--border: var(--color-gray-20);
+    --CollabyTextField--readonly--border: var(--color-border-outline-variant);
+    --CollabyTextField--border-hover: var(--brand-hover);
+    --CollabyTextField--border-active: var(--brand-active);
+    --CollabyTextField--placeholder: var(--color-border-outline-variant);
+
+    /* Button colors */
+    --button-hover-bg: var(--color-surface-high);
+    --button-active-bg: var(--color-surface-high);
+    --button-active-border: var(--brand-active);
+    --color-promo: var(--color-primary);
+    --color-primary-text: #030064;
+
+    /* Selection and theme */
+    --selection-box-border-color: #6965db;
+    --theme-filter: none;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -82,19 +238,590 @@ body {
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
+
+    /* Dark mode chart colors */
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    /* Dark mode sidebar colors */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Dark mode UI colors */
+    --surface-box-shadow: #121212;
+    --shadow-island:
+      0px 0px 0.9310142993927002px 0px rgba(0, 0, 0, 0.17),
+      0px 0px 3.1270833015441895px 0px rgba(0, 0, 0, 0.08),
+      0px 7px 14px 0px rgba(0, 0, 0, 0.05);
+    --color-primary-darker: #b2aeff;
+    --color-primary-darkest: #beb9ff;
+    --color-primary-light: #4f4d6f;
+    --color-primary-light-darker: #43415e;
+    --color-primary-hover: #bbb8ff;
+
+    /* Dark mode form colors */
+    --form-input: #121212;
+    --form-input-hover: #141414;
+    --color-border-input: #212121;
+    --form-color-text: #ced4da;
+    --color-primary: #a8a5ff;
+    --color-outline-focus: var(--color-primary);
+    --brand-active: #d0ccff;
+    --brand-hover: #bbb8ff;
+
+    /* Dark mode logo and surface colors */
+    --color-logo-text: #e2dfff;
+    --color-surface-high: #31303b;
+    --color-surface-low: #232329;
+    --color-surface-mid: #18181b;
+    --color-surface-lowest: #121212;
+    --color-on-surface: #e3e3e8;
+    --island-bg-color: #232329;
+    --dialog-border-color: var(--color-gray-80);
+    --text-primary-color: var(--color-on-surface);
+    --loading-text-color: var(--color-on-surface);
+
+    /* Dark mode border and text field colors */
+    --color-border-outline: #8e8d9c;
+    --color-border-outline-variant: #46464f;
+    --CollabyTextField--color: var(--color-on-surface);
+    --CollabyTextField--label-color: var(--color-on-surface);
+    --CollabyTextField--background: var(--color-surface-low);
+    --CollabyTextField--readonly--background: var(--color-surface-high);
+    --CollabyTextField--readonly--color: var(--color-on-surface);
+    --CollabyTextField--border: var(--color-gray-20);
+    --CollabyTextField--readonly--border: var(--color-border-outline-variant);
+    --CollabyTextField--border-hover: var(--brand-hover);
+    --CollabyTextField--border-active: var(--color-brand-active);
+    --CollabyTextField--placeholder: var(--color-border-outline-variant);
+
+    /* Dark mode button colors */
+    --button-hover-bg: var(--color-surface-high);
+    --button-active-bg: var(--color-surface-high);
+    --button-active-border: var(--brand-active);
+    --color-promo: var(--color-primary);
+
+    /* Dark mode selection and theme */
+    --selection-box-border-color: #a8a5ff;
+    --theme-filter: invert(93%) hue-rotate(180deg);
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border ring-ring/50;
   }
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Container styles */
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1400px;
+  }
+}
+
+/* Utility styles */
+@layer utilities {
+  .bg-transparent-checkerboard {
+    background-image:
+      linear-gradient(
+        45deg,
+        #ddd 25%,
+        transparent 25%,
+        transparent 75%,
+        #ddd 75%,
+        #ddd
+      ),
+      linear-gradient(
+        45deg,
+        #ddd 25%,
+        transparent 25%,
+        transparent 75%,
+        #ddd 75%,
+        #ddd
+      );
+    background-size: 10px 10px;
+    background-position:
+      0 0,
+      5px 5px;
+  }
+}
+
+/* Scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 50px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 50px;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #343a40;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #403e6a;
+}
+
+/* Firefox scrollbar */
+@-moz-document url-prefix() {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: transparent var(--scrollbar-thumb);
+  }
+}
+
+/* Surface and menu button shadows */
+.surface-box-shadow,
+.menu-btn-box-shadow {
+  box-shadow: 0 0 0 1px var(--surface-box-shadow);
+}
+
+.dark .surface-box-shadow,
+.dark .menu-btn-box-shadow {
+  box-shadow: 0 0 0 1px var(--surface-box-shadow);
+}
+
+/* Radio group styles */
+.RadioGroup__choice {
+  color: var(--RadioGroup-choice-color-on);
+  background: var(--RadioGroup-choice-background-on);
+}
+
+/* Island styles */
+.Island {
+  background-color: #ffffff;
+  box-shadow: var(--shadow-island);
+  transition: box-shadow 0.5s ease-in-out;
+}
+
+.dark .Island {
+  background-color: var(--island-bg-color);
+  box-shadow: var(--shadow-island);
+  transition: box-shadow 0.5s ease-in-out;
+}
+
+/* Global scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 3px;
+}
+
+select::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-thumb);
+}
+
+/* Button styles */
+button {
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Color picker styles */
+.color-picker__button {
+  --radius: 0.25rem;
+  padding: 0;
+  margin: 0;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid #d6d6d6;
+  border-radius: 4px;
+  background-position: left center;
+  position: relative;
+  font-family: inherit;
+  box-sizing: border-box;
+  filter: var(--theme-filter);
+}
+
+.color-picker__button:hover:after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  box-shadow: 0 0 0 1px #d6d6d6;
+  border-radius: 5px;
+}
+
+.color-picker__button.active .color-picker__button-outline {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  box-shadow: 0 0 0 1px #4a47b1;
+  z-index: 1;
+  border-radius: 5px;
+  filter: none;
+}
+
+.color-picker__button.is-transparent {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==);
+}
+
+.color-picker__button.active-color {
+  border-radius: calc(var(--radius) + 1px);
+  width: 1.625rem;
+  height: 1.625rem;
+}
+
+/* Tooltip styles */
+.popover-tooltip-arrow-pointer {
+  position: absolute;
+  left: 0px;
+  transform-origin: 0px 0px;
+  transform: translateY(50%) rotate(90deg) translateX(-50%);
+  top: 24px;
+}
+
+/* Animation styles */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(5px);
+  }
+}
+
+.animate-float {
+  animation: 2s ease-in-out 0s infinite alternate both running float;
+}
+
+.animation-delay-1 {
+  animation-delay: 0.5s;
+}
+
+/* NoteKaroSketch specific styles */
+.notekarosketch .collabyfont {
+  font-family: "Collabyfont", sans-serif;
+}
+
+.notekarosketch .welcome-screen-decor {
+  position: absolute;
+  z-index: 1;
+}
+
+.dark .notekarosketch .welcome-screen-decor {
+  opacity: 0.5;
+}
+
+.notekarosketch .welcome-screen-decor-hint--menu {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.notekarosketch .welcome-screen-decor-hint--menu svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.notekarosketch {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.notekarosketch .welcome-screen-decor-hint--toolbar {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.notekarosketch .welcome-screen-decor-hint--toolbar svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.notekarosketch .welcome-screen-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+}
+
+.notekarosketch .welcome-screen-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.notekarosketch .welcome-screen-center__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notekarosketch .NoteKaroSketchLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notekarosketch .NoteKaroSketchLogo svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.notekarosketch .NoteKaroSketchLogo .NoteKaroSketchLogo-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.notekarosketch .NoteKaroSketchLogo.is-small .NoteKaroSketchLogo-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.notekarosketch .NoteKaroSketchLogo-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.notekarosketch .welcome-screen-center__heading {
+  font-size: 1.25rem;
+  color: var(--foreground);
+}
+
+.notekarosketch .welcome-screen-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.notekarosketch .welcome-screen-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.notekarosketch .welcome-screen-menu-item:hover {
+  background-color: var(--card);
+}
+
+.dark .notekarosketch .welcome-screen-menu-item:hover {
+  background-color: var(--card);
+}
+
+.notekarosketch .welcome-screen-menu-item:active {
+  background-color: var(--card);
+}
+
+.dark .notekarosketch .welcome-screen-menu-item:active {
+  background-color: var(--card);
+}
+
+.notekarosketch .welcome-screen-menu-item:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.dark .notekarosketch .welcome-screen-menu-item:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.notekarosketch .welcome-screen-menu-item__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.notekarosketch .welcome-screen-menu-item__text {
+  font-size: 1rem;
+  color: var(--foreground);
+}
+
+.notekarosketch .welcome-screen-menu-item__shortcut {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.dark .notekarosketch .welcome-screen-menu-item,
+.dark .notekarosketch .welcome-screen-menu-item__shortcut {
+  color: var(--foreground);
+}
+
+.notekarosketch {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.notekarosketch .welcome-screen-menu-item:hover .welcome-screen-menu-item__icon,
+.notekarosketch
+  .welcome-screen-menu-item:hover
+  .welcome-screen-menu-item__text {
+  color: var(--primary);
+}
+
+.notekarosketch {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.notekarosketch
+  .welcome-screen-menu-item:active
+  .welcome-screen-menu-item__icon,
+.notekarosketch
+  .welcome-screen-menu-item:active
+  .welcome-screen-menu-item__text {
+  color: var(--primary);
+}
+
+.notekarosketch {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.notekarosketch {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.notekarosketch {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.notekarosketch {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.dark .notekarosketch-canvas,
+.dark .notekarosketch-canvas-dark {
+  background-color: var(--background);
+}
+
+.notekarosketch-texty::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Background gradients */
+.bg-page-gradient-purple,
+.bg-page-gradient-yellow {
+  background-image:
+    linear-gradient(138.59deg, #e0dfff26 4.71%, #e0dfff00 32.89%),
+    radial-gradient(52.08% 32.07% at 97.32% 50.03%, #e0dfff26 0, #e0dfff00 100%);
+}
+
+/* Prose styles */
+.prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  line-height: 140%;
+  margin-bottom: 1.25em;
+  margin-top: 0.5rem;
+}
+
+.prose
+  :where(.prose > :first-child):not(
+    :where([class~="not-prose"], [class~="not-prose"] *)
+  ) {
+  margin-top: 0;
+}
+
+.prose-xl :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  line-height: 160%;
+  margin-bottom: 1.2em;
+  margin-top: 0.5rem;
+}
+
+.prose-xl
+  :where(.prose-xl > :first-child):not(
+    :where([class~="not-prose"], [class~="not-prose"] *)
+  ) {
+  margin-top: 0;
+}
+
+@media (min-width: 1025px) {
+  .lg\:prose-xl
+    :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    line-height: 160%;
+    margin-bottom: 1.2em;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .lg\:prose-xl
+    :where(.lg\:prose-xl > :first-child):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    margin-top: 0;
+  }
+}
+
+/* Text editor styles */
+.notekarosketch-texty::-webkit-scrollbar {
+  display: none;
 }

@@ -1,63 +1,217 @@
 import type { Config } from "tailwindcss";
 
-const config: Config = {
-    darkMode: ["class"],
-    content: [
+const config = {
+  darkMode: ["class"],
+  content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-  	extend: {
-  		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
-  			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
-  			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
-  			}
-  		},
-  		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
-  		}
-  	}
+    extend: {
+      screens: {
+        xs: "480px",
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1536px",
+      },
+      colors: {
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        chart: {
+          "1": "hsl(var(--chart-1))",
+          "2": "hsl(var(--chart-2))",
+          "3": "hsl(var(--chart-3))",
+          "4": "hsl(var(--chart-4))",
+          "5": "hsl(var(--chart-5))",
+        },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
+        lightb: "#f1f0ff",
+        "w-bg": "var(--island-bg-color)",
+        "w-text": "var(--w-text)",
+        "w-button-hover-bg": "var(--w-button-hover-bg)",
+        "default-border-color-dark": "var(--default-border-color-dark)",
+        "d-btn-hover-bg": "var(--d-btn-hover-bg)",
+        "color-promo": "var(--color-promo)",
+        "light-btn-bg": "var(--color-surface-low)",
+        "light-btn-bg2": "var(--light-button-bg2)",
+        "light-btn-hover-bg": "var(--l-btn-hover-bg)",
+        "icon-fill-color": "var(--icon-fill-color)",
+        "icon-fill-color-d": "var(--icon-fill-color-d)",
+        "text-primary-color": "var(--text-primary-color)",
+        "selected-tool-bg-light": "var(--color-surface-primary-container)",
+        "selected-tool-bg-dark": "var(--selected-tool-bg-dark)",
+        "scrollbar-thumb": "var(--scrollbar-thumb)",
+        "scrollbar-thumb-hover": "var(--scrollbar-thumb-hover)",
+        "color-slider-track": "var(--color-slider-track)",
+        "color-slider-thumb": "var(--color-slider-thumb)",
+        "default-border-color": "var(--default-border-color)",
+        "color-on-primary-container": "var(--color-on-primary-container)",
+        "color-primary": "var(--color-primary)",
+        "color-primary-hover": "var(--color-primary-hover)",
+        "tool-btn-bg-hover-dark": "var(--tool-btn-bg-hover-dark)",
+        "yellow-light": "var(--yellow-light)",
+        "yellow-lighter": "var(--yellow-lighter)",
+        "yellow-darker": "var(--yellow-darker)",
+        "surface-loww": "var(--surface-loww)",
+        "form-input": "var(--form-input)",
+        "form-input-hover": "var(--form-input-hover)",
+        "color-border-input": "var(--color-border-input)",
+        "form-color-text": "var(--form-color-text)",
+        "color-outline-focus": "var(--color-outline-focus)",
+        "brand-active": "var(--brand-active)",
+        "brand-hover": "var(--brand-hover)",
+        "island-bg-color": "var(--island-bg-color)",
+        "dialog-border-color": "var(--dialog-border-color)",
+        "loading-text-color": "var(--loading-text-color)",
+        "collaby-textfield": "var(--CollabyTextField--background)",
+        "collaby-textfield-readonly":
+          "var(--CollabyTextField--readonly--background)",
+        "color-on-surface": "var(--color-on-surface)",
+        "button-hover-bg": "var(--button-hover-bg)",
+        "button-active-bg": "var(--button-active-bg)",
+        "color-primary-text": "var(--color-primary-text)",
+      },
+      textColor: {
+        primary: "var(--text-primary)",
+        secondary: "var(--text-secondary)",
+        tertiary: "var(--text-tertiary)",
+        quaternary: "var(--text-quaternary)",
+        quinary: "var(--text-quinary)",
+        senary: "var(--text-senary)",
+        septenary: "var(--text-septenary)",
+        octonary: "var(--text-octonary)",
+        nonary: "var(--text-nonary)",
+        denary: "var(--text-denary)",
+        "collaby-textfield": "var(--CollabyTextField--color)",
+        "collaby-textfield-label": "var(--CollabyTextField--label-color)",
+        "collaby-textfield-readonly":
+          "var(--CollabyTextField--readonly--color)",
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      borderColor: {
+        primary: "var(--border-primary)",
+        secondary: "var(--border-secondary)",
+        tertiary: "var(--border-tertiary)",
+        quaternary: "var(--border-quaternary)",
+        quinary: "var(--border-quinary)",
+        senary: "var(--border-senary)",
+        septenary: "var(--border-septenary)",
+        octonary: "var(--border-octonary)",
+        nonary: "var(--border-nonary)",
+        denary: "var(--border-denary)",
+        "collaby-textfield": "var(--CollabyTextField--border)",
+        "collaby-textfield-readonly":
+          "var(--CollabyTextField--readonly--border)",
+        "collaby-textfield-hover": "var(--CollabyTextField--border-hover)",
+        "collaby-textfield-active": "var(--CollabyTextField--border-active)",
+        "collaby-textfield-placeholder": "var(--CollabyTextField--placeholder)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      boxShadow: {
+        "outline-primary-darkest": "0 0 0 1px var(--color-primary-darkest)",
+        "outline-primary-light-darker":
+          "0 0 0 1px var(--color-primary-light-darker)",
+        "shadow-tool-focus": "0 0 0 1px var(--color-primary-hover)",
+        "input-shadow": "0px 0px 0px 1px rgba(0, 0, 0, 0.05)",
+        "modal-shadow": "0px 0px 0px 1px rgba(0, 0, 0, 0.05)",
+        "brand-color-shadow": "0 0 0 1px var(--brand-hover)",
+        "sidebar-shadow": "0px 0px 0px 1px rgba(0, 0, 0, 0.05)",
+        "card-shadow": "0px 0px 0px 1px rgba(0, 0, 0, 0.05)",
+        "button-shadow": "0px 0px 0px 1px rgba(0, 0, 0, 0.05)",
+        "dropdown-shadow": "0px 0px 0px 1px rgba(0, 0, 0, 0.05)",
+        "tooltip-shadow": "0px 0px 0px 1px rgba(0, 0, 0, 0.05)",
+        "popover-shadow": "0px 0px 0px 1px rgba(0, 0, 0, 0.05)",
+        "alert-shadow": "0px 0px 0px 1px rgba(0, 0, 0, 0.05)",
+        "badge-shadow": "0px 0px 0px 1px rgba(0, 0, 0, 0.05)",
+      },
+      fontFamily: {
+        assistant: ["var(--font-assistant)"],
+        sans: ["var(--font-assistant)", "sans-serif"],
+        mono: "var(--font-geist-mono), monospace",
+        collabyfont: ["Collabyfont", "sans-serif"],
+      },
+      filter: {
+        "canvas-theme-filter": "var(--theme-filter)",
+        "sidebar-blur": "blur(8px)",
+        "card-blur": "blur(8px)",
+        "button-blur": "blur(8px)",
+        "input-blur": "blur(8px)",
+        "dropdown-blur": "blur(8px)",
+        "modal-blur": "blur(8px)",
+        "tooltip-blur": "blur(8px)",
+        "popover-blur": "blur(8px)",
+        "alert-blur": "blur(8px)",
+        "badge-blur": "blur(8px)",
+      },
+      outlineColor: {
+        ring: "var(--ring)",
+      },
+    },
   },
-  plugins: [require("tailwindcss-animate")],
-};
+  plugins: [
+    require("tailwindcss-animate"),
+    require("tailwind-scrollbar")({ nocompatible: true }),
+  ],
+} satisfies Config;
+
 export default config;
