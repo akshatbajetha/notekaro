@@ -19,8 +19,8 @@ export default function ToolSelector({
 }: ToolSelectorProps) {
   return (
     <TooltipProvider delayDuration={0}>
-      <header className="Tool_Bar flex items-center gap-1 p-1.5 rounded-lg Island border-2">
-        <div className="flex fixed items-center flex-col top-8 right-8 gap-1 lg:gap-3">
+      <header className="Tool_Bar flex items-center gap-1 p-1.5 rounded-lg ">
+        <div className="flex fixed items-center flex-col top-8 right-8 gap-1 lg:gap-3 p-4 border-2 Island">
           {tools.map((tool) => (
             <Tooltip key={tool.type}>
               <TooltipTrigger asChild>

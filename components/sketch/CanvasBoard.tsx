@@ -14,6 +14,7 @@ import { CanvasEngine } from "@/canvas-engine/CanvasEngine";
 
 import {
   BgFill,
+  canvasBgDark,
   canvasBgLight,
   FillStyle,
   FontFamily,
@@ -34,11 +35,6 @@ import { AppSidebar } from "./AppSidebar";
 import { StyleConfigurator } from "./StyleConfigurator";
 import ToolSelector from "./ToolSelector";
 import ZoomControl from "./ZoomControl";
-import {
-  HomeWelcome,
-  MainMenuWelcome,
-  ToolMenuWelcome,
-} from "./welcome-screen";
 
 export default function CanvasBoard() {
   const { theme } = useTheme();
@@ -68,7 +64,7 @@ export default function CanvasBoard() {
   useEffect(() => {
     setCanvasEngineState((prev) => ({
       ...prev,
-      canvasColor: canvasBgLight[0],
+      canvasColor: theme === "dark" ? canvasBgDark[0] : canvasBgLight[0],
     }));
     console.log("Theme = ", theme);
   }, [theme]);
@@ -284,9 +280,6 @@ export default function CanvasBoard() {
                   onClearCanvas={clearCanvas}
                 />
               )}
-
-              {canvasEngineState.activeTool === "grab" &&
-                canvasEngineState.isCanvasEmpty && <MainMenuWelcome />}
             </div>
 
             <StyleConfigurator
@@ -408,13 +401,7 @@ export default function CanvasBoard() {
         />
       </div>
 
-      {canvasEngineState.activeTool === "grab" &&
-        canvasEngineState.isCanvasEmpty &&
-        !isLoading && (
-          <div className="relative">
-            <ToolMenuWelcome />
-          </div>
-        )}
+      {canvasEngineState.activeTool === "grab"}
 
       {matches && (
         <ZoomControl
@@ -559,9 +546,7 @@ export default function CanvasBoard() {
         />
       )}
 
-      {!isLoading &&
-        canvasEngineState.activeTool === "grab" &&
-        canvasEngineState.isCanvasEmpty && <HomeWelcome />}
+      {!isLoading && canvasEngineState.activeTool === "grab"}
 
       {isLoading && <ScreenLoading />}
 

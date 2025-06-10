@@ -115,7 +115,7 @@ export function StyleConfigurator({
           "StyleConfigurator p-3 overflow-y-auto overflow-x-hidden custom-scrollbar transition-transform duration-300 ease-in-out z-10 mt-2 left-0",
           isMobile
             ? ""
-            : "absolute top-full w-56 h-[calc(100vh-150px)] bg-background dark:bg-w-bg rounded-lg Island"
+            : "absolute top-full w-56 h-[calc(100vh-150px)] bg-background dark:bg-w-bg rounded-lg Island border-2"
         )}
       >
         <h2 className="sr-only">Selected shape actions</h2>

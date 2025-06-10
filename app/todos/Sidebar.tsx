@@ -168,7 +168,7 @@ function Sidebar({ width, isMobile, onClose }: SidebarProps) {
         <div className="flex items-center justify-between space-x-2 py-1.5 rounded-md">
           <button
             onClick={() => setIsCommandPaletteOpen(true)}
-            className="rounded-md bg-transparent hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none w-full p-2 flex flex-row items-center justify-between"
+            className="rounded-md bg-transparent hover:bg-foreground/20 dark:hover:bg-foreground/10 focus:outline-none w-full p-2 flex flex-row items-center justify-between"
           >
             <span className="text-sm dark:text-gray-400 text-gray-600 flex flex-row items-center gap-x-2">
               <Search className="w-4 h-4 dark:text-gray-400 text-gray-600 " />
@@ -248,7 +248,7 @@ function Sidebar({ width, isMobile, onClose }: SidebarProps) {
           <Link
             href={"/todos/today"}
             className={cn(
-              "flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md",
+              "flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-foreground/20 dark:hover:bg-foreground/10 rounded-md",
               pathName === "/todos/today" && "bg-gray-200 dark:bg-gray-800"
             )}
           >
@@ -258,7 +258,7 @@ function Sidebar({ width, isMobile, onClose }: SidebarProps) {
           <Link
             href={"/todos/upcoming"}
             className={cn(
-              "flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md",
+              "flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-foreground/20 dark:hover:bg-foreground/10 rounded-md",
               pathName === "/todos/upcoming" && "bg-gray-200 dark:bg-gray-800"
             )}
           >
@@ -268,7 +268,7 @@ function Sidebar({ width, isMobile, onClose }: SidebarProps) {
           <Link
             href={"/todos/completed"}
             className={cn(
-              "flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md",
+              "flex items-center justify-start gap-x-2 p-2 dark:text-gray-100 text-gray-900 hover:bg-foreground/20 dark:hover:bg-foreground/10 rounded-md",
               pathName === "/todos/completed" && "bg-gray-200 dark:bg-gray-800"
             )}
           >
@@ -308,7 +308,7 @@ function Sidebar({ width, isMobile, onClose }: SidebarProps) {
                 todoLists.map((todoList) => (
                   <div
                     key={todoList.id}
-                    className={`flex flex-row mb-1 justify-between hover:bg-gray-200 dark:hover:bg-gray-800 items-center rounded-md pr-2 ${
+                    className={`flex flex-row mb-1 justify-between hover:bg-foreground/20 dark:hover:bg-foreground/10 items-center rounded-md pr-2 ${
                       selectedTodoListId === todoList.id
                         ? "bg-gray-200 dark:bg-gray-800"
                         : ""
