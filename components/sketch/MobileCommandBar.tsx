@@ -231,11 +231,11 @@ function ScaleWidget({
   setScale: React.Dispatch<React.SetStateAction<number>>;
 }) {
   const zoomIn = () => {
-    setScale((prevScale: number) => Math.min(prevScale * 1.1, 5));
+    setScale((prevScale: number) => Math.min(prevScale + 0.05, 5));
   };
 
   const zoomOut = () => {
-    setScale((prevScale) => Math.max(prevScale * 0.9, 0.2));
+    setScale((prevScale) => Math.max(prevScale - 0.05, 0.2));
   };
 
   const resetScale = () => {

@@ -37,7 +37,9 @@ export default function ToolSelector({
                   </span>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>{tool.label}</TooltipContent>
+              <TooltipContent side="left" sideOffset={10}>
+                {tool.label}
+              </TooltipContent>
             </Tooltip>
           ))}
         </div>
