@@ -35,6 +35,7 @@ import { AppSidebar } from "./AppSidebar";
 import { StyleConfigurator } from "./StyleConfigurator";
 import ToolSelector from "./ToolSelector";
 import ZoomControl from "./ZoomControl";
+import { MobileNav } from "../mobile-nav";
 
 export default function CanvasBoard() {
   const { theme } = useTheme();
@@ -252,10 +253,13 @@ export default function CanvasBoard() {
             : "cursor-crosshair"
       )}
     >
+      <div className="fixed top-0 left-0 right-0 z-50 ml-4 mt-4">
+        <MobileNav />
+      </div>
       <div className="App_Menu App_Menu_Top fixed z-[4] top-4 right-4 left-4 flex justify-center items-center xs670:grid xs670:grid-cols-[1fr_auto_1fr] xs670:gap-4 md:gap-8 xs670:items-start">
         {matches && (
           <div className="Main_Menu_Stack Sidebar_Trigger_Button xs670:grid xs670:gap-[calc(.25rem*6)] grid-cols-[auto] grid-flow-row grid-rows auto-rows-min justify-self-start">
-            <div className="relative">
+            {/* <div className="relative">
               <AppMenuButton onClick={toggleSidebar} />
 
               {canvasEngineState.sidebarOpen && (
@@ -280,7 +284,7 @@ export default function CanvasBoard() {
                   onClearCanvas={clearCanvas}
                 />
               )}
-            </div>
+            </div> */}
 
             <StyleConfigurator
               activeTool={canvasEngineState.activeTool}

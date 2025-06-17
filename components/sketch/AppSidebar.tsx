@@ -135,54 +135,6 @@ export function AppSidebar({
                 label="Import Drawing"
                 onClick={onImportCanvas}
               />
-              <SidebarItem
-                icon={Share2}
-                label="Live collaboration"
-                onClick={() => setIsShareOpen(true)}
-              />
-
-              {session?.user && session?.user.id ? (
-                <SidebarItem
-                  icon={LogOut}
-                  label="Log Out"
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                />
-              ) : (
-                <SidebarItem
-                  icon={UserPlus}
-                  onClick={() => redirect("/auth/signup")}
-                  label="Sign up"
-                  className="text-color-promo hover:text-color-promo font-bold"
-                />
-              )}
-
-              <Separator className="my-4 dark:bg-default-border-color-dark" />
-              <Link
-                className={cn(
-                  buttonVariants({ variant: "ghost" }),
-                  "flex flex-row items-center justify-start gap-2 h-10 w-auto rounded-md px-3 text-sm font-medium transition-colors text-white dark:text-black hover:text-color-on-surface bg-transparent hover:bg-button-hover-bg focus-visible:shadow-brand-color-shadow focus-visible:outline-none focus-visible:ring-0 active:bg-button-hover-bg active:border active:border-brand-active dark:hover:bg-w-button-hover-bg border border-[#705400] bg-[#FFE599]"
-                )}
-                href="https://github.com/akshatbajetha/notekaro"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="GitHub"
-              >
-                <Github className="h-4 w-4" />
-                GitHub -{" "}
-                <span className="flex items-center justify-start gap-1">
-                  <Star className="h-4 w-4" />
-                </span>
-              </Link>
-              <SidebarLinkItem
-                icon={Twitter}
-                label="Twitter / X"
-                url="https://x.com/akshatbajetha"
-              />
-              <SidebarLinkItem
-                icon={Linkedin}
-                label="Linkedin"
-                url="https://www.linkedin.com/in/akshatbajetha"
-              />
             </nav>
           </div>
 

@@ -1000,8 +1000,10 @@ export class CanvasEngine {
         }
       }
 
-      this.clearCanvas();
-      hasUnsavedChanges = false;
+      setTimeout(() => {
+        this.clearCanvas();
+        hasUnsavedChanges = false;
+      }, 0);
     };
 
     textarea.addEventListener("input", () => {

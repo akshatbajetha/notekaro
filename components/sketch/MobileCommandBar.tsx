@@ -114,9 +114,9 @@ export function MobileCommandBar({
         <div className="mx-auto w-full max-w-full min-w-full px-4 pb-4">
           <div
             data-active-tool={activeTool}
-            className="flex items-center justify-between rounded-[8px] border p-2 backdrop-blur-md Island"
+            className="flex items-center justify-between rounded-[8px] p-2"
           >
-            <NavbarButton
+            {/* <NavbarButton
               icon={Menu}
               label="Menu"
               onClick={handleMenuButton}
@@ -129,13 +129,13 @@ export function MobileCommandBar({
                 onClick={() => setColorPickerOpen(true)}
                 active={colorPickerOpen}
               />
-            )}
+            )} */}
             <ScaleWidget scale={scale} setScale={setScale} />
           </div>
         </div>
       </footer>
 
-      {sidebarOpen && (
+      {/* {sidebarOpen && (
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetContent
             side="bottom"
@@ -190,7 +190,7 @@ export function MobileCommandBar({
             setTextAlign={setTextAlign}
           />
         </SheetContent>
-      </Sheet>
+      </Sheet> */}
     </>
   );
 }

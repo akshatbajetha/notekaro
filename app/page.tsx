@@ -37,7 +37,7 @@ function HomeContent() {
       />
 
       <main className="flex-1">
-        <section className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24">
+        <section className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12">
           <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
             <div className="md:space-y-6 flex flex-col gap-y-6">
               <h1 className="text-4xl font-bold tracking-tighter md:text-6xl text-gray-900 dark:text-white">
