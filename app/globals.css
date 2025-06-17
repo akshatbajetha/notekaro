@@ -32,7 +32,7 @@ h6 {
 }
 
 @font-face {
-  font-family: "NoteKaroSketchFont";
+  font-family: "SketchFont";
   src:
     url("/fonts/NoteKaroSketch-Regular.woff2") format("woff2"),
     url("/fonts/NoteKaroSketch-Regular.ttf") format("truetype");
@@ -196,16 +196,16 @@ h6 {
     /* Border and text field colors */
     --color-border-outline: #767680;
     --color-border-outline-variant: #c5c5d0;
-    --CollabyTextField--color: var(--color-on-surface);
-    --CollabyTextField--label-color: var(--color-on-surface);
-    --CollabyTextField--background: var(--color-surface-low);
-    --CollabyTextField--readonly--background: var(--color-surface-high);
-    --CollabyTextField--readonly--color: var(--color-on-surface);
-    --CollabyTextField--border: var(--color-gray-20);
-    --CollabyTextField--readonly--border: var(--color-border-outline-variant);
-    --CollabyTextField--border-hover: var(--brand-hover);
-    --CollabyTextField--border-active: var(--brand-active);
-    --CollabyTextField--placeholder: var(--color-border-outline-variant);
+    --SketchTextField--color: var(--color-on-surface);
+    --SketchTextField--label-color: var(--color-on-surface);
+    --SketchTextField--background: var(--color-surface-low);
+    --SketchTextField--readonly--background: var(--color-surface-high);
+    --SketchTextField--readonly--color: var(--color-on-surface);
+    --SketchTextField--border: var(--color-gray-20);
+    --SketchTextField--readonly--border: var(--color-border-outline-variant);
+    --SketchTextField--border-hover: var(--brand-hover);
+    --SketchTextField--border-active: var(--brand-active);
+    --SketchTextField--placeholder: var(--color-border-outline-variant);
 
     /* Button colors */
     --button-hover-bg: var(--color-surface-high);
@@ -293,16 +293,16 @@ h6 {
     /* Dark mode border and text field colors */
     --color-border-outline: #8e8d9c;
     --color-border-outline-variant: #46464f;
-    --CollabyTextField--color: var(--color-on-surface);
-    --CollabyTextField--label-color: var(--color-on-surface);
-    --CollabyTextField--background: var(--color-surface-low);
-    --CollabyTextField--readonly--background: var(--color-surface-high);
-    --CollabyTextField--readonly--color: var(--color-on-surface);
-    --CollabyTextField--border: var(--color-gray-20);
-    --CollabyTextField--readonly--border: var(--color-border-outline-variant);
-    --CollabyTextField--border-hover: var(--brand-hover);
-    --CollabyTextField--border-active: var(--color-brand-active);
-    --CollabyTextField--placeholder: var(--color-border-outline-variant);
+    --SketchTextField--color: var(--color-on-surface);
+    --SketchTextField--label-color: var(--color-on-surface);
+    --SketchTextField--background: var(--color-surface-low);
+    --SketchTextField--readonly--background: var(--color-surface-high);
+    --SketchTextField--readonly--color: var(--color-on-surface);
+    --SketchTextField--border: var(--color-gray-20);
+    --SketchTextField--readonly--border: var(--color-border-outline-variant);
+    --SketchTextField--border-hover: var(--brand-hover);
+    --SketchTextField--border-active: var(--color-brand-active);
+    --SketchTextField--placeholder: var(--color-border-outline-variant);
 
     /* Dark mode button colors */
     --button-hover-bg: var(--color-surface-high);
@@ -538,8 +538,8 @@ button {
 }
 
 /* NoteKaroSketch specific styles */
-.notekarosketch .collabyfont {
-  font-family: "Collabyfont", sans-serif;
+.notekarosketch .sketchfont {
+  font-family: "Sketchfont", sans-serif;
 }
 
 .notekarosketch .welcome-screen-decor {

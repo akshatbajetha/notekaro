@@ -884,7 +884,7 @@ export class CanvasEngine {
     textarea.classList.add("notekaroSketch-texty");
     textarea.style.color = this.strokeFill;
     // TODO: change font family
-    const fontString = `${calFont}px/1.2 ${this.fontFamily === "normal" ? "Arial" : this.fontFamily === "hand-drawn" ? "NoteKaroSketchFont, Xiaolai" : "Assistant"}`;
+    const fontString = `${calFont}px/1.2 ${this.fontFamily === "normal" ? "Arial" : this.fontFamily === "hand-drawn" ? "SketchFont, Xiaolai" : "Assistant"}`;
     textarea.style.font = fontString;
     textarea.style.zIndex = "100";
 
@@ -1562,7 +1562,7 @@ export class CanvasEngine {
     const lineHeight = getLineHeight(calFontSize);
 
     // TODO: change font family
-    const fontString = `${fontStyle} ${calFontSize}px/1.2 ${fontFamily === "normal" ? "Arial" : fontFamily === "hand-drawn" ? "NoteKaroSketchFont, Xiaolai" : "Assistant"}`;
+    const fontString = `${fontStyle} ${calFontSize}px/1.2 ${fontFamily === "normal" ? "Arial" : fontFamily === "hand-drawn" ? "SketchFont, Xiaolai" : "Assistant"}`;
     this.ctx.font = fontString;
     this.ctx.fillStyle = fillStyle;
     this.ctx.textAlign = textAlign;

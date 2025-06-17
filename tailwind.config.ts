@@ -106,9 +106,9 @@ const config = {
         "island-bg-color": "var(--island-bg-color)",
         "dialog-border-color": "var(--dialog-border-color)",
         "loading-text-color": "var(--loading-text-color)",
-        "collaby-textfield": "var(--CollabyTextField--background)",
-        "collaby-textfield-readonly":
-          "var(--CollabyTextField--readonly--background)",
+        "sketch-textfield": "var(--SketchTextField--background)",
+        "sketch-textfield-readonly":
+          "var(--SketchTextField--readonly--background)",
         "color-on-surface": "var(--color-on-surface)",
         "button-hover-bg": "var(--button-hover-bg)",
         "button-active-bg": "var(--button-active-bg)",
@@ -125,10 +125,9 @@ const config = {
         octonary: "var(--text-octonary)",
         nonary: "var(--text-nonary)",
         denary: "var(--text-denary)",
-        "collaby-textfield": "var(--CollabyTextField--color)",
-        "collaby-textfield-label": "var(--CollabyTextField--label-color)",
-        "collaby-textfield-readonly":
-          "var(--CollabyTextField--readonly--color)",
+        "sketch-textfield": "var(--SketchTextField--color)",
+        "sketch-textfield-label": "var(--SketchTextField--label-color)",
+        "sketch-textfield-readonly": "var(--SketchTextField--readonly--color)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -146,12 +145,11 @@ const config = {
         octonary: "var(--border-octonary)",
         nonary: "var(--border-nonary)",
         denary: "var(--border-denary)",
-        "collaby-textfield": "var(--CollabyTextField--border)",
-        "collaby-textfield-readonly":
-          "var(--CollabyTextField--readonly--border)",
-        "collaby-textfield-hover": "var(--CollabyTextField--border-hover)",
-        "collaby-textfield-active": "var(--CollabyTextField--border-active)",
-        "collaby-textfield-placeholder": "var(--CollabyTextField--placeholder)",
+        "sketch-textfield": "var(--SketchTextField--border)",
+        "sketch-textfield-readonly": "var(--SketchTextField--readonly--border)",
+        "sketch-textfield-hover": "var(--SketchTextField--border-hover)",
+        "sketch-textfield-active": "var(--SketchTextField--border-active)",
+        "sketch-textfield-placeholder": "var(--SketchTextField--placeholder)",
       },
       keyframes: {
         "accordion-down": {
@@ -188,7 +186,7 @@ const config = {
         assistant: ["var(--font-assistant)"],
         sans: ["var(--font-assistant)", "sans-serif"],
         mono: "var(--font-geist-mono), monospace",
-        collabyfont: ["Collabyfont", "sans-serif"],
+        sketchfont: ["SketchFont", "sans-serif"],
       },
       filter: {
         "canvas-theme-filter": "var(--theme-filter)",
