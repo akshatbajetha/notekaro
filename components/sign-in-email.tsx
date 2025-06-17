@@ -57,7 +57,11 @@ export function SignInEmail() {
           disabled={isLoading}
         />
       </div>
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button
+        type="submit"
+        className="w-full bg-foreground text-background"
+        disabled={isLoading}
+      >
         {isLoading ? "Sending..." : "Sign up with email"}
       </Button>
     </form>

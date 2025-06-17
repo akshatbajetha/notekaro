@@ -30,8 +30,6 @@ import {
 } from "@/types/canvas";
 import { MobileCommandBar } from "./MobileCommandBar";
 import ScreenLoading from "./ScreenLoading";
-import AppMenuButton from "./AppMenuButton";
-import { AppSidebar } from "./AppSidebar";
 import { StyleConfigurator } from "./StyleConfigurator";
 import ToolSelector from "./ToolSelector";
 import ZoomControl from "./ZoomControl";
@@ -204,17 +202,6 @@ export default function CanvasBoard() {
 
     return () => window.removeEventListener("resize", handleResize);
   }, [canvasEngineState.engine]);
-
-  const clearCanvas = useCallback(() => {
-    canvasEngineState.engine?.clearAllShapes();
-  }, [canvasEngineState.engine]);
-
-  const toggleSidebar = useCallback(() => {
-    setCanvasEngineState((prev) => ({
-      ...prev,
-      sidebarOpen: !prev.sidebarOpen,
-    }));
-  }, []);
 
   const handleScaleUpdate = useCallback(
     (newScale: number | ((prev: number) => number)) => {
@@ -418,23 +405,6 @@ export default function CanvasBoard() {
 
       {!matches && (
         <MobileCommandBar
-          sidebarOpen={canvasEngineState.sidebarOpen}
-          setSidebarOpen={() =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              sidebarOpen: !prev.sidebarOpen,
-            }))
-          }
-          canvasColor={canvasEngineState.canvasColor}
-          setCanvasColor={(newCanvasColor: SetStateAction<string>) =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              canvasColor:
-                typeof newCanvasColor === "function"
-                  ? newCanvasColor(prev.canvasColor)
-                  : newCanvasColor,
-            }))
-          }
           scale={canvasEngineState.scale}
           setScale={(newScale: SetStateAction<number>) =>
             setCanvasEngineState((prev) => ({
@@ -445,108 +415,6 @@ export default function CanvasBoard() {
                   : newScale,
             }))
           }
-          activeTool={canvasEngineState.activeTool}
-          setStrokeFill={(newStrokeFill: SetStateAction<StrokeFill>) =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              strokeFill:
-                typeof newStrokeFill === "function"
-                  ? newStrokeFill(prev.strokeFill)
-                  : newStrokeFill,
-            }))
-          }
-          strokeFill={canvasEngineState.strokeFill}
-          strokeWidth={canvasEngineState.strokeWidth}
-          setStrokeWidth={(newStrokeWidth: SetStateAction<StrokeWidth>) =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              strokeWidth:
-                typeof newStrokeWidth === "function"
-                  ? newStrokeWidth(prev.strokeWidth)
-                  : newStrokeWidth,
-            }))
-          }
-          bgFill={canvasEngineState.bgFill}
-          setBgFill={(newBgFill: SetStateAction<BgFill>) =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              bgFill:
-                typeof newBgFill === "function"
-                  ? newBgFill(prev.bgFill)
-                  : newBgFill,
-            }))
-          }
-          strokeEdge={canvasEngineState.strokeEdge}
-          setStrokeEdge={(newStrokeEdge: SetStateAction<StrokeEdge>) =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              strokeEdge:
-                typeof newStrokeEdge === "function"
-                  ? newStrokeEdge(prev.strokeEdge)
-                  : newStrokeEdge,
-            }))
-          }
-          strokeStyle={canvasEngineState.strokeStyle}
-          setStrokeStyle={(newStrokeStyle: SetStateAction<StrokeStyle>) =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              strokeStyle:
-                typeof newStrokeStyle === "function"
-                  ? newStrokeStyle(prev.strokeStyle)
-                  : newStrokeStyle,
-            }))
-          }
-          roughStyle={canvasEngineState.roughStyle}
-          setRoughStyle={(newRoughStyle: SetStateAction<RoughStyle>) =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              roughStyle:
-                typeof newRoughStyle === "function"
-                  ? newRoughStyle(prev.roughStyle)
-                  : newRoughStyle,
-            }))
-          }
-          fillStyle={canvasEngineState.fillStyle}
-          setFillStyle={(newFillStyle: SetStateAction<FillStyle>) =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              fillStyle:
-                typeof newFillStyle === "function"
-                  ? newFillStyle(prev.fillStyle)
-                  : newFillStyle,
-            }))
-          }
-          fontFamily={canvasEngineState.fontFamily}
-          setFontFamily={(newFontFamily: SetStateAction<FontFamily>) =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              fontFamily:
-                typeof newFontFamily === "function"
-                  ? newFontFamily(prev.fontFamily)
-                  : newFontFamily,
-            }))
-          }
-          fontSize={canvasEngineState.fontSize}
-          setFontSize={(newFontSize: SetStateAction<FontSize>) =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              fontSize:
-                typeof newFontSize === "function"
-                  ? newFontSize(prev.fontSize)
-                  : newFontSize,
-            }))
-          }
-          textAlign={canvasEngineState.textAlign}
-          setTextAlign={(newTextAlign: SetStateAction<TextAlign>) =>
-            setCanvasEngineState((prev) => ({
-              ...prev,
-              textAlign:
-                typeof newTextAlign === "function"
-                  ? newTextAlign(prev.textAlign)
-                  : newTextAlign,
-            }))
-          }
-          onClearCanvas={clearCanvas}
         />
       )}
 

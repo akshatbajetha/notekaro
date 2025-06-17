@@ -111,17 +111,29 @@ model Todo {
 }
 
 model Element {
-  id          String      @id
+  id          String      @id @default(uuid())
   type        ElementType
-  x1          Float
-  y1          Float
-  x2          Float?
-  y2          Float?
-  text        String?
+  x           Float
+  y           Float
+  width       Float?
+  height      Float?
+  radX        Float?
+  radY        Float?
+  toX         Float?
+  toY         Float?
   points      Json?
+  text        String?
   strokeWidth Int
-  stroke      String
-  deleted     Boolean     @default(false)
+  strokeFill  String
+  bgFill      String?
+  strokeStyle String
+  roughStyle  Int
+  fillStyle   String?
+  rounded     String?
+  fontFamily  String?
+  fontSize    String?
+  fontStyle   String?
+  textAlign   String?
   userId      String
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime    @default(now())
@@ -131,11 +143,12 @@ model Element {
 }
 
 enum ElementType {
-  PENCIL
-  TEXT
-  LINE
-  RECT
-  CIRCLE
+  RECTANGLE
+  ELLIPSE
   DIAMOND
+  LINE
   ARROW
+  FREE_DRAW
+  TEXT
+  SELECTION
 }

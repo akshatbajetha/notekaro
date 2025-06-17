@@ -37,6 +37,7 @@ import type { Point } from "roughjs/bin/geometry";
 import { getFontSize, getLineHeight } from "@/utils/textUtils";
 import { generateFreeDrawPath } from "../shape-render/RenderElements";
 import { roundRect } from "@/shape-render/roundRect";
+import { sketchQueueManager } from "@/hooks/useSketchQueue";
 
 // NOTE: Comments in this Canvas Engine are not AI generated. This are for my personal understanding.
 export class CanvasEngine {
@@ -86,6 +87,8 @@ export class CanvasEngine {
   private activeTextarea: HTMLTextAreaElement | null = null;
   private activeTextPosition: { x: number; y: number } | null = null;
 
+  private sketchQueue: typeof sketchQueueManager;
+
   constructor(
     canvas: HTMLCanvasElement,
     canvasBgColor: string,
@@ -116,14 +119,16 @@ export class CanvasEngine {
     this.touchEndHandler = this.touchEndHandler.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
 
+    this.sketchQueue = sketchQueueManager;
+
     this.init();
     this.initMouseHandler();
 
     this.SelectionController.setOnUpdate(() => {
-      localStorage.setItem(
-        LOCALSTORAGE_CANVAS_KEY,
-        JSON.stringify(this.existingShapes)
-      );
+      const selectedShape = this.SelectionController.getSelectedShape();
+      if (selectedShape?.id) {
+        this.sketchQueue.queueUpdate(selectedShape.id, selectedShape);
+      }
     });
   }
 
@@ -131,13 +136,13 @@ export class CanvasEngine {
     window.addEventListener("keydown", this.handleKeyDown);
 
     try {
-      const storedShapes = localStorage.getItem(LOCALSTORAGE_CANVAS_KEY);
-      if (storedShapes) {
-        const parsedShapes = JSON.parse(storedShapes);
-        this.existingShapes = [...this.existingShapes, ...parsedShapes];
+      const response = await fetch("/api/sketch");
+      if (response.ok) {
+        const shapes = await response.json();
+        this.existingShapes = [...this.existingShapes, ...shapes];
       }
     } catch (e) {
-      console.error("Error loading shapes from localStorage:", e);
+      console.error("Error loading shapes:", e);
     }
 
     this.clearCanvas();
@@ -490,10 +495,9 @@ export class CanvasEngine {
             if (index !== -1) {
               this.existingShapes[index] = selectedShape;
 
-              localStorage.setItem(
-                LOCALSTORAGE_CANVAS_KEY,
-                JSON.stringify(this.existingShapes)
-              );
+              if (selectedShape.id) {
+                this.sketchQueue.queueUpdate(selectedShape.id, selectedShape);
+              }
             }
           }
           this.SelectionController.stopDragging();
@@ -505,10 +509,9 @@ export class CanvasEngine {
     this.clicked = false;
 
     if (this.selectedShape) {
-      localStorage.setItem(
-        LOCALSTORAGE_CANVAS_KEY,
-        JSON.stringify(this.existingShapes)
-      );
+      if (this.selectedShape.id) {
+        this.sketchQueue.queueUpdate(this.selectedShape.id, this.selectedShape);
+      }
     }
 
     const { x, y } = this.transformPanScale(e.clientX, e.clientY);
@@ -633,13 +636,8 @@ export class CanvasEngine {
       this.existingShapes.push(shape);
       this.notifyShapeCountChange();
 
-      try {
-        localStorage.setItem(
-          LOCALSTORAGE_CANVAS_KEY,
-          JSON.stringify(this.existingShapes)
-        );
-      } catch (e) {
-        console.error("Error saving shapes to localStorage:", e);
+      if (shape.id) {
+        this.sketchQueue.queueCreate(shape);
       }
 
       this.clearCanvas();
@@ -988,10 +986,7 @@ export class CanvasEngine {
       this.existingShapes.push(newShape);
       this.notifyShapeCountChange();
 
-      localStorage.setItem(
-        LOCALSTORAGE_CANVAS_KEY,
-        JSON.stringify(this.existingShapes)
-      );
+      this.sketchQueue.queueUpdate(newShape.id, newShape);
 
       if (noteKaroSketchContainer?.contains(textarea)) {
         noteKaroSketchContainer.removeChild(textarea);
@@ -1594,14 +1589,7 @@ export class CanvasEngine {
       this.notifyShapeCountChange();
       this.clearCanvas();
 
-      try {
-        localStorage.setItem(
-          LOCALSTORAGE_CANVAS_KEY,
-          JSON.stringify(this.existingShapes)
-        );
-      } catch (e) {
-        console.error("Error saving shapes to localStorage:", e);
-      }
+      this.sketchQueue.queueDelete(erasedShape.id);
     }
   }
 
@@ -1639,10 +1627,15 @@ export class CanvasEngine {
   }
 
   clearAllShapes() {
+    this.existingShapes.forEach((shape) => {
+      if (shape.id) {
+        this.sketchQueue.queueDelete(shape.id);
+      }
+    });
+
     this.existingShapes = [];
     this.notifyShapeCountChange();
     this.clearCanvas();
-    localStorage.removeItem(LOCALSTORAGE_CANVAS_KEY);
   }
 
   handleResize(width: number, height: number) {
@@ -1664,9 +1657,10 @@ export class CanvasEngine {
     const index = this.existingShapes.findIndex(
       (shape) => shape.id === updatedShape.id
     );
-    if (index !== -1) {
+    if (index !== -1 && updatedShape.id) {
       this.existingShapes[index] = updatedShape;
       this.clearCanvas();
+      this.sketchQueue.queueUpdate(updatedShape.id, updatedShape);
     }
   }
 
@@ -1682,11 +1676,19 @@ export class CanvasEngine {
           this.SelectionController.setSelectedShape(shape);
         }
       }
+
+      if (shape.id) {
+        this.sketchQueue.queueUpdate(shape.id, shape);
+      }
     });
     this.clearCanvas();
   }
 
   public removeShape(id: string): void {
+    const shape = this.existingShapes.find((s) => s.id === id);
+    if (shape?.id) {
+      this.sketchQueue.queueDelete(shape.id);
+    }
     this.existingShapes = this.existingShapes.filter(
       (shape) => shape.id !== id
     );
@@ -1714,14 +1716,7 @@ export class CanvasEngine {
           this.SelectionController.setSelectedShape(null);
           this.notifyShapeCountChange();
 
-          try {
-            localStorage.setItem(
-              LOCALSTORAGE_CANVAS_KEY,
-              JSON.stringify(this.existingShapes)
-            );
-          } catch (e) {
-            console.error("Error saving shapes to localStorage:", e);
-          }
+          this.sketchQueue.queueDelete(selectedShape.id);
           this.clearCanvas();
         }
       }
