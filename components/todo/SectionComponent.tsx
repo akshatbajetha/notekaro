@@ -225,7 +225,7 @@ export default function SectionComponent({
                 size="sm"
                 // onClick={handleUpdateSectionTitle}
                 disabled={!newTitle.trim() || isUpdating}
-                className="h-7 text-xs"
+                className="h-7 text-xs bg-foreground text-background"
               >
                 {isUpdating ? <Loader2 className="animate-spin" /> : "Save"}
               </Button>

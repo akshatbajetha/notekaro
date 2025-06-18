@@ -15,6 +15,7 @@ model User {
   emailVerified DateTime?
   image         String?
   name          String?
+  timezone      String     @default("UTC")
   updatedAt     DateTime   @default(now()) @updatedAt
   accounts      Account[]
   elements      Element[]

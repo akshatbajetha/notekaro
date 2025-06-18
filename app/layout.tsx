@@ -8,6 +8,7 @@ import { Analytics } from "@vercel/analytics/react";
 import AuthComponent from "@/components/AuthComponent";
 import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
+import TimezoneDetector from "@/components/TimezoneDetector";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -113,6 +114,7 @@ export default function RootLayout({
           <SessionProvider>
             <TopNavbar />
             <AuthComponent />
+            <TimezoneDetector />
             {children}
             <Toaster />
             <Analytics />

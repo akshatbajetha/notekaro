@@ -455,7 +455,7 @@ export default function TodoComponent({
               size="sm"
               onClick={handleUpdateTodo}
               disabled={!title.trim()}
-              className="h-7 text-xs"
+              className="h-7 text-xs bg-foreground text-background"
             >
               Save
             </Button>
