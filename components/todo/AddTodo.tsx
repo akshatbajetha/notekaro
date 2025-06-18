@@ -314,7 +314,7 @@ export default function AddTodo({
             variant="default"
             size="sm"
             disabled={!title.trim()}
-            className="h-7 text-xs"
+            className="h-7 text-xs bg-foreground text-background"
           >
             Add Todo
           </Button>

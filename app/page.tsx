@@ -12,6 +12,7 @@ import { AppsCarousel } from "@/components/AppsCarousel";
 import BenefitsImage from "@/components/BenefitsImage";
 import { IconBrandGithub } from "@tabler/icons-react";
 import { SignInModal } from "@/components/sign-in-modal";
+import ScreenLoading from "@/components/sketch/ScreenLoading";
 
 // Create a client component that uses useSearchParams
 function HomeContent() {
@@ -61,9 +62,42 @@ function HomeContent() {
         </section>
 
         <section
+          id="how-it-works"
+          className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24"
+        >
+          <div className="relative rounded-lg overflow-hidden bg-gray-300 aspect-video max-w-4xl mx-auto shadow-lg">
+            {/* Video placeholder - replace src with your actual video */}
+
+            <video
+              className="w-full h-full object-cover"
+              poster={videoPoster.src}
+              controls
+              preload="none"
+            >
+              <source
+                src="https://notekaro.b-cdn.net/Dummy%20Video%20For%20Website.mp4"
+                type="video/mp4"
+              />
+              Your browser does not support the video tag.
+            </video>
+
+            {/* Play button overlay - only show when video is not playing */}
+          </div>
+        </section>
+        <section
           id="features"
           className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24"
         >
+          <div className="flex flex-col items-center justify-center gap-y-4 md:gap-y-8 p-4 md:mb-12 mb-8">
+            <h1 className="md:text-4xl text-2xl font-bold text-foreground max-w-2xl mx-auto text-center">
+              Tired of switching between different apps to manage your notes,
+              sketches and tasks?
+            </h1>
+            <p className="md:text-3xl text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-center">
+              <span className="text-blue-600 dark:text-blue-400">NoteKaro</span>{" "}
+              is the solution for you.
+            </p>
+          </div>
           <div className="grid gap-8 md:grid-cols-3">
             <div className="rounded-lg border-2 border-gray-200 dark:border-gray-800 bg-[#F5F5F5] dark:bg-[#1E1E1E] p-6">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/50">
@@ -126,8 +160,8 @@ function HomeContent() {
                   Real-time Sync
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Access your notes and tasks from any device with instant
-                  synchronization.
+                  Access your notes, sketches and tasks from any device with
+                  instant synchronization.
                 </p>
               </div>
               <div className="flex flex-col items-start">
@@ -138,8 +172,7 @@ function HomeContent() {
                   Fast Performance
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Enjoy a smooth, responsive experience even with large
-                  documents.
+                  Enjoy a smooth, responsive experience.
                 </p>
               </div>
 
@@ -155,38 +188,6 @@ function HomeContent() {
                 </p>
               </div>
             </div>
-          </div>
-        </section>
-
-        <section
-          id="how-it-works"
-          className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24"
-        >
-          <div className="text-center mb-10">
-            <h2 className="text-4xl font-bold mb-4">How It Works</h2>
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Getting started with NoteKaro is simple. Our intuitive workflow
-              helps you capture and organize your ideas effortlessly.
-            </p>
-          </div>
-
-          <div className="relative rounded-lg overflow-hidden bg-gray-300 aspect-video max-w-4xl mx-auto shadow-lg">
-            {/* Video placeholder - replace src with your actual video */}
-
-            <video
-              className="w-full h-full object-cover"
-              poster={videoPoster.src}
-              controls
-              preload="none"
-            >
-              <source
-                src="https://notekaro.b-cdn.net/Dummy%20Video%20For%20Website.mp4"
-                type="video/mp4"
-              />
-              Your browser does not support the video tag.
-            </video>
-
-            {/* Play button overlay - only show when video is not playing */}
           </div>
         </section>
 
@@ -325,10 +326,7 @@ function HomeContent() {
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-6">
               Ready to Transform Your Productivity?
             </h2>
-            <p className="text-lg dark:text-blue-100 text-blue-500 max-w-3xl mx-auto mb-8">
-              Join thousands of professionals who have already made the switch
-              to NoteKaro
-            </p>
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <GetStartedButton />
             </div>
@@ -413,7 +411,7 @@ function HomeContent() {
 // Main page component
 export default function Home() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<ScreenLoading />}>
       <HomeContent />
     </Suspense>
   );

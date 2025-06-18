@@ -83,7 +83,7 @@ export function CreateTodoListModal() {
             <DialogFooter>
               <Button
                 type="submit"
-                className="md:mt-10 mt-8 ml-2 h-max w-max bg-foreground md:text-lg text-xs font-bold"
+                className="md:mt-10 mt-8 ml-2 h-max w-max bg-foreground text-background md:text-lg text-xs font-bold"
                 disabled={isLoading}
               >
                 {isLoading ? (
