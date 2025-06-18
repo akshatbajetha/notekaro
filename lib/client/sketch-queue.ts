@@ -30,6 +30,30 @@ function convertShapeType(type: string): string {
   }
 }
 
+// Convert Prisma enum to frontend type
+export function convertPrismaType(type: string): string {
+  switch (type) {
+    case "RECTANGLE":
+      return "rectangle";
+    case "ELLIPSE":
+      return "ellipse";
+    case "DIAMOND":
+      return "diamond";
+    case "LINE":
+      return "line";
+    case "ARROW":
+      return "arrow";
+    case "FREE_DRAW":
+      return "free-draw";
+    case "TEXT":
+      return "text";
+    case "SELECTION":
+      return "selection";
+    default:
+      return type.toLowerCase();
+  }
+}
+
 class SketchQueue {
   private queue: QueuedOperation[] = [];
   private processingTimeout: NodeJS.Timeout | null = null;

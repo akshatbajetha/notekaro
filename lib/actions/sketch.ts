@@ -34,8 +34,8 @@ export async function getShapes() {
 
 export async function createShape(shapeData: {
   type: ElementType;
-  x: number;
-  y: number;
+  x?: number;
+  y?: number;
   width?: number;
   height?: number;
   radX?: number;
@@ -44,11 +44,11 @@ export async function createShape(shapeData: {
   toY?: number;
   points?: { x: number; y: number }[];
   text?: string;
-  strokeWidth: number;
+  strokeWidth?: number;
   strokeFill: string;
   bgFill?: string;
-  strokeStyle: string;
-  roughStyle: number;
+  strokeStyle?: string;
+  roughStyle?: number;
   fillStyle?: string;
   rounded?: string;
   fontFamily?: string;
@@ -66,6 +66,9 @@ export async function createShape(shapeData: {
     const shape = await prisma.element.create({
       data: {
         ...shapeData,
+        roughStyle: shapeData.roughStyle ?? 0,
+        strokeWidth: shapeData.strokeWidth ?? 1,
+        strokeStyle: shapeData.strokeStyle ?? "solid",
         user: {
           connect: {
             id: user.id,

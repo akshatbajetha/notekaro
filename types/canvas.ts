@@ -56,8 +56,7 @@ export type StrokeFill =
   | "#e03131"
   | "#2f9e44"
   | "#1971c2"
-  | "#f08c00";
-export type StrokeFillDark =
+  | "#f08c00"
   | "#d3d3d3"
   | "#ff8383"
   | "#3a994c"
@@ -105,7 +104,7 @@ export type Shape =
       bgFill: string;
       rounded: StrokeEdge;
       strokeStyle: StrokeStyle;
-      roughStyle: RoughStyle;
+      roughStyle?: RoughStyle;
       fillStyle: FillStyle;
     }
   | {
@@ -119,7 +118,7 @@ export type Shape =
       strokeFill: string;
       bgFill: string;
       strokeStyle: StrokeStyle;
-      roughStyle: RoughStyle;
+      roughStyle?: RoughStyle;
       fillStyle: FillStyle;
     }
   | {
@@ -134,7 +133,7 @@ export type Shape =
       bgFill: string;
       rounded: StrokeEdge;
       strokeStyle: StrokeStyle;
-      roughStyle: RoughStyle;
+      roughStyle?: RoughStyle;
       fillStyle: FillStyle;
     }
   | {
@@ -147,7 +146,7 @@ export type Shape =
       strokeWidth: StrokeWidth;
       strokeFill: string;
       strokeStyle: StrokeStyle;
-      roughStyle: RoughStyle;
+      roughStyle?: RoughStyle;
     }
   | {
       id: string | null;
@@ -159,7 +158,7 @@ export type Shape =
       strokeWidth: StrokeWidth;
       strokeFill: string;
       strokeStyle: StrokeStyle;
-      roughStyle: RoughStyle;
+      roughStyle?: RoughStyle;
     }
   | {
       id: string | null;
@@ -198,4 +197,6 @@ export type Shape =
       fontStyle: FontStyle;
       textAlign: TextAlign;
       strokeFill: string;
+      strokeWidth?: StrokeWidth;
+      strokeStyle?: StrokeStyle;
     };

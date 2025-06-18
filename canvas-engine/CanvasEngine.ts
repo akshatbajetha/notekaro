@@ -38,6 +38,7 @@ import { getFontSize, getLineHeight } from "@/utils/textUtils";
 import { generateFreeDrawPath } from "../shape-render/RenderElements";
 import { roundRect } from "@/shape-render/roundRect";
 import { sketchQueueManager } from "@/hooks/useSketchQueue";
+import { convertPrismaType } from "@/lib/client/sketch-queue";
 
 // NOTE: Comments in this Canvas Engine are not AI generated. This are for my personal understanding.
 export class CanvasEngine {
@@ -88,18 +89,21 @@ export class CanvasEngine {
   private activeTextPosition: { x: number; y: number } | null = null;
 
   private sketchQueue: typeof sketchQueueManager;
+  private onLoadingChange: (loading: boolean) => void;
 
   constructor(
     canvas: HTMLCanvasElement,
     canvasBgColor: string,
     onScaleChangeCallback: (scale: number) => void,
-    appTheme: "light" | "dark" | null
+    appTheme: "light" | "dark" | null,
+    onLoadingChange: (loading: boolean) => void
   ) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d")!;
     this.roughCanvas = rough.canvas(canvas);
     this.canvasBgColor = canvasBgColor;
     this.onScaleChangeCallback = onScaleChangeCallback;
+    this.onLoadingChange = onLoadingChange;
     this.SelectionController = new SelectionController(this.ctx, canvas);
 
     this.clicked = false;
@@ -134,18 +138,25 @@ export class CanvasEngine {
 
   async init() {
     window.addEventListener("keydown", this.handleKeyDown);
+    this.onLoadingChange(true); // Start loading
 
     try {
       const response = await fetch("/api/sketch");
       if (response.ok) {
         const shapes = await response.json();
-        this.existingShapes = [...this.existingShapes, ...shapes];
+        const normalizedShapes = shapes.map((shape: Shape) => ({
+          ...shape,
+          type: convertPrismaType(shape.type) as Shape["type"],
+        }));
+        console.log("Normalized shapes: ", normalizedShapes);
+        this.existingShapes = [...this.existingShapes, ...normalizedShapes];
       }
     } catch (e) {
       console.error("Error loading shapes:", e);
+    } finally {
+      this.clearCanvas();
+      this.onLoadingChange(false); // End loading
     }
-
-    this.clearCanvas();
   }
 
   initMouseHandler() {
@@ -235,9 +246,9 @@ export class CanvasEngine {
   }
 
   private getRoughOptions(
-    strokeWidth: number,
+    strokeWidth: number | undefined,
     strokeFill: string,
-    roughStyle: RoughStyle,
+    roughStyle: RoughStyle | undefined,
     bgFill?: string,
     strokeStyle?: StrokeStyle,
     fillStyle?: FillStyle,
@@ -249,22 +260,23 @@ export class CanvasEngine {
 
     const options: Options = {
       stroke: strokeFill,
-      strokeWidth: strokeStyle !== "solid" ? strokeWidth + 0.6 : strokeWidth,
-      roughness: roughStyle,
-      bowing: roughStyle === 0 ? 0 : 0.5 * roughStyle,
+      strokeWidth:
+        strokeStyle !== "solid" ? (strokeWidth ?? 1) + 0.6 : (strokeWidth ?? 1),
+      roughness: roughStyle ?? 0,
+      bowing: roughStyle === 0 ? 0 : 0.5 * (roughStyle ?? 0),
       fill: bgFill ?? "",
       fillStyle: fillStyle,
       hachureAngle: hachureAngle,
-      hachureGap: strokeWidth * 4,
+      hachureGap: (strokeWidth ?? 1) * 4,
       seed: this.roughSeed,
       disableMultiStroke: true,
       disableMultiStrokeFill: true,
-      fillWeight: strokeWidth,
+      fillWeight: strokeWidth ?? 1,
       strokeLineDash:
         strokeStyle === "dashed"
-          ? getDashArrayDashed(strokeWidth)
+          ? getDashArrayDashed(strokeWidth ?? 1)
           : strokeStyle === "dotted"
-            ? getDashArrayDotted(strokeWidth)
+            ? getDashArrayDotted(strokeWidth ?? 1)
             : undefined,
       dashOffset:
         strokeStyle === "dashed" ? 5 : strokeStyle === "dotted" ? 2 : undefined,
@@ -275,15 +287,6 @@ export class CanvasEngine {
             curveTightness: 1,
             preserveVertices: true,
           }),
-
-      // Ensure the sketchy path closely follows the original shape with minimal deviation
-      // curveFitting: 1,
-
-      // Tightens the curves around corner control points for smoother rounded corners
-      // curveTightness: 1,
-
-      // Prevents Rough.js from altering the actual vertex points — keeps the shape precise
-      // preserveVertices: true,
     };
 
     return options;
@@ -981,12 +984,13 @@ export class CanvasEngine {
         fontStyle: "normal",
         textAlign: this.textAlign,
         strokeFill: this.strokeFill,
+        strokeWidth: this.strokeWidth,
       };
 
       this.existingShapes.push(newShape);
       this.notifyShapeCountChange();
 
-      this.sketchQueue.queueUpdate(newShape.id, newShape);
+      this.sketchQueue.queueCreate(newShape);
 
       if (noteKaroSketchContainer?.contains(textarea)) {
         noteKaroSketchContainer.removeChild(textarea);
@@ -1035,11 +1039,18 @@ export class CanvasEngine {
     const tolerance = ERASER_TOLERANCE;
 
     switch (shape.type) {
+      case "free-draw": {
+        return shape.points.some(
+          (point) => Math.hypot(point.x - x, point.y - y) <= tolerance
+        );
+      }
+
       case "rectangle": {
-        const startX = Math.min(shape.x, shape.x + shape.width);
-        const endX = Math.max(shape.x, shape.x + shape.width);
-        const startY = Math.min(shape.y, shape.y + shape.height);
-        const endY = Math.max(shape.y, shape.y + shape.height);
+        if (shape.x === undefined || shape.y === undefined) return false;
+        const startX = Math.min(shape.x, shape.x + (shape.width || 0));
+        const endX = Math.max(shape.x, shape.x + (shape.width || 0));
+        const startY = Math.min(shape.y, shape.y + (shape.height || 0));
+        const endY = Math.max(shape.y, shape.y + (shape.height || 0));
 
         return (
           x >= startX - tolerance &&
@@ -1048,7 +1059,9 @@ export class CanvasEngine {
           y <= endY + tolerance
         );
       }
+
       case "ellipse": {
+        if (shape.x === undefined || shape.y === undefined) return false;
         const dx = x - shape.x;
         const dy = y - shape.y;
         const normalized =
@@ -1056,7 +1069,9 @@ export class CanvasEngine {
           (dy * dy) / ((shape.radY + tolerance) * (shape.radY + tolerance));
         return normalized <= 1;
       }
+
       case "diamond": {
+        if (shape.x === undefined || shape.y === undefined) return false;
         const dx = Math.abs(x - shape.x);
         const dy = Math.abs(y - shape.y);
 
@@ -1066,25 +1081,16 @@ export class CanvasEngine {
           1
         );
       }
-      case "line": {
-        const lineLength = Math.hypot(shape.toX - shape.x, shape.toY - shape.y);
-        const distance =
-          Math.abs(
-            (shape.toY - shape.y) * x -
-              (shape.toX - shape.x) * y +
-              shape.toX * shape.y -
-              shape.toY * shape.x
-          ) / lineLength;
 
-        const withinLineBounds =
-          x >= Math.min(shape.x, shape.toX) - tolerance &&
-          x <= Math.max(shape.x, shape.toX) + tolerance &&
-          y >= Math.min(shape.y, shape.toY) - tolerance &&
-          y <= Math.max(shape.y, shape.toY) + tolerance;
-
-        return distance <= tolerance && withinLineBounds;
-      }
+      case "line":
       case "arrow": {
+        if (
+          shape.x === undefined ||
+          shape.y === undefined ||
+          shape.toX === undefined ||
+          shape.toY === undefined
+        )
+          return false;
         const lineLength = Math.hypot(shape.toX - shape.x, shape.toY - shape.y);
         const distance =
           Math.abs(
@@ -1101,16 +1107,12 @@ export class CanvasEngine {
           y <= Math.max(shape.y, shape.toY) + tolerance;
 
         return distance <= tolerance && withinLineBounds;
-      }
-      case "free-draw": {
-        return shape.points.some(
-          (point) => Math.hypot(point.x - x, point.y - y) <= tolerance
-        );
       }
 
       case "text": {
+        if (shape.x === undefined || shape.y === undefined) return false;
         const startX = shape.x;
-        const endX = shape.x + shape.width;
+        const endX = shape.x + (shape.width || 0);
         const startY = shape.y;
         const textHeight = FONT_SIZE_MAP[shape.fontSize];
         const endY = shape.y + textHeight;
@@ -1148,14 +1150,14 @@ export class CanvasEngine {
     bgFill: string,
     rounded: StrokeEdge,
     strokeStyle: StrokeStyle,
-    roughStyle: RoughStyle,
-    fillStyle: FillStyle
+    roughStyle?: RoughStyle,
+    fillStyle?: FillStyle
   ) {
     const posX = width < 0 ? x + width : x;
     const posY = height < 0 ? y + height : y;
     const normalizedWidth = Math.abs(width);
     const normalizedHeight = Math.abs(height);
-    if (roughStyle === 0) {
+    if (roughStyle === undefined || roughStyle === 0) {
       const radius = Math.min(
         Math.abs(
           Math.max(normalizedWidth, normalizedHeight) /
@@ -1237,10 +1239,10 @@ export class CanvasEngine {
     strokeFill: string,
     bgFill: string,
     strokeStyle: StrokeStyle,
-    roughStyle: RoughStyle,
-    fillStyle: FillStyle
+    roughStyle?: RoughStyle,
+    fillStyle?: FillStyle
   ) {
-    if (roughStyle === 0) {
+    if (roughStyle === undefined || roughStyle === 0) {
       this.ctx.beginPath();
       this.ctx.strokeStyle = strokeFill;
       this.ctx.lineWidth = strokeWidth;
@@ -1294,8 +1296,8 @@ export class CanvasEngine {
     bgFill: string,
     rounded: StrokeEdge,
     strokeStyle: StrokeStyle,
-    roughStyle: RoughStyle,
-    fillStyle: FillStyle
+    roughStyle?: RoughStyle,
+    fillStyle?: FillStyle
   ) {
     const halfWidth = width / 2;
     const halfHeight = height / 2;
@@ -1303,7 +1305,7 @@ export class CanvasEngine {
     const normalizedWidth = Math.abs(halfWidth);
     const normalizedHeight = Math.abs(halfHeight);
 
-    if (roughStyle === 0) {
+    if (roughStyle === undefined || roughStyle === 0) {
       this.ctx.setLineDash(
         strokeStyle === "dashed"
           ? getDashArrayDashed(strokeWidth)
@@ -1433,10 +1435,10 @@ export class CanvasEngine {
     strokeWidth: number,
     strokeFill: string,
     strokeStyle: StrokeStyle,
-    roughStyle: RoughStyle,
-    arrowHead: boolean
+    roughStyle?: RoughStyle,
+    isArrow: boolean = false
   ) {
-    if (roughStyle === 0) {
+    if (roughStyle === undefined || roughStyle === 0) {
       this.ctx.beginPath();
       this.ctx.strokeStyle = strokeFill;
       this.ctx.lineWidth = strokeWidth;
@@ -1456,12 +1458,15 @@ export class CanvasEngine {
         strokeFill,
         roughStyle,
         undefined,
-        strokeStyle
+        strokeStyle,
+        undefined,
+        60,
+        isArrow ? "arrow" : "line"
       );
       this.roughCanvas.line(fromX, fromY, toX, toY, options);
     }
 
-    if (arrowHead) {
+    if (isArrow) {
       const angleHeadAngle = Math.atan2(toY - fromY, toX - fromX);
       const length = ARROW_HEAD_LENGTH * (strokeStyle !== "solid" ? 2 : 1);
 

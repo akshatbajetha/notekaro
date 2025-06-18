@@ -81,77 +81,84 @@ export class SelectionController {
     width: number;
     height: number;
   } {
-    if (shape.type !== "free-draw") {
-      const bounds = {
-        x: shape.x,
-        y: shape.y,
-        width: 0,
-        height: 0,
+    if (shape.type === "free-draw") {
+      // Handle free-draw shapes using points array
+      const points = shape.points || [];
+      if (points.length === 0) return { x: 0, y: 0, width: 0, height: 0 };
+
+      const xs = points.map((p) => p.x);
+      const ys = points.map((p) => p.y);
+      return {
+        x: Math.min(...xs),
+        y: Math.min(...ys),
+        width: Math.max(...xs) - Math.min(...xs),
+        height: Math.max(...ys) - Math.min(...ys),
       };
-
-      switch (shape.type) {
-        case "rectangle":
-          bounds.width = shape.width || 0;
-          bounds.height = shape.height || 0;
-          if (bounds.width < 0) {
-            bounds.x += bounds.width;
-            bounds.width = Math.abs(bounds.width);
-          }
-          if (bounds.height < 0) {
-            bounds.y += bounds.height;
-            bounds.height = Math.abs(bounds.height);
-          }
-          bounds.x -= 4;
-          bounds.y -= 4;
-          bounds.width += 8;
-          bounds.height += 8;
-          break;
-
-        case "ellipse":
-          bounds.x = shape.x - (shape.radX || 0);
-          bounds.y = shape.y - (shape.radY || 0);
-          bounds.width = (shape.radX || 0) * 2;
-          bounds.height = (shape.radY || 0) * 2;
-          break;
-
-        case "diamond":
-          bounds.width = shape.width;
-          bounds.height = shape.height;
-          bounds.x = shape.x - shape.width / 2;
-          bounds.y = shape.y - shape.height / 2;
-          break;
-
-        case "line":
-        case "arrow":
-          const minX = Math.min(shape.x, shape.toX);
-          const minY = Math.min(shape.y, shape.toY);
-          const maxX = Math.max(shape.x, shape.toX);
-          const maxY = Math.max(shape.y, shape.toY);
-
-          bounds.x = minX - shape.strokeWidth - 20;
-          bounds.y = minY - shape.strokeWidth - 20;
-          bounds.width = maxX - minX + shape.strokeWidth * 2 + 40;
-          bounds.height = maxY - minY + shape.strokeWidth * 2 + 40;
-          break;
-
-        case "text":
-          const calFontSize = getFontSize(shape.fontSize, 100);
-          this.ctx.font = `${calFontSize}px/1.2 ${shape.fontFamily === "normal" ? "Arial" : shape.fontFamily === "hand-drawn" ? "SketchFont, Xiaolai" : "Assistant"}`;
-          bounds.x = shape.x;
-          bounds.y = shape.y;
-          bounds.width = shape.width;
-          bounds.height = shape.height;
-          break;
-      }
-
-      return bounds;
     }
+
+    // For other shapes, handle optional x,y
     const bounds = {
-      x: 0,
-      y: 0,
+      x: shape.x ?? 0,
+      y: shape.y ?? 0,
       width: 0,
       height: 0,
     };
+
+    switch (shape.type) {
+      case "rectangle":
+        bounds.width = shape.width || 0;
+        bounds.height = shape.height || 0;
+        if (bounds.width < 0) {
+          bounds.x += bounds.width;
+          bounds.width = Math.abs(bounds.width);
+        }
+        if (bounds.height < 0) {
+          bounds.y += bounds.height;
+          bounds.height = Math.abs(bounds.height);
+        }
+        bounds.x -= 4;
+        bounds.y -= 4;
+        bounds.width += 8;
+        bounds.height += 8;
+        break;
+
+      case "ellipse":
+        bounds.x = shape.x - (shape.radX || 0);
+        bounds.y = shape.y - (shape.radY || 0);
+        bounds.width = (shape.radX || 0) * 2;
+        bounds.height = (shape.radY || 0) * 2;
+        break;
+
+      case "diamond":
+        bounds.width = shape.width;
+        bounds.height = shape.height;
+        bounds.x = shape.x - shape.width / 2;
+        bounds.y = shape.y - shape.height / 2;
+        break;
+
+      case "line":
+      case "arrow":
+        const minX = Math.min(shape.x, shape.toX);
+        const minY = Math.min(shape.y, shape.toY);
+        const maxX = Math.max(shape.x, shape.toX);
+        const maxY = Math.max(shape.y, shape.toY);
+
+        bounds.x = minX - (shape.strokeWidth ?? 1) - 20;
+        bounds.y = minY - (shape.strokeWidth ?? 1) - 20;
+        bounds.width = maxX - minX + (shape.strokeWidth ?? 1) * 2 + 40;
+        bounds.height = maxY - minY + (shape.strokeWidth ?? 1) * 2 + 40;
+        break;
+
+      case "text":
+        const calFontSize = getFontSize(shape.fontSize, 100);
+        this.ctx.font = `${calFontSize}px/1.2 ${shape.fontFamily === "normal" ? "Arial" : shape.fontFamily === "hand-drawn" ? "SketchFont, Xiaolai" : "Assistant"}`;
+        bounds.x = shape.x;
+        bounds.y = shape.y;
+        bounds.width = shape.width;
+        bounds.height = shape.height;
+        break;
+    }
+
     return bounds;
   }
 

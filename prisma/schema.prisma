@@ -113,8 +113,8 @@ model Todo {
 model Element {
   id          String      @id @default(uuid())
   type        ElementType
-  x           Float
-  y           Float
+  x           Float?
+  y           Float?
   width       Float?
   height      Float?
   radX        Float?
@@ -123,11 +123,11 @@ model Element {
   toY         Float?
   points      Json?
   text        String?
-  strokeWidth Int
+  strokeWidth Int?
   strokeFill  String
   bgFill      String?
-  strokeStyle String
-  roughStyle  Int
+  strokeStyle String?
+  roughStyle  Int?
   fillStyle   String?
   rounded     String?
   fontFamily  String?

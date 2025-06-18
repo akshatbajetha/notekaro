@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import ItemLabel from "./ItemLabel";
+import { useTheme } from "next-themes";
 
 interface ColorBoardProps {
   mode: "Shape" | "CanvasSheet";
@@ -32,13 +33,26 @@ export function ColorBoard({
   setBgFill,
   activeTool,
 }: ColorBoardProps) {
-  const strokeFills: StrokeFill[] = [
+  const { theme } = useTheme();
+
+  const lightModeColors: StrokeFill[] = [
     "#1971c2",
     "#1e1e1e",
     "#2f9e44",
     "#e03131",
     "#f08c00",
   ];
+
+  const darkModeColors: StrokeFill[] = [
+    "#55a1e6",
+    "#d3d3d3",
+    "#3a994c",
+    "#ff8383",
+    "#b76100",
+  ];
+
+  const strokeFills = theme === "dark" ? darkModeColors : lightModeColors;
+
   const bgFills: BgFill[] = [
     "#00000000",
     "#a5d8ff",

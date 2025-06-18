@@ -39,6 +39,7 @@ export default function CanvasBoard() {
   const { theme } = useTheme();
   const { matches, isLoading } = useMediaQuery(670);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
+  const [isLoadingShapes, setIsLoadingShapes] = useState(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasEngineState, setCanvasEngineState] = useState({
     engine: null as CanvasEngine | null,
@@ -165,7 +166,8 @@ export default function CanvasBoard() {
       canvasEngineState.canvasColor,
       (newScale) =>
         setCanvasEngineState((prev) => ({ ...prev, scale: newScale })),
-      theme === "light" ? "light" : "dark"
+      theme === "light" ? "light" : "dark",
+      setIsLoadingShapes
     );
     engine.setOnShapeCountChange((count: number) => {
       setCanvasEngineState((prev) => ({
@@ -240,6 +242,7 @@ export default function CanvasBoard() {
             : "cursor-crosshair"
       )}
     >
+      {isLoadingShapes && <ScreenLoading />}
       <div className="fixed top-0 left-0 right-0 z-50 ml-4 mt-4">
         <MobileNav />
       </div>
