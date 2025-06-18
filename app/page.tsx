@@ -1,20 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import videoPoster from "@/public/benefits-light.png";
+import videoPosterDark from "@/public/VideoPosterDark.png";
+import videoPosterLight from "@/public/VideoPosterLight.png";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import { Pencil, CheckSquare, FileEdit, Clock, Zap, Bell } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
-// import { Card, CardContent } from "@/components/ui/card";
 import GetStartedButton from "@/components/GetStartedButton";
 import { AppsCarousel } from "@/components/AppsCarousel";
 import BenefitsImage from "@/components/BenefitsImage";
 import { IconBrandGithub } from "@tabler/icons-react";
 import { SignInModal } from "@/components/sign-in-modal";
 import ScreenLoading from "@/components/sketch/ScreenLoading";
+import HeroVideoDialog from "@/src/components/magicui/hero-video-dialog";
 
-// Create a client component that uses useSearchParams
 function HomeContent() {
   const searchParams = useSearchParams();
   const [showSignInModal, setShowSignInModal] = useState(false);
@@ -65,23 +65,21 @@ function HomeContent() {
           id="how-it-works"
           className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24"
         >
-          <div className="relative rounded-lg overflow-hidden bg-gray-300 aspect-video max-w-4xl mx-auto shadow-lg">
-            {/* Video placeholder - replace src with your actual video */}
-
-            <video
-              className="w-full h-full object-cover"
-              poster={videoPoster.src}
-              controls
-              preload="none"
-            >
-              <source
-                src="https://notekaro.b-cdn.net/Dummy%20Video%20For%20Website.mp4"
-                type="video/mp4"
-              />
-              Your browser does not support the video tag.
-            </video>
-
-            {/* Play button overlay - only show when video is not playing */}
+          <div className="relative">
+            <HeroVideoDialog
+              className="block dark:hidden"
+              animationStyle="from-center"
+              videoSrc="https://www.youtube.com/embed/4UJy0UwdoXs?si=_0r-NOionE8MCeOe"
+              thumbnailSrc={videoPosterLight.src}
+              thumbnailAlt="NoteKaro Demo Video"
+            />
+            <HeroVideoDialog
+              className="hidden dark:block"
+              animationStyle="from-center"
+              videoSrc="https://www.youtube.com/embed/BwTYR-7RhFs?si=NGyuJ9nurBTFNjpE"
+              thumbnailSrc={videoPosterDark.src}
+              thumbnailAlt="NoteKaro Demo Video"
+            />
           </div>
         </section>
         <section
@@ -408,7 +406,6 @@ function HomeContent() {
   );
 }
 
-// Main page component
 export default function Home() {
   return (
     <Suspense fallback={<ScreenLoading />}>
