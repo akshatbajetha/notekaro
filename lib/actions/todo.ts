@@ -703,25 +703,30 @@ export async function sendTodoReminders() {
           now.toLocaleString("en-US", { timeZone: userTimezone })
         );
 
-        // Calculate tomorrow in user's timezone
-        const tomorrow = new Date(userNow);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
+        // Calculate tomorrow's start (00:00:00) in user's timezone
+        const tomorrowStart = new Date(userNow);
+        tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+        tomorrowStart.setHours(0, 0, 0, 0);
 
-        // Convert tomorrow to UTC for database query
-        const tomorrowUTC = new Date(
-          tomorrow.toLocaleString("en-US", { timeZone: userTimezone })
+        // Calculate tomorrow's end (23:59:59) in user's timezone
+        const tomorrowEnd = new Date(tomorrowStart);
+        tomorrowEnd.setHours(23, 59, 59, 999);
+
+        // Convert to UTC for database query
+        const tomorrowStartUTC = new Date(
+          tomorrowStart.toLocaleString("en-US", { timeZone: userTimezone })
         );
-        const nextDayUTC = new Date(tomorrowUTC);
-        nextDayUTC.setDate(nextDayUTC.getDate() + 1);
+        const tomorrowEndUTC = new Date(
+          tomorrowEnd.toLocaleString("en-US", { timeZone: userTimezone })
+        );
 
         // Find todos due tomorrow in user's timezone
         const todos = await prisma.todo.findMany({
           where: {
             userId: user.id,
             dueDate: {
-              gte: tomorrowUTC,
-              lt: nextDayUTC,
+              gte: tomorrowStartUTC,
+              lte: tomorrowEndUTC,
             },
             completed: false,
           },
