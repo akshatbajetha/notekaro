@@ -1,0 +1,40 @@
+name: Deploy Prisma Migrations
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  prisma-deploy:
+    name: Apply Prisma Migrations to Supabase
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎️ Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🧰 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22.14.0"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Validate Prisma Schema
+        run: npx prisma validate
+
+      - name: ⚙️ Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🚀 Apply Migrations to Supabase
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: 🧪 (Optional) Build Next.js App
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: ${{ secrets.NODE_ENV || 'production' }}

@@ -24,6 +24,20 @@ export const metadata: Metadata = {
   description:
     "NoteKaro: Your all-in-one workspace for notes, sketches, and todos with reminders. Start creating instantly!",
   metadataBase: new URL("https://notekaro.com"),
+  keywords: [
+    "NoteKaro",
+    "note-taking app",
+    "todo app",
+    "productivity tool",
+    "sketch app",
+    "free productivity tool",
+    "Notion alternative",
+    "Excalidraw alternative",
+    "Task manager",
+    "note app with todo list",
+    "note app with reminders",
+    "all in one productivity app",
+  ],
   openGraph: {
     title: "NoteKaro - Notes, Sketches & Tasks in One Place",
     description:
@@ -39,6 +53,7 @@ export const metadata: Metadata = {
       },
     ],
     locale: "en_US",
+
     type: "website",
   },
   twitter: {
