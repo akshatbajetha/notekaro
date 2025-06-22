@@ -1,30 +1,42 @@
-/**
- * CRON ROUTE - DO NOT USE IN PRODUCTION
- * This route is for sending todo reminders to users at 6 PM every day.
- * It triggers the sendTodoReminders function.
- */
-
-import { NextResponse } from "next/server";
 import { sendTodoReminders } from "@/lib/actions/todo";
-import { verifyQStashWebhook } from "@/lib/qstash/verify";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    // Verify QStash signature for security
-    const isValid = await verifyQStashWebhook(request);
+    const authHeader = request.headers.get("authorization");
+    const expectedAuth = `Bearer ${process.env.CRON_SECRET}`;
 
-    if (!isValid) {
-      console.error("Invalid QStash webhook signature");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!authHeader || authHeader !== expectedAuth) {
+      return NextResponse.json(
+        {
+          error: "Unauthorized",
+          message: "Invalid or missing authorization token",
+          timestamp: new Date().toISOString(),
+        },
+        { status: 401 }
+      );
     }
 
-    // Process the todo reminders
     const result = await sendTodoReminders();
-    return NextResponse.json(result);
+
+    return NextResponse.json({
+      success: true,
+      message: "Todo reminders sent successfully",
+      timestamp: new Date().toISOString(),
+      result: result,
+    });
   } catch (error) {
-    console.error("Error in todo reminders route:", error);
+    console.error("Error:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
     return NextResponse.json(
-      { error: "Failed to send todo reminders" },
+      {
+        success: false,
+        error: "Failed to send reminders",
+        message: errorMessage,
+        timestamp: new Date().toISOString(),
+      },
       { status: 500 }
     );
   }

@@ -339,8 +339,9 @@ function HomeContent() {
               out to us at{" "}
               <a
                 href="mailto:feedback@notekaro.com"
+                aria-label="Email us at feedback@notekaro.com"
                 target="_blank"
-                className="text-blue-700 dark:text-blue-300 hover:underline"
+                className="text-gray-700 dark:text-gray-300 hover:underline"
               >
                 feedback@notekaro.com
               </a>
@@ -353,6 +354,7 @@ function HomeContent() {
           <div className="flex space-x-4 flex-row justify-center items-center w-full">
             <a
               href="https://github.com/akshatbajetha/NoteKaro"
+              aria-label="Akshat Bajetha's GitHub Profile"
               target="_blank"
               className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
             >
@@ -393,7 +395,7 @@ function HomeContent() {
             <div className="mt-4 md:mt-0">
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 Made with ❤️ by{" "}
-                <span className="hover:underline text-gray-800 dark:text-gray-200">
+                <span className="hover:underline text-gray-700 dark:text-gray-300">
                   <a
                     aria-label="Akshat Bajetha's GitHub Profile"
                     target="_blank"

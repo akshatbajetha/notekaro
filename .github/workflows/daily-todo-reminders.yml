@@ -1,0 +1,65 @@
+name: Send Daily Todo Reminders
+
+on:
+  schedule:
+    - cron: "0 15 * * *"
+
+  workflow_dispatch:
+    inputs:
+      test_run:
+        description: "Is this a test run?"
+        required: false
+        default: "false"
+        type: boolean
+
+env:
+  TZ: UTC
+
+jobs:
+  send-reminders:
+    name: Send Todo Reminders
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Todo Reminders API Call
+        run: |
+          echo "🚀 Starting todo reminders job at $(date)"
+
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            https://www.notekaro.com/api/cron/send-todo-reminders \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: GitHub-Actions-Cron/1.0")
+
+          http_code=$(echo "$response" | tail -n1)
+          response_body=$(echo "$response" | head -n -1)
+
+          echo "📊 Response Status: $http_code"
+          echo "📝 Response Body: $response_body"
+
+          if [ "$http_code" -eq 200 ]; then
+            echo "✅ Todo reminders sent successfully!"
+          else
+            echo "❌ Failed to send todo reminders. Status code: $http_code"
+            echo "Response: $response_body"
+            exit 1
+          fi
+
+      - name: Log Completion
+        if: always()
+        run: |
+          echo "🏁 Job completed at $(date)"
+          echo "Status: ${{ job.status }}"
+
+  notify-on-failure:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    needs: send-reminders
+    if: failure()
+
+    steps:
+      - name: Log Failure
+        run: |
+          echo "🚨 Todo reminders job failed!"
+          echo "Time: $(date)"
+          echo "You may want to check your application logs."
