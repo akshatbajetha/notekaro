@@ -1,42 +1,75 @@
-# 📝 NoteKaro - Work in Progress
+# NoteKaro - Notes, Sketches and Tasks in One Place!
 
-**NoteKaro** is an **open-source, all-in-one productivity app** that combines Notion-like note-taking, Excalidraw-style sketching, and Todoist-inspired task management — all in one elegant and extendable platform.
+All-in-one productivity platform combining Notion-style note-taking, Excalidraw-like sketching, and Todoist-inspired task management.
 
-[NoteKaro](https://www.notekaro.com/)
+Check it out: [notekaro.com](https://www.notekaro.com/)
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Boost your focus, visualize your ideas, and organize your day with NoteKaro.
 
-## Getting Started
+## 📒 Features 
 
-First, run the development server:
+📝 Rich Note-Taking using [BlockNote.js](https://github.com/TypeCellOS/BlockNote).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+🎨 Canvas based Sketchboard to visualize ideas.
+
+✅ TODO Manager with email reminders and structured layout.
+
+## Screenshots
+
+
+![image](https://github.com/user-attachments/assets/585be63d-dc37-4a4c-9744-2d0c7093ca44) | ![image](https://github.com/user-attachments/assets/b52004bf-8a54-4688-924f-adeba81d2607)
+----------------------------------------------------------------------------------------- | -----------------------------------------------------------------------------------------
+![image](https://github.com/user-attachments/assets/7f67aa09-086c-49f5-ba04-967a65fefbf8) | ![image](https://github.com/user-attachments/assets/469f4702-0e4b-4ee4-8f56-4862afe4f3c1)
+
+
+## Getting Started (Local Setup)
+
+1. Clone the repository
+
+```
+git clone https://github.com/akshatbajetha/notekaro.git
+cd notekaro
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+  npm install
+  # or
+  yarn install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Create .env.local file
 
-## Learn More
+```
+cp .env.example .env.local
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Run the development server
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+npm run dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# or
 
-## Deploy on Vercel
+yarn dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Visit http://localhost:3000 in your browser.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🤝 Contributing
+
+All contributions are welcomed to improve NoteKaro!
+
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## 👨‍💻 Author
+
+Built with 💙 by [Akshat Bajetha](https://github.com/akshatbajetha)
+
+If you like the project, consider giving it a ⭐ on GitHub and sharing it!
+
