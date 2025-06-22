@@ -4,6 +4,8 @@ import { prisma } from "../db";
 import { getOrCreateUser } from "../getOrCreateUser";
 import { Resend } from "resend";
 import { TodoReminderTemplate } from "@/components/email/TodoReminderTemplate";
+import { fromZonedTime, toZonedTime } from "date-fns-tz";
+import { startOfDay, endOfDay, addDays } from "date-fns";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -685,47 +687,142 @@ export async function getUpcomingTodos() {
   }
 }
 
+// export async function sendTodoReminders() {
+//   try {
+//     // Get all users
+//     const users = await prisma.user.findMany();
+
+//     const results = [];
+
+//     for (const user of users) {
+//       try {
+//         // Get the user's timezone
+//         const userTimezone = user.timezone || "UTC";
+
+//         // Get current time in UTC
+//         const nowUTC = new Date();
+
+//         // Get current date in user's timezone
+//         const userDateStr = nowUTC.toLocaleDateString("en-CA", {
+//           timeZone: userTimezone,
+//         }); // YYYY-MM-DD format
+//         const [year, month, day] = userDateStr.split("-").map(Number);
+
+//         // Calculate tomorrow's date in user's timezone
+//         const tomorrow = new Date(year, month - 1, day + 1); // month is 0-indexed
+
+//         // Create start and end of tomorrow in user's timezone
+//         const tomorrowStart = new Date(tomorrow);
+//         tomorrowStart.setHours(0, 0, 0, 0);
+
+//         const tomorrowEnd = new Date(tomorrow);
+//         tomorrowEnd.setHours(23, 59, 59, 999);
+
+//         // Convert to UTC for database query
+//         // We need to create the date in the user's timezone and then convert to UTC
+//         const tomorrowStartUTC = new Date(
+//           tomorrowStart.toLocaleString("en-US", { timeZone: userTimezone })
+//         );
+//         const tomorrowEndUTC = new Date(
+//           tomorrowEnd.toLocaleString("en-US", { timeZone: userTimezone })
+//         );
+
+//         // Find todos due tomorrow in user's timezone
+//         const todos = await prisma.todo.findMany({
+//           where: {
+//             userId: user.id,
+//             dueDate: {
+//               gte: tomorrowStartUTC,
+//               lte: tomorrowEndUTC,
+//             },
+//             completed: false,
+//           },
+//           include: {
+//             todoList: true,
+//             section: true,
+//           },
+//         });
+
+//         if (todos.length > 0) {
+//           // Send email
+//           await resend.emails.send({
+//             from: "Notekaro <reminders@notekaro.com>",
+//             to: user.email,
+//             subject: "Your Upcoming Todos for Tomorrow",
+//             react: TodoReminderTemplate({
+//               todos,
+//               userName: user.email.split("@")[0],
+//             }),
+//           });
+
+//           results.push({
+//             userId: user.id,
+//             status: "success",
+//             todosCount: todos.length,
+//           });
+//         } else {
+//           results.push({
+//             userId: user.id,
+//             status: "skipped",
+//             reason: "no_todos",
+//           });
+//         }
+//       } catch (error) {
+//         console.error(`Error processing user ${user.email}:`, error);
+//         results.push({
+//           userId: user.id,
+//           status: "error",
+//           error: error instanceof Error ? error.message : "Unknown error",
+//         });
+//       }
+//     }
+
+//     return {
+//       success: true,
+//       processed: results.length,
+//       results,
+//     };
+//   } catch (error) {
+//     console.error("Error sending todo reminders:", error);
+//     throw new Error("Failed to send todo reminders");
+//   }
+// }
+
 export async function sendTodoReminders() {
   try {
-    // Get all users
-    const users = await prisma.user.findMany();
+    // Get all users with their timezones
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        timezone: true,
+      },
+    });
 
     const results = [];
 
     for (const user of users) {
       try {
-        // Get the user's timezone
         const userTimezone = user.timezone || "UTC";
 
-        // Get current time in UTC
-        const nowUTC = new Date();
+        // Get current time in user's timezone
+        const nowInUserTZ = toZonedTime(new Date(), userTimezone);
 
-        // Get current date in user's timezone
-        const userDateStr = nowUTC.toLocaleDateString("en-CA", {
-          timeZone: userTimezone,
-        }); // YYYY-MM-DD format
-        const [year, month, day] = userDateStr.split("-").map(Number);
+        // Get tomorrow in user's timezone
+        const tomorrowInUserTZ = addDays(nowInUserTZ, 1);
 
-        // Calculate tomorrow's date in user's timezone
-        const tomorrow = new Date(year, month - 1, day + 1); // month is 0-indexed
-
-        // Create start and end of tomorrow in user's timezone
-        const tomorrowStart = new Date(tomorrow);
-        tomorrowStart.setHours(0, 0, 0, 0);
-
-        const tomorrowEnd = new Date(tomorrow);
-        tomorrowEnd.setHours(23, 59, 59, 999);
+        // Get start and end of tomorrow in user's timezone
+        const tomorrowStartLocal = startOfDay(tomorrowInUserTZ);
+        const tomorrowEndLocal = endOfDay(tomorrowInUserTZ);
 
         // Convert to UTC for database query
-        // We need to create the date in the user's timezone and then convert to UTC
-        const tomorrowStartUTC = new Date(
-          tomorrowStart.toLocaleString("en-US", { timeZone: userTimezone })
+        const tomorrowStartUTC = fromZonedTime(
+          tomorrowStartLocal,
+          userTimezone
         );
-        const tomorrowEndUTC = new Date(
-          tomorrowEnd.toLocaleString("en-US", { timeZone: userTimezone })
-        );
+        const tomorrowEndUTC = fromZonedTime(tomorrowEndLocal, userTimezone);
 
-        // Find todos due tomorrow in user's timezone
+        // Find todos due tomorrow
         const todos = await prisma.todo.findMany({
           where: {
             userId: user.id,
@@ -736,8 +833,12 @@ export async function sendTodoReminders() {
             completed: false,
           },
           include: {
-            todoList: true,
-            section: true,
+            todoList: {
+              select: { title: true },
+            },
+            section: {
+              select: { title: true },
+            },
           },
         });
 
@@ -757,12 +858,14 @@ export async function sendTodoReminders() {
             userId: user.id,
             status: "success",
             todosCount: todos.length,
+            timezone: userTimezone,
           });
         } else {
           results.push({
             userId: user.id,
             status: "skipped",
             reason: "no_todos",
+            timezone: userTimezone,
           });
         }
       } catch (error) {
