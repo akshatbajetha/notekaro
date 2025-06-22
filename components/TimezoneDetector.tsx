@@ -1,12 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function TimezoneDetector() {
+  const { data: session, status } = useSession();
   const { toast } = useToast();
 
   useEffect(() => {
+    // Only run if user is authenticated and session is loaded
+    if (status === "loading" || !session) {
+      return;
+    }
+
     const updateTimezone = async () => {
       try {
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -33,7 +40,7 @@ export default function TimezoneDetector() {
     };
 
     updateTimezone();
-  }, [toast]);
+  }, [session, status, toast]);
 
   return null;
 }
