@@ -39,10 +39,3 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
-
-      - name: 🧪 (Optional) Build Next.js App
-        run: npm run build
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL }}
-          NODE_ENV: ${{ secrets.NODE_ENV || 'production' }}
