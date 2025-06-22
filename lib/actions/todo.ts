@@ -690,64 +690,85 @@ export async function sendTodoReminders() {
     // Get all users
     const users = await prisma.user.findMany();
 
+    const results = [];
+
     for (const user of users) {
-      // Get the user's timezone
-      const userTimezone = user.timezone || "UTC";
+      try {
+        // Get the user's timezone
+        const userTimezone = user.timezone || "UTC";
 
-      // Get current time in user's timezone
-      const now = new Date();
-      const userNow = new Date(
-        now.toLocaleString("en-US", { timeZone: userTimezone })
-      );
+        // Get current time in user's timezone
+        const now = new Date();
+        const userNow = new Date(
+          now.toLocaleString("en-US", { timeZone: userTimezone })
+        );
 
-      // Check if it's 6 PM in user's timezone
-      if (userNow.getHours() !== 18) {
-        continue; // Skip if it's not 6 PM
-      }
+        // Calculate tomorrow in user's timezone
+        const tomorrow = new Date(userNow);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
 
-      // Calculate tomorrow in user's timezone
-      const tomorrow = new Date(userNow);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
+        // Convert tomorrow to UTC for database query
+        const tomorrowUTC = new Date(
+          tomorrow.toLocaleString("en-US", { timeZone: userTimezone })
+        );
+        const nextDayUTC = new Date(tomorrowUTC);
+        nextDayUTC.setDate(nextDayUTC.getDate() + 1);
 
-      // Convert tomorrow to UTC for database query
-      const tomorrowUTC = new Date(
-        tomorrow.toLocaleString("en-US", { timeZone: userTimezone })
-      );
-      const nextDayUTC = new Date(tomorrowUTC);
-      nextDayUTC.setDate(nextDayUTC.getDate() + 1);
-
-      // Find todos due tomorrow in user's timezone
-      const todos = await prisma.todo.findMany({
-        where: {
-          userId: user.id,
-          dueDate: {
-            gte: tomorrowUTC,
-            lt: nextDayUTC,
+        // Find todos due tomorrow in user's timezone
+        const todos = await prisma.todo.findMany({
+          where: {
+            userId: user.id,
+            dueDate: {
+              gte: tomorrowUTC,
+              lt: nextDayUTC,
+            },
+            completed: false,
           },
-          completed: false,
-        },
-        include: {
-          todoList: true,
-          section: true,
-        },
-      });
+          include: {
+            todoList: true,
+            section: true,
+          },
+        });
 
-      if (todos.length > 0) {
-        // Send email
-        await resend.emails.send({
-          from: "Notekaro <reminders@notekaro.com>",
-          to: user.email,
-          subject: "Your Upcoming Todos for Tomorrow",
-          react: TodoReminderTemplate({
-            todos,
-            userName: user.email.split("@")[0],
-          }),
+        if (todos.length > 0) {
+          // Send email
+          await resend.emails.send({
+            from: "Notekaro <reminders@notekaro.com>",
+            to: user.email,
+            subject: "Your Upcoming Todos for Tomorrow",
+            react: TodoReminderTemplate({
+              todos,
+              userName: user.email.split("@")[0],
+            }),
+          });
+
+          results.push({
+            userId: user.id,
+            status: "success",
+            todosCount: todos.length,
+          });
+        } else {
+          results.push({
+            userId: user.id,
+            status: "skipped",
+            reason: "no_todos",
+          });
+        }
+      } catch (error) {
+        results.push({
+          userId: user.id,
+          status: "error",
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
 
-    return { success: true };
+    return {
+      success: true,
+      processed: results.length,
+      results,
+    };
   } catch (error) {
     console.error("Error sending todo reminders:", error);
     throw new Error("Failed to send todo reminders");
