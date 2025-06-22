@@ -82,6 +82,7 @@ function HomeContent() {
             />
           </div>
         </section>
+
         <section
           id="features"
           className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12 md:py-24"
@@ -101,9 +102,9 @@ function HomeContent() {
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/50">
                 <FileEdit className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="mb-2 text-xl font-bold dark:text-white">
+              <h2 className="mb-2 text-xl font-bold dark:text-white">
                 Rich Note Taking
-              </h3>
+              </h2>
               <p className="text-gray-600 dark:text-gray-400">
                 Create beautifully formatted notes with our powerful rich text
                 editor.
@@ -113,9 +114,9 @@ function HomeContent() {
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/50">
                 <Pencil className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
-              <h3 className="mb-2 text-xl font-bold dark:text-white">
+              <h2 className="mb-2 text-xl font-bold dark:text-white">
                 Sketching
-              </h3>
+              </h2>
               <p className="text-gray-600 dark:text-gray-400">
                 Express your ideas visually with our intuitive sketching tools.
               </p>
@@ -124,9 +125,9 @@ function HomeContent() {
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/50">
                 <CheckSquare className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
-              <h3 className="mb-2 text-xl font-bold dark:text-white">
+              <h2 className="mb-2 text-xl font-bold dark:text-white">
                 Todo List
-              </h3>
+              </h2>
               <p className="text-gray-600 dark:text-gray-400">
                 Stay organized with tasks and receive timely email reminders.
               </p>
@@ -333,13 +334,13 @@ function HomeContent() {
 
         <footer className="py-8 border-t border-gray-200 dark:border-gray-800">
           <div className="container mx-auto px-4 text-center">
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-700 dark:text-gray-300">
               Have questions or feedback? We&apos;d love to hear from you! Reach
               out to us at{" "}
               <a
                 href="mailto:feedback@notekaro.com"
                 target="_blank"
-                className="text-blue-600 dark:text-blue-400 hover:underline"
+                className="text-blue-700 dark:text-blue-300 hover:underline"
               >
                 feedback@notekaro.com
               </a>
@@ -386,14 +387,18 @@ function HomeContent() {
           <div className="flex flex-row gap-x-2"></div>
 
           <div className="mt-8 border-t border-gray-200 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between">
-            <p className="text-sm text-gray-500 dark:text-gray-500">
+            <p className="text-sm text-gray-700 dark:text-gray-300">
               &copy; {new Date().getFullYear()} NoteKaro. All rights reserved.
             </p>
             <div className="mt-4 md:mt-0">
-              <p className="text-sm text-gray-500 dark:text-gray-500">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
                 Made with ❤️ by{" "}
-                <span className="hover:underline text-gray-600 dark:text-gray-400">
-                  <a target="_blank" href="https://github.com/akshatbajetha">
+                <span className="hover:underline text-gray-800 dark:text-gray-200">
+                  <a
+                    aria-label="Akshat Bajetha's GitHub Profile"
+                    target="_blank"
+                    href="https://github.com/akshatbajetha"
+                  >
                     Akshat Bajetha
                   </a>
                 </span>

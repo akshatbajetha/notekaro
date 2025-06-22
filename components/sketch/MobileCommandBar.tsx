@@ -109,3 +109,5 @@ function ScaleWidget({
     </>
   );
 }
+
+// TODO: Add shapes options for mobile

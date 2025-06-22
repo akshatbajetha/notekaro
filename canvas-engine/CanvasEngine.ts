@@ -884,7 +884,6 @@ export class CanvasEngine {
     const calFont = getFontSize(this.fontSize, this.scale);
     textarea.classList.add("notekaroSketch-texty");
     textarea.style.color = this.strokeFill;
-    // TODO: change font family
     const fontString = `${calFont}px/1.2 ${this.fontFamily === "normal" ? "Arial" : this.fontFamily === "hand-drawn" ? "SketchFont, Xiaolai" : "Assistant"}`;
     textarea.style.font = fontString;
     textarea.style.zIndex = "100";
@@ -1563,7 +1562,6 @@ export class CanvasEngine {
     const calFontSize = getFontSize(fontSize, this.scale);
     const lineHeight = getLineHeight(calFontSize);
 
-    // TODO: change font family
     const fontString = `${fontStyle} ${calFontSize}px/1.2 ${fontFamily === "normal" ? "Arial" : fontFamily === "hand-drawn" ? "SketchFont, Xiaolai" : "Assistant"}`;
     this.ctx.font = fontString;
     this.ctx.fillStyle = fillStyle;
@@ -1607,7 +1605,6 @@ export class CanvasEngine {
     this.canvas.removeEventListener("touchmove", this.touchMoveHandler);
     this.canvas.removeEventListener("touchend", this.touchEndHandler);
 
-    // TODO: Check if this is needed
     if (this.flushInterval) clearInterval(this.flushInterval);
   }
 

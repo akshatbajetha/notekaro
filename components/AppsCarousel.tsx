@@ -69,8 +69,11 @@ export function AppsCarousel() {
               <Image
                 src={image}
                 alt="App screenshot"
-                width={1440}
-                height={1080}
+                width={500}
+                height={300}
+                sizes="(max-width: 768px) 100vw, 500px"
+                loading="eager"
+                priority
                 className="[transform:rotateY(-12deg)] scale-100 object-cover rounded-xl  transition-transform duration-500"
               />
             </div>
