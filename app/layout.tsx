@@ -107,6 +107,25 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <meta name="theme-color" content="#ffffff" />
+
+        {/* Favicons */}
+        <link rel="icon" href="/favicon.ico" sizes="any" type="image/x-icon" />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="192x192"
+          href="/android-chrome-192x192.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="512x512"
+          href="/android-chrome-512x512.png"
+        />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-E6Q5M4X2VH"
           strategy="afterInteractive"
