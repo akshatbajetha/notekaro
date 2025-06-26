@@ -66,7 +66,9 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any", type: "image/x-icon" },
+      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       {
         url: "/android-chrome-192x192.png",
         sizes: "192x192",
@@ -78,7 +80,14 @@ export const metadata: Metadata = {
         type: "image/png",
       },
     ],
-    apple: "/apple-touch-icon.png",
+    apple: [
+      {
+        url: "/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
+    shortcut: "/favicon.ico",
   },
   robots: {
     index: true,
@@ -108,23 +117,8 @@ export default function RootLayout({
     >
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
-        <meta name="theme-color" content="#ffffff" />
 
-        {/* Favicons */}
-        <link rel="icon" href="/favicon.ico" sizes="any" type="image/x-icon" />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="192x192"
-          href="/android-chrome-192x192.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="512x512"
-          href="/android-chrome-512x512.png"
-        />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta name="theme-color" content="#ffffff" />
 
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-E6Q5M4X2VH"
