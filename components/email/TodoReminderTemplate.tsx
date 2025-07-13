@@ -3,11 +3,13 @@ import { Todo } from "@prisma/client";
 interface EmailTemplateProps {
   todos: Todo[];
   userName: string;
+  userTimezone: string;
 }
 
 export const TodoReminderTemplate = ({
   todos,
   userName,
+  userTimezone,
 }: EmailTemplateProps) => {
   return (
     <div
@@ -39,7 +41,13 @@ export const TodoReminderTemplate = ({
             <h3 style={{ margin: "0", color: "#333" }}>{todo.title}</h3>
             {todo.dueDate && (
               <p style={{ margin: "5px 0", color: "#666" }}>
-                Due: {new Date(todo.dueDate).toLocaleDateString()}
+                Due:{" "}
+                {new Date(todo.dueDate).toLocaleDateString("en-US", {
+                  timeZone: userTimezone,
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
               </p>
             )}
           </div>

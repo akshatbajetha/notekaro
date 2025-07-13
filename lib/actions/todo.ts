@@ -843,6 +843,21 @@ export async function sendTodoReminders() {
         });
 
         if (todos.length > 0) {
+          // Debug logging
+          console.log(
+            `[DEBUG] Processing user ${user.email} in timezone ${userTimezone}`
+          );
+          console.log(
+            `[DEBUG] Tomorrow in user TZ: ${tomorrowInUserTZ.toISOString()}`
+          );
+          console.log(
+            `[DEBUG] Tomorrow start UTC: ${tomorrowStartUTC.toISOString()}`
+          );
+          console.log(
+            `[DEBUG] Tomorrow end UTC: ${tomorrowEndUTC.toISOString()}`
+          );
+          console.log(`[DEBUG] Found ${todos.length} todos for tomorrow`);
+
           // Send email
           await resend.emails.send({
             from: "Notekaro <reminders@notekaro.com>",
@@ -851,6 +866,7 @@ export async function sendTodoReminders() {
             react: TodoReminderTemplate({
               todos,
               userName: user.email.split("@")[0],
+              userTimezone: userTimezone,
             }),
           });
 

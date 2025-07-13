@@ -14,6 +14,7 @@ import { IconBrandGithub } from "@tabler/icons-react";
 import { SignInModal } from "@/components/sign-in-modal";
 import ScreenLoading from "@/components/sketch/ScreenLoading";
 import HeroVideoDialog from "@/src/components/magicui/hero-video-dialog";
+import FloatingContactButton from "@/components/FloatingContactButton";
 
 function HomeContent() {
   const searchParams = useSearchParams();
@@ -36,6 +37,8 @@ function HomeContent() {
         isOpen={showSignInModal}
         onClose={() => setShowSignInModal(false)}
       />
+
+      <FloatingContactButton />
 
       <main className="flex-1">
         <section className="container px-4 sm:px-6 md:px-12 lg:px-24 py-12">

@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import TodoComponent from "@/components/todo/TodoComponent";
 import { useTodoStore } from "@/store/todoStore";
-import { format, isToday, isTomorrow, addDays } from "date-fns";
+import { format, isToday, isTomorrow } from "date-fns";
 import Link from "next/link";
 import { Hash } from "lucide-react";
 
@@ -88,6 +88,17 @@ function Page() {
     {} as Record<string, Todo[]>
   );
 
+  // Debug logging
+  console.log(
+    "[DEBUG] Upcoming todos:",
+    upcomingTodos.map((t) => ({
+      title: t.title,
+      dueDate: t.dueDate.toISOString(),
+      dateKey: t.dueDate.toISOString().split("T")[0],
+    }))
+  );
+  console.log("[DEBUG] Grouped todos:", groupedTodos);
+
   // Sort dates
   const sortedDates = Object.keys(groupedTodos).sort();
 
@@ -114,7 +125,7 @@ function Page() {
         {sortedDates.length > 0 ? (
           sortedDates.map((date) => {
             const todos = groupedTodos[date];
-            const dateObj = addDays(new Date(date), 1); // Adjust only the display date
+            const dateObj = new Date(date); // Use the correct date directly
             let dateTitle = format(dateObj, "MMMM d, yyyy");
 
             if (isToday(dateObj)) {
