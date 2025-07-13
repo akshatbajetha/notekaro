@@ -564,25 +564,28 @@ export async function getTodosDueToday() {
 
     // Get current time in user's timezone
     const now = new Date();
-    const userNow = new Date(
-      now.toLocaleString("en-US", { timeZone: userTimezone })
-    );
+    const userNow = toZonedTime(now, userTimezone);
 
     // Set to start of today in user's timezone
-    const startOfToday = new Date(userNow);
-    startOfToday.setHours(0, 0, 0, 0);
+    const startOfToday = startOfDay(userNow);
 
     // Set to end of today in user's timezone
-    const endOfToday = new Date(userNow);
-    endOfToday.setHours(23, 59, 59, 999);
+    const endOfToday = endOfDay(userNow);
 
     // Convert to UTC for database query
-    const startOfTodayUTC = new Date(
-      startOfToday.toLocaleString("en-US", { timeZone: userTimezone })
+    const startOfTodayUTC = fromZonedTime(startOfToday, userTimezone);
+    const endOfTodayUTC = fromZonedTime(endOfToday, userTimezone);
+
+    // Debug logging
+    console.log(`[DEBUG] User timezone: ${userTimezone}`);
+    console.log(
+      `[DEBUG] Start of today (user TZ): ${startOfToday.toISOString()}`
     );
-    const endOfTodayUTC = new Date(
-      endOfToday.toLocaleString("en-US", { timeZone: userTimezone })
+    console.log(`[DEBUG] End of today (user TZ): ${endOfToday.toISOString()}`);
+    console.log(
+      `[DEBUG] Start of today (UTC): ${startOfTodayUTC.toISOString()}`
     );
+    console.log(`[DEBUG] End of today (UTC): ${endOfTodayUTC.toISOString()}`);
 
     const todos = (await prisma.todo.findMany({
       where: {
@@ -636,18 +639,13 @@ export async function getUpcomingTodos() {
 
     // Get current time in user's timezone
     const now = new Date();
-    const userNow = new Date(
-      now.toLocaleString("en-US", { timeZone: userTimezone })
-    );
+    const userNow = toZonedTime(now, userTimezone);
 
     // Set to start of today in user's timezone
-    const startOfToday = new Date(userNow);
-    startOfToday.setHours(0, 0, 0, 0);
+    const startOfToday = startOfDay(userNow);
 
     // Convert to UTC for database query
-    const startOfTodayUTC = new Date(
-      startOfToday.toLocaleString("en-US", { timeZone: userTimezone })
-    );
+    const startOfTodayUTC = fromZonedTime(startOfToday, userTimezone);
 
     const todos = (await prisma.todo.findMany({
       where: {
